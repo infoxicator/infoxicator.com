@@ -6,31 +6,34 @@ interface MarkdownRendererProps {
 }
 
 export function MarkdownRenderer({ content }: MarkdownRendererProps) {
-  const [elements, setElements] = React.useState<React.ReactNode[]>([])
-  const [isLoading, setIsLoading] = React.useState(true)
+  const [elements, setElements] = React.useState<React.ReactNode[]>(() =>
+    parseContentSync(content)
+  )
 
   React.useEffect(() => {
+    let cancelled = false
     parseContent(content).then((parsed) => {
-      setElements(parsed)
-      setIsLoading(false)
+      if (!cancelled) {
+        setElements(parsed)
+      }
     })
+    return () => {
+      cancelled = true
+    }
   }, [content])
-
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <div className="h-6 bg-secondary rounded animate-pulse" />
-        <div className="h-4 bg-secondary rounded animate-pulse w-3/4" />
-        <div className="h-4 bg-secondary rounded animate-pulse w-1/2" />
-      </div>
-    )
-  }
 
   return <div>{elements}</div>
 }
 
 function looksLikeHtml(content: string): boolean {
-  return /<(p|h1|h2|h3|ul|ol|blockquote|figure|pre|img|a)\b/i.test(content)
+  const hasHtml =
+    /<(p|h1|h2|h3|ul|ol|blockquote|figure|pre|img|a|iframe|code|strong|em|s|br)\b/i.test(
+      content
+    )
+  const hasMarkdown = /(^|\n)\s*(#{1,6}\s|```|[-*]\s|\d+\.\s|!\[|\[.+\]\(.+\))/m.test(
+    content
+  )
+  return hasHtml && !hasMarkdown
 }
 
 async function parseContent(content: string): Promise<React.ReactNode[]> {
@@ -38,6 +41,197 @@ async function parseContent(content: string): Promise<React.ReactNode[]> {
     return parseHtml(content)
   }
   return parseMarkdown(content)
+}
+
+function parseContentSync(content: string): React.ReactNode[] {
+  if (looksLikeHtml(content)) {
+    return [
+      <div
+        key="html"
+        dangerouslySetInnerHTML={{ __html: content }}
+      />
+    ]
+  }
+  return parseMarkdownSync(content)
+}
+
+function parseMarkdownSync(content: string): React.ReactNode[] {
+  const lines = content.trim().split('\n')
+  const elements: React.ReactNode[] = []
+  let inCodeBlock = false
+  let codeContent: string[] = []
+  let codeLanguage = ''
+  let blockStartIndex = 0
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]
+
+    if (line.startsWith('```')) {
+      if (!inCodeBlock) {
+        inCodeBlock = true
+        codeLanguage = line.slice(3).trim() || 'text'
+        codeContent = []
+        blockStartIndex = i
+      } else {
+        const code = codeContent.join('\n')
+        const highlighted = highlightCodeSync(code)
+        elements.push(
+          <div
+            key={blockStartIndex}
+            className="my-4 rounded border border-theme overflow-hidden"
+          >
+            <div className="flex items-center justify-between px-4 py-2 bg-tertiary border-b border-theme">
+              <span className="text-xs text-muted font-medium uppercase">{codeLanguage}</span>
+            </div>
+            <div
+              className="p-4 overflow-x-auto text-sm [&_pre]:!bg-transparent [&_pre]:!m-0 [&_pre]:!p-0"
+              dangerouslySetInnerHTML={{ __html: highlighted }}
+            />
+          </div>
+        )
+        inCodeBlock = false
+        codeContent = []
+        codeLanguage = ''
+      }
+      continue
+    }
+
+    if (inCodeBlock) {
+      codeContent.push(line)
+      continue
+    }
+
+    if (!line.trim()) {
+      continue
+    }
+
+    const trimmedLine = line.trim()
+    if (trimmedLine.startsWith('<') && trimmedLine.endsWith('>')) {
+      elements.push(
+        <div
+          key={`html-${i}`}
+          dangerouslySetInnerHTML={{ __html: trimmedLine }}
+        />
+      )
+      continue
+    }
+
+    const twitterMatch = line.match(/^\{%\s*twitter\s+(\d+)\s*%\}$/)
+    if (twitterMatch) {
+      const tweetId = twitterMatch[1]
+      elements.push(<TwitterEmbed key={i} tweetId={tweetId} />)
+      continue
+    }
+
+    const youtubeMatch = line.match(/^\{%\s*youtube\s+(.+?)\s*%\}$/)
+    if (youtubeMatch) {
+      const embedUrl = buildYouTubeEmbedUrl(youtubeMatch[1])
+      if (embedUrl) {
+        elements.push(
+          <div key={i} className="my-6 w-full overflow-hidden rounded border border-theme">
+            <iframe
+              src={embedUrl}
+              width="100%"
+              height="375"
+              title="YouTube video"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="w-full"
+            />
+          </div>
+        )
+        continue
+      }
+    }
+
+    const imageMatch = line.match(/^!\[([^\]]*)\]\(([^)]+)\)$/)
+    if (imageMatch) {
+      const [, alt, src] = imageMatch
+      elements.push(
+        <figure key={i} className="my-6">
+          <img
+            src={src}
+            alt={alt}
+            className="rounded border border-theme max-w-full"
+            loading="lazy"
+          />
+          {alt && (
+            <figcaption className="text-sm text-muted mt-2 text-center">
+              {alt}
+            </figcaption>
+          )}
+        </figure>
+      )
+      continue
+    }
+
+    if (line.startsWith('> ')) {
+      elements.push(
+        <blockquote
+          key={i}
+          className="border-l-4 border-accent pl-4 my-4 italic text-secondary"
+        >
+          {renderInlineElements(line.slice(2))}
+        </blockquote>
+      )
+      continue
+    }
+
+    if (line.startsWith('# ')) {
+      elements.push(
+        <h1 key={i} className="text-2xl font-bold text-primary mt-8 mb-4">
+          {line.slice(2)}
+        </h1>
+      )
+      continue
+    }
+
+    if (line.startsWith('## ')) {
+      elements.push(
+        <h2 key={i} className="text-xl font-semibold text-primary mt-8 mb-3">
+          {line.slice(3)}
+        </h2>
+      )
+      continue
+    }
+
+    if (line.startsWith('### ')) {
+      elements.push(
+        <h3 key={i} className="text-lg font-medium text-primary mt-6 mb-2">
+          {line.slice(4)}
+        </h3>
+      )
+      continue
+    }
+
+    if (line.startsWith('- ')) {
+      elements.push(
+        <li key={i} className="text-secondary ml-4 my-1 list-disc">
+          {renderInlineElements(line.slice(2))}
+        </li>
+      )
+      continue
+    }
+
+    if (/^\d+\.\s/.test(line)) {
+      const text = line.replace(/^\d+\.\s/, '')
+      elements.push(
+        <li key={i} className="text-secondary ml-4 my-1 list-decimal">
+          {renderInlineElements(text)}
+        </li>
+      )
+      continue
+    }
+
+    elements.push(
+      <p key={i} className="text-secondary my-4 leading-relaxed">
+        {renderInlineElements(line)}
+      </p>
+    )
+  }
+
+  return elements
 }
 
 async function parseMarkdown(content: string): Promise<React.ReactNode[]> {
@@ -92,12 +286,42 @@ async function parseMarkdown(content: string): Promise<React.ReactNode[]> {
       continue
     }
 
+    const trimmedLine = line.trim()
+    if (trimmedLine.startsWith('<') && trimmedLine.endsWith('>')) {
+      const htmlElements = await parseHtmlFragment(trimmedLine, `html-${i}`)
+      elements.push(...htmlElements)
+      continue
+    }
+
     // Handle Twitter/X embeds: {% twitter 1234567890 %}
     const twitterMatch = line.match(/^\{%\s*twitter\s+(\d+)\s*%\}$/)
     if (twitterMatch) {
       const tweetId = twitterMatch[1]
       elements.push(<TwitterEmbed key={i} tweetId={tweetId} />)
       continue
+    }
+
+    // Handle YouTube embeds: {% youtube https://www.youtube.com/watch?v=... %}
+    const youtubeMatch = line.match(/^\{%\s*youtube\s+(.+?)\s*%\}$/)
+    if (youtubeMatch) {
+      const embedUrl = buildYouTubeEmbedUrl(youtubeMatch[1])
+      if (embedUrl) {
+        elements.push(
+          <div key={i} className="my-6 w-full overflow-hidden rounded border border-theme">
+            <iframe
+              src={embedUrl}
+              width="100%"
+              height="375"
+              title="YouTube video"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="w-full"
+            />
+          </div>
+        )
+        continue
+      }
     }
 
     // Handle images: ![alt](url)
@@ -200,6 +424,15 @@ async function parseHtml(content: string): Promise<React.ReactNode[]> {
   return renderHtmlNodes(Array.from(doc.body.childNodes), 'html')
 }
 
+async function parseHtmlFragment(
+  content: string,
+  keyPrefix: string
+): Promise<React.ReactNode[]> {
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(content, 'text/html')
+  return renderHtmlNodes(Array.from(doc.body.childNodes), keyPrefix)
+}
+
 async function renderHtmlNodes(
   nodes: ChildNode[],
   keyPrefix: string
@@ -252,19 +485,31 @@ async function renderHtmlNode(
     }
     case 'h1':
       return (
-        <h1 key={key} className="text-2xl font-bold text-primary mt-8 mb-4">
+        <h1
+          key={key}
+          id={element.getAttribute('id') || undefined}
+          className="text-2xl font-bold text-primary mt-8 mb-4"
+        >
           {element.textContent?.trim()}
         </h1>
       )
     case 'h2':
       return (
-        <h2 key={key} className="text-xl font-semibold text-primary mt-8 mb-3">
+        <h2
+          key={key}
+          id={element.getAttribute('id') || undefined}
+          className="text-xl font-semibold text-primary mt-8 mb-3"
+        >
           {element.textContent?.trim()}
         </h2>
       )
     case 'h3':
       return (
-        <h3 key={key} className="text-lg font-medium text-primary mt-6 mb-2">
+        <h3
+          key={key}
+          id={element.getAttribute('id') || undefined}
+          className="text-lg font-medium text-primary mt-6 mb-2"
+        >
           {element.textContent?.trim()}
         </h3>
       )
@@ -387,6 +632,34 @@ async function renderHtmlNode(
         </div>
       )
     }
+    case 'iframe': {
+      const src = element.getAttribute('src') || ''
+      if (!src) {
+        return null
+      }
+      const width = element.getAttribute('width') || '100%'
+      const height = element.getAttribute('height') || undefined
+      const title = element.getAttribute('title') || 'Embedded content'
+      const loading = element.getAttribute('loading') || 'lazy'
+      const allow = element.getAttribute('allow') || undefined
+      const frameBorder = element.getAttribute('frameborder') || undefined
+      const allowFullScreen = element.hasAttribute('allowfullscreen')
+      return (
+        <div key={key} className="my-6 w-full overflow-hidden rounded border border-theme">
+          <iframe
+            src={src}
+            width={width}
+            height={height}
+            title={title}
+            loading={loading}
+            allow={allow}
+            frameBorder={frameBorder}
+            allowFullScreen={allowFullScreen}
+            className="w-full"
+          />
+        </div>
+      )
+    }
     case 'code': {
       const text = element.textContent ?? ''
       return (
@@ -456,6 +729,10 @@ async function highlightCode(code: string, lang: string): Promise<string> {
   }
 }
 
+function highlightCodeSync(code: string): string {
+  return `<pre><code>${escapeHtml(code)}</code></pre>`
+}
+
 function escapeHtml(text: string): string {
   return text
     .replace(/&/g, '&amp;')
@@ -463,6 +740,62 @@ function escapeHtml(text: string): string {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;')
+}
+
+function buildYouTubeEmbedUrl(rawUrl: string): string | null {
+  const trimmed = rawUrl.trim()
+  if (!trimmed) {
+    return null
+  }
+
+  try {
+    const url = trimmed.startsWith('//') ? new URL(`https:${trimmed}`) : new URL(trimmed)
+    let videoId = ''
+
+    if (url.hostname.includes('youtu.be')) {
+      videoId = url.pathname.replace('/', '')
+    } else if (url.hostname.includes('youtube.com')) {
+      if (url.pathname.startsWith('/embed/')) {
+        videoId = url.pathname.split('/embed/')[1] || ''
+      } else {
+        videoId = url.searchParams.get('v') || ''
+      }
+    }
+
+    if (!videoId) {
+      return null
+    }
+
+    const startParam = url.searchParams.get('t') || url.searchParams.get('start')
+    const startTime = startParam ? parseYouTubeTime(startParam) : null
+    const embedUrl = new URL(`https://www.youtube.com/embed/${videoId}`)
+
+    if (startTime && startTime > 0) {
+      embedUrl.searchParams.set('start', String(startTime))
+    }
+
+    return embedUrl.toString()
+  } catch {
+    return null
+  }
+}
+
+function parseYouTubeTime(value: string): number | null {
+  if (/^\d+$/.test(value)) {
+    return Number.parseInt(value, 10)
+  }
+
+  const match = value.match(/(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?/i)
+  if (!match) {
+    return null
+  }
+
+  const hours = match[1] ? Number.parseInt(match[1], 10) : 0
+  const minutes = match[2] ? Number.parseInt(match[2], 10) : 0
+  const seconds = match[3] ? Number.parseInt(match[3], 10) : 0
+
+  const total = hours * 3600 + minutes * 60 + seconds
+  return total > 0 ? total : null
 }
 
 function TwitterEmbed({ tweetId }: { tweetId: string }) {

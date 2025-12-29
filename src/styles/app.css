@@ -181,3 +181,18 @@
   width: fit-content;
   min-width: 100%;
 }
+
+/* Blinking cursor animation for active nav links */
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+.nav-link-active::after {
+  content: '_';
+  animation: blink 1s step-end infinite;
+}

@@ -1,7 +1,7 @@
 ---
 title: "Introducing a New Web Vital: Time to Usability (TTU)"
 excerpt: "A proposed metric focused on when users can actually use your app, not just when it loads."
-date: "2024-11-12"
+date: "2025-03-11"
 tags:
   - Performance
   - Web Vitals
@@ -31,7 +31,7 @@ To measure TTU, you can ask the following question: How quickly can users start 
 
 Unlike generic performance scores, **TTU** is application-specific. It shifts the focus from technical implementation details to real usability, helping developers measure what truly impacts user experience.
 
-### **How TTU Differs from Time to Interactive (TTI)**  
+### How TTU Differs from Time to Interactive (TTI)  
 
 I can hear you thinking, hold on a minute, we already have a metric for that is called **Time to Interactive (TTI)**
 
@@ -187,9 +187,9 @@ The good news? **The performance markers are useful in both Synthetic tests and 
 
 The **bad news?** There are a couple of caveats to keep in mind:
 
-1. The Performance API itself has a small overhead. While minimal, instrumenting too many markers or collecting excessive data could impact performance. However, the benefits far outweigh the cost, the insights you gain will help you optimize the real bottlenecks in your app.
+- The Performance API itself has a small overhead. While minimal, instrumenting too many markers or collecting excessive data could impact performance. However, the benefits far outweigh the cost, the insights you gain will help you optimize the real bottlenecks in your app.
 
-2. Measuring TTU is a manual and custom process. Unlike generic performance metrics, Time to Usability (TTU) requires thoughtful instrumentation based on your app’s core functionality. There’s no one-size-fits-all solution, it’s up to you to define and measure what truly matters for your users.
+- Measuring TTU is a manual and custom process. Unlike generic performance metrics, Time to Usability (TTU) requires thoughtful instrumentation based on your app’s core functionality. There’s no one-size-fits-all solution, it’s up to you to define and measure what truly matters for your users.
 
 With the Performance API, you have the tools to go beyond generic benchmarks and truly understand what makes your app feel fast. By combining custom markers, resource timing, and telemetry, you can continuously measure, optimize, and improve your app’s real-world performance.
 

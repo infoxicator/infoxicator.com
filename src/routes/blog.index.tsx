@@ -13,7 +13,7 @@ function BlogIndex() {
       <header className="space-y-4">
         <h1 className="text-3xl font-bold text-primary">Blog</h1>
         <p className="text-secondary">
-          Thoughts on software engineering, web development, and building things.
+          Thoughts on software engineering, web development, and building things with Ai.
         </p>
       </header>
 
