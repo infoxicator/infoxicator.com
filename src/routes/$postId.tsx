@@ -4,7 +4,7 @@ import { NotFound } from '~/components/NotFound'
 import { MarkdownRenderer } from '~/components/MarkdownRenderer'
 import { ScrollProgressBar } from '~/components/ScrollProgressBar'
 
-export const Route = createFileRoute('/blog/$postId')({
+export const Route = createFileRoute('/$postId')({
   component: BlogPost,
   notFoundComponent: () => <NotFound>Post not found</NotFound>,
 })
@@ -23,11 +23,11 @@ function BlogPost() {
       <article className="space-y-8">
       {/* Back Link */}
       <Link
-        to="/blog"
+        to="/"
         className="inline-flex items-center gap-2 text-sm text-muted hover:text-accent transition-colors"
       >
         <span aria-hidden="true">&larr;</span>
-        Back to blog
+        Back to home
       </Link>
 
       {/* Post Header */}
@@ -64,7 +64,7 @@ function BlogPost() {
       {/* Post Footer */}
       <footer className="pt-8 border-t border-theme">
         <Link
-          to="/blog"
+          to="/"
           className="inline-flex items-center gap-2 text-sm text-muted hover:text-accent transition-colors"
         >
           <span aria-hidden="true">&larr;</span>

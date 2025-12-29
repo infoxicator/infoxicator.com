@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-export type Theme = 'light' | 'dark' | 'dracula' | 'nord' | 'monokai'
+export type Theme = 'light' | 'dark-side' | 'terminal-green' | 'vibe-code'
 
 interface ThemeContextType {
   theme: Theme
@@ -12,10 +12,9 @@ const ThemeContext = React.createContext<ThemeContextType | undefined>(undefined
 
 const themes: { id: Theme; name: string }[] = [
   { id: 'light', name: 'Light' },
-  { id: 'dark', name: 'Dark' },
-  { id: 'dracula', name: 'Dracula' },
-  { id: 'nord', name: 'Nord' },
-  { id: 'monokai', name: 'Monokai' },
+  { id: 'dark-side', name: 'Dark Side' },
+  { id: 'terminal-green', name: 'Terminal' },
+  { id: 'vibe-code', name: 'Vibe Code' },
 ]
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {

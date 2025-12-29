@@ -42,3 +42,4 @@ I don't know.
 
 I am having a lot of fun creating things, I brought the "joy of programming" back: ** insert year end blog post**
 
+Now there's a different type of pain. (you are absolutely right!)

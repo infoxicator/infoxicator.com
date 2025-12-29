@@ -1,9 +1,9 @@
+/* Fira Code Font */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Fira+Mono:wght@400;500;700&display=swap');
+
 @import 'tailwindcss';
 
 @source '../**/*.{js,jsx,ts,tsx}';
-
-/* Fira Code Font */
-@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Fira+Mono:wght@400;500;700&display=swap');
 
 /* Theme CSS Variables */
 :root {
@@ -22,56 +22,44 @@
   --code-bg: #f1f3f5;
 }
 
-[data-theme="dark"] {
-  --bg-primary: #1a1a2e;
-  --bg-secondary: #16213e;
-  --bg-tertiary: #0f3460;
-  --text-primary: #eaeaea;
-  --text-secondary: #b8b8b8;
-  --text-muted: #888888;
-  --accent: #00d9ff;
-  --accent-hover: #00b8d4;
-  --border: #2a2a4a;
-  --code-bg: #0f3460;
+[data-theme="dark-side"] {
+  --bg-primary: #040405;
+  --bg-secondary: #0A0A0D;
+  --bg-tertiary: #121216;
+  --text-primary: #F2F2F5;
+  --text-secondary: #C2C2C7;
+  --text-muted: #8A8A90;
+  --accent: #FF2A2A;
+  --accent-hover: #FF4D4D;
+  --border: #1E1E24;
+  --code-bg: #0A0A0D;
 }
 
-[data-theme="dracula"] {
-  --bg-primary: #282a36;
-  --bg-secondary: #1e1f29;
-  --bg-tertiary: #44475a;
-  --text-primary: #f8f8f2;
-  --text-secondary: #bd93f9;
-  --text-muted: #6272a4;
-  --accent: #ff79c6;
-  --accent-hover: #ff92d0;
-  --border: #44475a;
-  --code-bg: #1e1f29;
+[data-theme="terminal-green"] {
+  --bg-primary: #020806;
+  --bg-secondary: #04110c;
+  --bg-tertiary: #071c14;
+  --text-primary: #7CFFB2;
+  --text-secondary: #46C98A;
+  --text-muted: #2E8F63;
+  --accent: #00FF9C;
+  --accent-hover: #2BFF88;
+  --border: #0E3D2C;
+  --code-bg: #04110c;
 }
 
-[data-theme="nord"] {
-  --bg-primary: #2e3440;
-  --bg-secondary: #3b4252;
-  --bg-tertiary: #434c5e;
-  --text-primary: #eceff4;
-  --text-secondary: #d8dee9;
-  --text-muted: #4c566a;
-  --accent: #88c0d0;
-  --accent-hover: #8fbcbb;
-  --border: #4c566a;
-  --code-bg: #3b4252;
-}
-
-[data-theme="monokai"] {
-  --bg-primary: #272822;
-  --bg-secondary: #1e1f1c;
-  --bg-tertiary: #3e3d32;
-  --text-primary: #f8f8f2;
-  --text-secondary: #a6e22e;
-  --text-muted: #75715e;
-  --accent: #f92672;
-  --accent-hover: #fd5ff0;
-  --border: #3e3d32;
-  --code-bg: #1e1f1c;
+[data-theme="vibe-code"] {
+  --bg-primary: #0C0616;
+  --bg-secondary: #140B24;
+  --bg-tertiary: #1D1035;
+  --text-primary: #F5EFFF;
+  --text-secondary: #C9B8FF;
+  --text-muted: #9B85D6;
+  --accent: #6E1AE9;
+  --accent-hover: #FF6AD5;
+  --accent-gradient: linear-gradient(135deg, #6E1AE9 0%, #FF6AD5 100%);
+  --border: #2A174A;
+  --code-bg: #140B24;
 }
 
 /*
@@ -171,14 +159,12 @@
 }
 
 /* Dark themes: show dark colors, hide light */
-[data-theme="dark"] .shiki,
-[data-theme="dark"] .shiki span,
-[data-theme="dracula"] .shiki,
-[data-theme="dracula"] .shiki span,
-[data-theme="nord"] .shiki,
-[data-theme="nord"] .shiki span,
-[data-theme="monokai"] .shiki,
-[data-theme="monokai"] .shiki span {
+[data-theme="dark-side"] .shiki,
+[data-theme="dark-side"] .shiki span,
+[data-theme="terminal-green"] .shiki,
+[data-theme="terminal-green"] .shiki span,
+[data-theme="vibe-code"] .shiki,
+[data-theme="vibe-code"] .shiki span {
   color: var(--shiki-dark) !important;
   background-color: transparent !important;
 }

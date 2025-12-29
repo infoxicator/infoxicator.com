@@ -23,7 +23,7 @@ function BlogIndex() {
             key={post.id}
             className="group p-4 -mx-4 rounded hover:bg-secondary transition-colors"
           >
-            <Link to="/blog/$postId" params={{ postId: post.id }} className="block space-y-2">
+            <Link to="/$postId" params={{ postId: post.id }} className="block space-y-2">
               <div className="flex items-center gap-3 text-sm text-muted">
                 <time dateTime={post.date}>
                   {new Date(post.date).toLocaleDateString('en-US', {

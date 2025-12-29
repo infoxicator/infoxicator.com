@@ -1,0 +1,21 @@
+{
+  "pages": [
+    {
+      "path": "/",
+      "prerender": {
+        "outputPath": "/_shell",
+        "crawlLinks": true,
+        "retryCount": 0,
+        "enabled": true,
+        "headers": {
+          "X-TSS_SHELL": "true"
+        }
+      },
+      "sitemap": {
+        "exclude": true
+      }
+    }
+  ],
+  "host": "https://localhost:3000",
+  "lastBuilt": "2025-12-29T13:05:41.887Z"
+}

@@ -10,7 +10,7 @@ import * as React from 'react'
 import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary'
 import { NotFound } from '~/components/NotFound'
 import { ThemeProvider } from '~/components/ThemeProvider'
-import { ThemeSwitcher } from '~/components/ThemeSwitcher'
+import { ThemeSwitcherButton, ThemeSwitcherPanel, ThemeSwitcherProvider } from '~/components/ThemeSwitcher'
 import appCss from '~/styles/app.css?url'
 import { seo } from '~/utils/seo'
 
@@ -94,11 +94,14 @@ function RootLayout({ children }: { children: React.ReactNode }) {
       </head>
       <body className="min-h-screen flex flex-col">
         <ThemeProvider>
-          <Header />
-          <main className="flex-1 w-full max-w-3xl mx-auto px-6 py-8">
-            {children}
-          </main>
-          <Footer />
+          <ThemeSwitcherProvider>
+            <ThemeSwitcherPanel />
+            <Header />
+            <main className="flex-1 w-full max-w-3xl mx-auto px-6 py-8">
+              {children}
+            </main>
+            <Footer />
+          </ThemeSwitcherProvider>
         </ThemeProvider>
         <Scripts />
       </body>
@@ -129,7 +132,7 @@ function Header() {
           >
             blog
           </Link>
-          <ThemeSwitcher />
+          <ThemeSwitcherButton />
         </nav>
       </div>
     </header>
