@@ -1,0 +1,197 @@
+@import 'tailwindcss';
+
+@source '../**/*.{js,jsx,ts,tsx}';
+
+/* Fira Code Font */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Fira+Mono:wght@400;500;700&display=swap');
+
+/* Theme CSS Variables */
+:root {
+  --font-mono: "Fira Code", "Fira Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+
+  /* Light Theme (Default) */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #e9ecef;
+  --text-primary: #212529;
+  --text-secondary: #495057;
+  --text-muted: #6c757d;
+  --accent: #0066cc;
+  --accent-hover: #0052a3;
+  --border: #dee2e6;
+  --code-bg: #f1f3f5;
+}
+
+[data-theme="dark"] {
+  --bg-primary: #1a1a2e;
+  --bg-secondary: #16213e;
+  --bg-tertiary: #0f3460;
+  --text-primary: #eaeaea;
+  --text-secondary: #b8b8b8;
+  --text-muted: #888888;
+  --accent: #00d9ff;
+  --accent-hover: #00b8d4;
+  --border: #2a2a4a;
+  --code-bg: #0f3460;
+}
+
+[data-theme="dracula"] {
+  --bg-primary: #282a36;
+  --bg-secondary: #1e1f29;
+  --bg-tertiary: #44475a;
+  --text-primary: #f8f8f2;
+  --text-secondary: #bd93f9;
+  --text-muted: #6272a4;
+  --accent: #ff79c6;
+  --accent-hover: #ff92d0;
+  --border: #44475a;
+  --code-bg: #1e1f29;
+}
+
+[data-theme="nord"] {
+  --bg-primary: #2e3440;
+  --bg-secondary: #3b4252;
+  --bg-tertiary: #434c5e;
+  --text-primary: #eceff4;
+  --text-secondary: #d8dee9;
+  --text-muted: #4c566a;
+  --accent: #88c0d0;
+  --accent-hover: #8fbcbb;
+  --border: #4c566a;
+  --code-bg: #3b4252;
+}
+
+[data-theme="monokai"] {
+  --bg-primary: #272822;
+  --bg-secondary: #1e1f1c;
+  --bg-tertiary: #3e3d32;
+  --text-primary: #f8f8f2;
+  --text-secondary: #a6e22e;
+  --text-muted: #75715e;
+  --accent: #f92672;
+  --accent-hover: #fd5ff0;
+  --border: #3e3d32;
+  --code-bg: #1e1f1c;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--border);
+  }
+}
+
+@layer base {
+  html,
+  body {
+    font-family: var(--font-mono);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .using-mouse * {
+    outline: none !important;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  a:hover {
+    color: var(--accent-hover);
+  }
+
+  ::selection {
+    background-color: var(--accent);
+    color: var(--bg-primary);
+  }
+}
+
+/* Utility classes for theme colors */
+@layer utilities {
+  .bg-primary {
+    background-color: var(--bg-primary);
+  }
+
+  .bg-secondary {
+    background-color: var(--bg-secondary);
+  }
+
+  .bg-tertiary {
+    background-color: var(--bg-tertiary);
+  }
+
+  .text-primary {
+    color: var(--text-primary);
+  }
+
+  .text-secondary {
+    color: var(--text-secondary);
+  }
+
+  .text-muted {
+    color: var(--text-muted);
+  }
+
+  .text-accent {
+    color: var(--accent);
+  }
+
+  .border-theme {
+    border-color: var(--border);
+  }
+
+  .code-bg {
+    background-color: var(--code-bg);
+  }
+}
+
+/* Shiki syntax highlighting - theme-aware */
+.shiki,
+.shiki span {
+  font-family: var(--font-mono) !important;
+}
+
+/* Light theme: show light colors, hide dark */
+:root .shiki,
+:root .shiki span {
+  color: var(--shiki-light) !important;
+  background-color: transparent !important;
+}
+
+/* Dark themes: show dark colors, hide light */
+[data-theme="dark"] .shiki,
+[data-theme="dark"] .shiki span,
+[data-theme="dracula"] .shiki,
+[data-theme="dracula"] .shiki span,
+[data-theme="nord"] .shiki,
+[data-theme="nord"] .shiki span,
+[data-theme="monokai"] .shiki,
+[data-theme="monokai"] .shiki span {
+  color: var(--shiki-dark) !important;
+  background-color: transparent !important;
+}
+
+/* Code block container styles */
+.shiki {
+  padding: 0;
+  margin: 0;
+  overflow-x: auto;
+}
+
+.shiki code {
+  display: block;
+  width: fit-content;
+  min-width: 100%;
+}
