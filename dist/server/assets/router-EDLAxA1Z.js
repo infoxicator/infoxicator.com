@@ -66,29 +66,30 @@ const themes = [
   { id: "vibe-code", name: "Vibe Code" }
 ];
 function ThemeProvider({ children }) {
-  const [theme, setThemeState] = React.useState("light");
-  const [mounted, setMounted] = React.useState(false);
-  React.useEffect(() => {
-    setMounted(true);
+  const [theme, setThemeState] = React.useState(() => {
+    if (typeof document === "undefined") {
+      return "light";
+    }
+    const attrTheme = document.documentElement.getAttribute("data-theme");
+    if (attrTheme && themes.some((t) => t.id === attrTheme)) {
+      return attrTheme;
+    }
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme && themes.some((t) => t.id === savedTheme)) {
-      setThemeState(savedTheme);
-      document.documentElement.setAttribute("data-theme", savedTheme);
-    } else {
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const defaultTheme = prefersDark ? "vibe-code" : "light";
-      setThemeState(defaultTheme);
-      document.documentElement.setAttribute("data-theme", defaultTheme);
+      return savedTheme;
     }
-  }, []);
+    return "light";
+  });
+  React.useEffect(() => {
+    if (typeof document === "undefined") {
+      return;
+    }
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
   const setTheme = (newTheme) => {
     setThemeState(newTheme);
-    localStorage.setItem("theme", newTheme);
-    document.documentElement.setAttribute("data-theme", newTheme);
   };
-  if (!mounted) {
-    return null;
-  }
   return /* @__PURE__ */ jsx(ThemeContext.Provider, { value: { theme, setTheme, themes }, children });
 }
 function useTheme() {
@@ -414,8 +415,8 @@ function Footer() {
     ] })
   ] }) });
 }
-const $$splitNotFoundComponentImporter = () => import("./_postId-CLasFhqp.js");
-const $$splitComponentImporter$2 = () => import("./_postId-F-3qpf38.js");
+const $$splitNotFoundComponentImporter = () => import("./_postId-CJUQ0pst.js");
+const $$splitComponentImporter$2 = () => import("./_postId-CR4CfL35.js");
 const Route$2 = createFileRoute("/$postId")({
   component: lazyRouteComponent($$splitComponentImporter$2, "component"),
   notFoundComponent: lazyRouteComponent($$splitNotFoundComponentImporter, "notFoundComponent")

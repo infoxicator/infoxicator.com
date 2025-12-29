@@ -1,0 +1,4 @@
+const tsrStartManifest = () => ({ "routes": { "__root__": { "filePath": "/Users/ruben.casas@postman.com/Documents/infoxicator/infoxicator.com/src/routes/__root.tsx", "children": ["/", "/$postId", "/blog/"], "preloads": ["/assets/main-CaFDQw4T.js"], "assets": [] }, "/": { "filePath": "/Users/ruben.casas@postman.com/Documents/infoxicator/infoxicator.com/src/routes/index.tsx", "assets": [], "preloads": ["/assets/index-DdZtafq7.js", "/assets/posts-BDliQh2j.js"] }, "/$postId": { "filePath": "/Users/ruben.casas@postman.com/Documents/infoxicator/infoxicator.com/src/routes/$postId.tsx", "assets": [], "preloads": ["/assets/_postId-DJsyDbRV.js", "/assets/posts-BDliQh2j.js"] }, "/blog/": { "filePath": "/Users/ruben.casas@postman.com/Documents/infoxicator/infoxicator.com/src/routes/blog.index.tsx", "assets": [], "preloads": ["/assets/blog.index-BtxZp5S5.js", "/assets/posts-BDliQh2j.js"] } }, "clientEntry": "/assets/main-CaFDQw4T.js" });
+export {
+  tsrStartManifest
+};

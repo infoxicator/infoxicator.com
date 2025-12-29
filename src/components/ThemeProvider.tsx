@@ -18,31 +18,35 @@ const themes: { id: Theme; name: string }[] = [
 ]
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = React.useState<Theme>('light')
-  const [mounted, setMounted] = React.useState(false)
+  const [theme, setThemeState] = React.useState<Theme>(() => {
+    if (typeof document === 'undefined') {
+      return 'light'
+    }
 
-  React.useEffect(() => {
-    setMounted(true)
+    const attrTheme = document.documentElement.getAttribute('data-theme') as Theme | null
+    if (attrTheme && themes.some((t) => t.id === attrTheme)) {
+      return attrTheme
+    }
+
     const savedTheme = localStorage.getItem('theme') as Theme | null
     if (savedTheme && themes.some((t) => t.id === savedTheme)) {
-      setThemeState(savedTheme)
-      document.documentElement.setAttribute('data-theme', savedTheme)
-    } else {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-      const defaultTheme = prefersDark ? 'vibe-code' : 'light'
-      setThemeState(defaultTheme)
-      document.documentElement.setAttribute('data-theme', defaultTheme)
+      return savedTheme
     }
-  }, [])
+
+    return 'light'
+  })
+
+  React.useEffect(() => {
+    if (typeof document === 'undefined') {
+      return
+    }
+
+    document.documentElement.setAttribute('data-theme', theme)
+    localStorage.setItem('theme', theme)
+  }, [theme])
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme)
-    localStorage.setItem('theme', newTheme)
-    document.documentElement.setAttribute('data-theme', newTheme)
-  }
-
-  if (!mounted) {
-    return null
   }
 
   return (
