@@ -1,15 +1,4 @@
-const f=`---
-title: "Building a Loading Component Using ChatGPT"
-excerpt: "A fun exercise to stretch the limits of ChatGPT and how far it can go in creating entire components and UI. Can AI write a progress bar component for me?"
-date: "2023-01-28"
-tags:
-  - React
-  - ChatGPT
-  - AI
-readingTime: "6 min read"
----
-
-Have you ever seen the red progress bar on Youtube or the blue progress bar on GitHub when navigating from one page to the next?
+const a=[{title:"Building a Loading Component Using ChatGPT",excerpt:"A fun exercise to stretch the limits of ChatGPT and how far it can go in creating entire components and UI. Can AI write a progress bar component for me?",date:"2023-01-28",tags:["React","ChatGPT","AI"],readingTime:"6 min read",_meta:{filePath:"building-a-loading-component-using-chatgpt.md",fileName:"building-a-loading-component-using-chatgpt.md",directory:".",extension:"md",path:"building-a-loading-component-using-chatgpt"},slug:"building-a-loading-component-using-chatgpt",content:`Have you ever seen the red progress bar on Youtube or the blue progress bar on GitHub when navigating from one page to the next?
 
 ![youtube loading bar](https://user-images.githubusercontent.com/17012976/215293411-0e52235e-77ce-4077-ba6b-c6297f27f381.gif)
 
@@ -304,20 +293,191 @@ https://stackblitz.com/edit/github-9eintn-ru5xtl?file=src%2Fprogress-bar.tsx
 
 ## My Conclusion:
 
-I need to get better at React animations.
+I need to get better at React animations.`},{title:"Introducing a New Web Vital: Time to Usability (TTU)",excerpt:"A proposed metric focused on when users can actually use your app, not just when it loads.",date:"2024-11-12",tags:["Performance","Web Vitals","UX"],readingTime:"7 min read",_meta:{filePath:"introducing-a-new-web-vital-time-to-usability-ttu.md",fileName:"introducing-a-new-web-vital-time-to-usability-ttu.md",directory:".",extension:"md",path:"introducing-a-new-web-vital-time-to-usability-ttu"},slug:"introducing-a-new-web-vital-time-to-usability-ttu",content:`## **Introducing a New Web Vital: Time to Usability (TTU)**  
 
-`,g=`---
-title: "Is React Going Anywhere?"
-excerpt: "React will turn 10 years old soon. As applications built with React age, they accumulate problems. But are these issues inherent to React itself?"
-date: "2022-11-23"
-tags:
-  - React
-  - JavaScript
-  - Architecture
-readingTime: "6 min read"
----
+When thinking about application performance, the go to strategy is to "**Measure, Measure, Measure**." But not all metrics are created equal. Tools like **Lighthouse** and **Core Web Vitals** provide a great high-level view and are useful for debugging, but they **don’t capture performance issues specific to your app’s core functionality**.  
 
-<figure>
+What if we had a metric that measured **when users can start using your app**, not just when the page loads, but when it becomes **truly usable**? That’s why I’m introducing **Time to Usability (TTU)**: a new way to measure performance that focuses on **real user experience** rather than just technical readiness.  
+
+In this guide, I’ll show you how to use the **Performance API** to instrument your app, break down every millisecond and capture **TTU** to optimize performance where it really matters.  
+
+## How to Measure TTU:
+
+Not everything that can be measured matters when applied to your application context. Traditional performance metrics like **First Contentful Paint (FCP)** or **Largest Contentful Paint (LCP)** tell us when content appears on screen, but they don’t indicate when an app is actually **usable**.
+
+To measure TTU, you can ask the following question: How quickly can users start using the app’s core feature?
+
+**Some real-world examples**:
+
+• **VS Code** → How fast until the user gets a **blinking cursor** and can start coding?
+• **Slack** → How fast until the user can open a chat and **send a message**?
+• **Postman** → How fast until the user can **send an API request**?
+
+Unlike generic performance scores, **TTU** is application-specific. It shifts the focus from technical implementation details to real usability, helping developers measure what truly impacts user experience.
+
+### **How TTU Differs from Time to Interactive (TTI)**  
+
+I can hear you thinking, hold on a minute, we already have a metric for that is called **Time to Interactive (TTI)**
+
+Both **Time to Usability (TTU)** and **Time to Interactive (TTI)** measure when an app becomes usable, but they focus on different aspects:  
+
+| **Metric**            | **What It Measures** | **Why It Matters** | **Limitations** |
+|----------------------|-------------------|----------------|---------------|
+| **Time to Interactive (TTI)** | When the page is fully interactive (event handlers registered, main thread idle). | Ensures the app won’t feel sluggish when users try to interact. | A page can be "interactive" but still not **functional** for its core task. |
+| **Time to Usability (TTU)** | When users can start using the app’s **main feature** (e.g., sending a message in Slack, coding in VS Code). | Aligns performance measurement with **real-world usability**. | Requires **application-specific instrumentation**—generic tools don’t track it automatically. |
+
+While **TTI ensures technical readiness**, **TTU reflects real usability** and helps developers optimize what **actually matters to users**.
+
+## Instrumenting Your App with Performance Markers
+
+One of the best places to start is **app launch performance**, the one thing every single user experiences and directly impacts the first impression and usability.
+
+The Performance API’s mark and measure methods let us place custom timestamps at key points in the user journey and calculate the time between them.
+
+### Collect the Data Using \`performance.mark()\`
+
+Just like adding \`console.log()\` statements to debug your code, you can use **performance markers** to log how long key operations take. The **[Performance API’s \`mark\` method](https://developer.mozilla.org/en-US/docs/Web/API/Performance/mark)** allows you to timestamp specific points in your app’s execution.
+
+As an example, we’ll divide the app launch process into **five key phases** and then aggregate them into **Time to Usability (TTU)**:  
+
+1. **Platform Initialization** – App container, browser, or runtime initialization. (As an example, in an Electron App, this is the main process bootstrap until the renderer process initialises)
+2. **Downloading, Parsing & Compiling JavaScript** – First page load, downloading and executing scripts.
+3. **Fetching Data** – Making API calls to retrieve necessary data.
+4. **Rendering the Critical Flow** – Displaying the UI needed for interaction.
+5. **Core Feature Ready** – When the main feature is rendered and fully usable (TTU).
+
+Here’s how you can track **each phase of app launch** using \`performance.mark()\`:
+
+\`\`\`js
+// Mark platform initialization start
+performance.mark("platform_init_start");
+
+// Simulate platform setup
+await setupPlatform();
+performance.mark("platform_init_end");
+
+// JavaScript loading phase
+performance.mark("js_loading_start");
+await loadJavaScriptBundles();
+performance.mark("js_loading_end");
+
+// Fetching data phase
+performance.mark("fetch_data_start");
+await fetchInitialData();
+performance.mark("fetch_data_end");
+
+// Rendering the critical flow
+performance.mark("render_start");
+await renderCriticalUI();
+performance.mark("render_end");
+
+// Mark when core feature is ready (TTU)
+performance.mark("core_feature_ready");
+
+// Aggregate total TTU
+performance.measure("Platform Initialization", "platform_init_start", "platform_init_end");
+performance.measure("JS Processing", "js_loading_start", "js_loading_end");
+performance.measure("Data Fetching", "fetch_data_start", "fetch_data_end");
+performance.measure("Rendering", "render_start", "render_end");
+performance.measure("Time to Usability (TTU)", "platform_init_start", "core_feature_ready");
+
+// Log all performance measures
+const measures = performance.getEntriesByType("measure");
+measures.forEach(entry => {
+  console.log(\`\${entry.name}: \${entry.duration.toFixed(2)}ms\`);
+});
+\`\`\`
+
+![TTU Breakdown](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/4eqc236wg70elge24zyu.png).
+
+You can also see the performance markers using Chrome Developer Tools under the Performance tab -> Timings when running a performance profile.
+
+
+![Performance Profile Tab](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/8pc4mki3zzmaw0c25707.png)
+
+
+Measuring performance locally is useful, but real-world performance **varies across devices, networks, and user environments.** To get meaningful insights, you need to send this data to a telemetry, logging or analytics platform where you can aggregate, analyze, and visualize it.
+
+For example, you can send the collected TTU data to an observability tool or a custom logging service.
+
+## Measuring Page Load Performance with The Resource and Navigation Performance Entries
+
+Once you have identified the bottlenecks, you can go deeper. For example, inspecting the page navigation and the resources (i.e JavaScript assets) that are downloaded during the initial page load.
+
+
+![Navigation timing](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/7jy6x430dk92c35f6cct.png)
+
+
+
+**1. Measuring Document Load with PerformanceNavigationTiming**
+
+The [PerformanceNavigationTiming](https://developer.mozilla.org/en-US/docs/Web/API/PerformanceNavigationTiming) API gives you a detailed breakdown of the navigation process, from the first request to when the page is fully loaded:
+
+\`\`\`js
+const navigation = performance.getEntriesByType("navigation")[0];
+
+console.log(\`DNS Lookup: \${navigation.domainLookupEnd - navigation.domainLookupStart}ms\`);
+console.log(\`TCP Connection: \${navigation.connectEnd - navigation.connectStart}ms\`);
+console.log(\`TTFB (Time to First Byte): \${navigation.responseStart - navigation.requestStart}ms\`);
+console.log(\`DOM Load: \${navigation.domContentLoadedEventEnd - navigation.startTime}ms\`);
+console.log(\`Page Load: \${navigation.loadEventEnd - navigation.startTime}ms\`);
+\`\`\`
+**2. Measuring Individual Resources with performance.getEntriesByType('resource')**
+
+Beyond document load times, you can track how long each JavaScript file, CSS, image, or API request takes:
+
+\`\`\`js
+const resources = performance.getEntriesByType("resource");
+
+resources.forEach(resource => {
+  console.log(\`\${resource.name}: \${resource.duration.toFixed(2)}ms\`);
+});
+\`\`\`
+This is especially useful for tracking third-party scripts, which can slow down page performance.
+
+**3. Advanced: Identifying Network vs. Service Worker Loads with Server Timing API**
+
+A more advanced technique is using a [Server-Timing header](https://developer.mozilla.org/en-US/docs/Web/API/PerformanceServerTiming) to tag responses. An example use case is to differentiate network loads (cache misses) vs. service worker cache loads (cache hits).
+
+The Service Worker can add a custom header to all requests that are intercepted and served from it:
+
+\`\`\`bash
+Server-Timing: cache-hit;desc="Loaded from Service Worker"
+\`\`\`
+And retrieve this information for each resource (asset downloaded by the page)
+
+\`\`\`js
+const resources = performance.getEntriesByType("resource");
+
+resources.forEach(resource => {
+  if (resource.serverTiming.length > 0) {
+    console.log(\`\${resource.name} loaded via: \${resource.serverTiming[0].description}\`);
+  }
+});
+\`\`\`
+
+This is one of the use cases, but you can also send a custom server timing header to **capture database read/write operation times, CPU time, and file system access.**
+
+## Synthetic Monitoring vs. Real User Monitoring (RUM)
+
+Performance isn’t a one-time optimization, it’s an ongoing process. This is where Synthetic Monitoring and Real User Monitoring (RUM) complement each other.
+
+• RUM gives you real-world data from actual users, but it’s a lagging metric, it tells you what happened after users experience an issue.
+• Synthetic Monitoring proactively runs tests in controlled environments, helping detect regressions before they impact users.
+
+The good news? **The performance markers are useful in both Synthetic tests and Real User Metrics**, you just need to send the data to your telemetry systems.
+
+## Conclusion
+
+The **bad news?** There are a couple of caveats to keep in mind:
+
+1. The Performance API itself has a small overhead. While minimal, instrumenting too many markers or collecting excessive data could impact performance. However, the benefits far outweigh the cost, the insights you gain will help you optimize the real bottlenecks in your app.
+
+2. Measuring TTU is a manual and custom process. Unlike generic performance metrics, Time to Usability (TTU) requires thoughtful instrumentation based on your app’s core functionality. There’s no one-size-fits-all solution, it’s up to you to define and measure what truly matters for your users.
+
+With the Performance API, you have the tools to go beyond generic benchmarks and truly understand what makes your app feel fast. By combining custom markers, resource timing, and telemetry, you can continuously measure, optimize, and improve your app’s real-world performance.
+
+Performance isn’t just about numbers, it’s about user experience! 🚀`},{title:"Is React Going Anywhere?",excerpt:"React will turn 10 years old soon. As applications built with React age, they accumulate problems. But are these issues inherent to React itself?",date:"2022-11-23",tags:["React","JavaScript","Architecture"],readingTime:"6 min read",_meta:{filePath:"is-react-going-anywhere.md",fileName:"is-react-going-anywhere.md",directory:".",extension:"md",path:"is-react-going-anywhere"},slug:"is-react-going-anywhere",content:`<figure>
   <img src="/images/posts/is-react-going-anywhere/byereact.png" alt="Is React going anywhere? cover" />
 </figure>
 
@@ -509,19 +669,7 @@ readingTime: "6 min read"
 
 
 
-<p></p>
-`,w=`---
-title: "Micro-Frontends FAQs"
-excerpt: "Questions I fielded after my React Advanced London 2021 presentation on Micro-Frontends Performance and Centralised Data Caching."
-date: "2021-10-27"
-tags:
-  - Micro Frontends
-  - Architecture
-readingTime: "5 min read"
-image: "https://www.infoxication.net/wp-content/uploads/2021/10/React-Advanced-London-2021-The-Brewery-Simon-Callaghan-Photography-282-scaled-e1635890210219.jpeg"
----
-
-<figure>
+<p></p>`},{title:"Micro-Frontends FAQs",excerpt:"Questions I fielded after my React Advanced London 2021 presentation on Micro-Frontends Performance and Centralised Data Caching.",date:"2021-10-27",tags:["Micro Frontends","Architecture"],readingTime:"5 min read",_meta:{filePath:"micro-frontends-faqs.md",fileName:"micro-frontends-faqs.md",directory:".",extension:"md",path:"micro-frontends-faqs"},slug:"micro-frontends-faqs",content:`<figure>
   <img src="/images/posts/micro-frontends-faqs/React-Advanced-London-2021-The-Brewery-Simon-Callaghan-Photography-282-scaled-e1635890210219.jpeg" alt="Micro-Frontends FAQs cover" />
 </figure>
 
@@ -585,19 +733,7 @@ image: "https://www.infoxication.net/wp-content/uploads/2021/10/React-Advanced-L
 
 
 
-<p>The second approach is the &#8220;managed&#8221; approach, where you publish your Micro-Frontend and follow the rules of Semantic Versioning so consumers can choose what version to use; the difference of this approach from a standard npm dependency is that you can start consuming the new version at runtime without the need to install and deploy a new version of the application that is consuming it.</p>
-`,y=`---
-title: "My Experience at React Summit Amsterdam"
-excerpt: "My first time at the biggest JavaScript Festival and React Conference in the world. Conversations with Ryan Carniato, Tobias Koppers, Dominik from React Query, Evan Bacon, and more!"
-date: "2024-06-20"
-tags:
-  - React
-  - Conference
-  - Community
-readingTime: "8 min read"
----
-
-This was my first time at the biggest JavaScript Festival and React Conference in the world (not an exaggeration). It was also my first time as an attendee and I enjoyed not having to worry about giving a talk and just experiencing the conference!
+<p>The second approach is the &#8220;managed&#8221; approach, where you publish your Micro-Frontend and follow the rules of Semantic Versioning so consumers can choose what version to use; the difference of this approach from a standard npm dependency is that you can start consuming the new version at runtime without the need to install and deploy a new version of the application that is consuming it.</p>`},{title:"My Experience at React Summit Amsterdam",excerpt:"My first time at the biggest JavaScript Festival and React Conference in the world. Conversations with Ryan Carniato, Tobias Koppers, Dominik from React Query, Evan Bacon, and more!",date:"2024-06-20",tags:["React","Conference","Community"],readingTime:"8 min read",_meta:{filePath:"my-experience-at-react-summit-amsterdam.md",fileName:"my-experience-at-react-summit-amsterdam.md",directory:".",extension:"md",path:"my-experience-at-react-summit-amsterdam"},slug:"my-experience-at-react-summit-amsterdam",content:`This was my first time at the biggest JavaScript Festival and React Conference in the world (not an exaggeration). It was also my first time as an attendee and I enjoyed not having to worry about giving a talk and just experiencing the conference!
 
 Apart from photobombing the stage TVs every single time I had a chance 😅, I was also lucky enough to have **1 on 1 conversations** with the smartest and most influential speakers and library authors in our industry. 
 
@@ -675,18 +811,7 @@ Finally thanks [Josh Goldberg](https://x.com/JoshuaKGoldberg), for being a great
 This is the best frontend conference, full stop. I have been going to GitNation events for a while and it is always a pleasure to be part of this community. Rob, Daria, Anna, Alex, Lera and the rest of the crew are amazing at what they do and they really care about the details and the community. Congratulations on another amazing event! and see you at React Advanced London.
 
 
-![Arriving at the conf by bike](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/jfed9wl6ksiivrchs28i.jpeg)`,b=`---
-title: "React Router 6.4 Code-Splitting"
-excerpt: "React Router 6.4 introduced Data Routers with parallel data fetching capabilities, but bundling all loaders at the top level creates performance issues. Here's how to solve it."
-date: "2022-10-06"
-tags:
-  - React
-  - React Router
-  - Performance
-  - Code Splitting
-readingTime: "7 min read"
----
-<figure>
+![Arriving at the conf by bike](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/jfed9wl6ksiivrchs28i.jpeg)`},{title:"React Router 6.4 Code-Splitting",excerpt:"React Router 6.4 introduced Data Routers with parallel data fetching capabilities, but bundling all loaders at the top level creates performance issues. Here's how to solve it.",date:"2022-10-06",tags:["React","React Router","Performance","Code Splitting"],readingTime:"7 min read",_meta:{filePath:"react-router-6-4-code-splitting.md",fileName:"react-router-6-4-code-splitting.md",directory:".",extension:"md",path:"react-router-6-4-code-splitting"},slug:"react-router-6-4-code-splitting",content:`<figure>
   <img src="/images/posts/react-router-6-4-code-splitting/xy2km3wsql2sq9jzdkgm.jpeg" alt="React Router 6.4 Code-Splitting cover" />
 </figure>
 
@@ -933,19 +1058,7 @@ export async function lazyLoader(...args) {
 
 
 
-<p>Thanks again to <a href="https://twitter.com/brophdawg11">Matt</a> from Remix for helping me to figure this one out! all the credit goes to him.</p>
-`,v=`---
-title: "React Router 6 Deferred Fetch"
-excerpt: "Exploring React Router 6's deferred API for managing data fetching—allowing developers to await critical data while deferring optional information."
-date: "2022-11-04"
-tags:
-  - React
-  - React Router
-  - Performance
-readingTime: "5 min read"
----
-
-<figure>
+<p>Thanks again to <a href="https://twitter.com/brophdawg11">Matt</a> from Remix for helping me to figure this one out! all the credit goes to him.</p>`},{title:"React Router 6 Deferred Fetch",excerpt:"Exploring React Router 6's deferred API for managing data fetching—allowing developers to await critical data while deferring optional information.",date:"2022-11-04",tags:["React","React Router","Performance"],readingTime:"5 min read",_meta:{filePath:"react-router-6-deferred-fetch.md",fileName:"react-router-6-deferred-fetch.md",directory:".",extension:"md",path:"react-router-6-deferred-fetch"},slug:"react-router-6-deferred-fetch",content:`<figure>
   <img src="/images/posts/react-router-6-deferred-fetch/noworlater-1024x681-1.jpeg" alt="React Router 6 Deferred Fetch cover" />
 </figure>
 
@@ -1187,18 +1300,7 @@ export const loader = async () =&gt; {
 
 
 
-<p><a href="https://github.com/infoxicator/react-router-defer-fetch" target="_blank" rel="noreferrer noopener">https://github.com/infoxicator/react-router-defer-fetch</a><a href=""></a></p>
-`,k=`---
-title: "The Risks of Micro-Frontends"
-excerpt: "Architecture is a series of decisions and trade-offs. Here are the common risks of Micro-Frontends and how to mitigate them."
-date: "2021-11-09"
-tags:
-  - Micro Frontends
-  - Architecture
-readingTime: "6 min read"
----
-
-<figure>
+<p><a href="https://github.com/infoxicator/react-router-defer-fetch" target="_blank" rel="noreferrer noopener">https://github.com/infoxicator/react-router-defer-fetch</a><a href=""></a></p>`},{title:"The Risks of Micro-Frontends",excerpt:"Architecture is a series of decisions and trade-offs. Here are the common risks of Micro-Frontends and how to mitigate them.",date:"2021-11-09",tags:["Micro Frontends","Architecture"],readingTime:"6 min read",_meta:{filePath:"the-risks-of-micro-frontends.md",fileName:"the-risks-of-micro-frontends.md",directory:".",extension:"md",path:"the-risks-of-micro-frontends"},slug:"the-risks-of-micro-frontends",content:`<figure>
   <img src="/images/posts/the-risks-of-micro-frontends/photo-1558939608-7e8f4c8336d2-copy.jpg" alt="The Risks of Micro-Frontends cover" />
 </figure>
 
@@ -1274,18 +1376,7 @@ readingTime: "6 min read"
 
 
 
-<p>Remember, an architecture is only as good as its implementation.</p>
-`,R=`---
-title: "What are Micro-Frontends? Really..."
-excerpt: "There are widespread misconceptions about micro-frontends. Let me explain what they are not, and what they actually are."
-date: "2022-04-18"
-tags:
-  - Micro Frontends
-  - Architecture
-readingTime: "5 min read"
----
-
-<figure>
+<p>Remember, an architecture is only as good as its implementation.</p>`},{title:"What are Micro-Frontends? Really...",excerpt:"There are widespread misconceptions about micro-frontends. Let me explain what they are not, and what they actually are.",date:"2022-04-18",tags:["Micro Frontends","Architecture"],readingTime:"5 min read",_meta:{filePath:"what-are-micro-frontends-really.md",fileName:"what-are-micro-frontends-really.md",directory:".",extension:"md",path:"what-are-micro-frontends-really"},slug:"what-are-micro-frontends-really",content:`<figure>
   <img src="/images/posts/what-are-micro-frontends-really/Screenshot-2022-04-18-at-21.45.46-copy.jpg" alt="What are Micro-Frontends? Really... cover" />
 </figure>
 
@@ -1385,6 +1476,4 @@ readingTime: "5 min read"
 
 
 
-<p></p>
-`;function x(e){const t=/^---\n([\s\S]*?)\n---\n([\s\S]*)$/,s=e.match(t);if(!s)throw new Error("Invalid frontmatter format");const[,n,c]=s,l={},m=n.split(`
-`);let a=null,r=!1,i=[];for(const o of m)if(o.startsWith("  - "))r&&a&&i.push(o.replace("  - ","").trim());else if(o.includes(":")){r&&a&&(l[a]=i,i=[],r=!1);const d=o.indexOf(":"),p=o.slice(0,d).trim(),u=o.slice(d+1).trim();u===""?(a=p,r=!0,i=[]):l[p]=u.replace(/^["']|["']$/g,"")}return r&&a&&(l[a]=i),{frontMatter:l,body:c.trim()}}const I=Object.assign({"../content/posts/building-a-loading-component-using-chatgpt.md":f,"../content/posts/is-react-going-anywhere.md":g,"../content/posts/micro-frontends-faqs.md":w,"../content/posts/my-experience-at-react-summit-amsterdam.md":y,"../content/posts/react-router-6-4-code-splitting.md":b,"../content/posts/react-router-6-deferred-fetch.md":v,"../content/posts/the-risks-of-micro-frontends.md":k,"../content/posts/what-are-micro-frontends-really.md":R}),h=Object.entries(I).map(([e,t])=>{const s=e.split("/").pop()?.replace(".md","")||"",{frontMatter:n,body:c}=x(t);return{id:s,title:n.title,excerpt:n.excerpt,content:c,date:n.date,tags:n.tags,readingTime:n.readingTime}}).sort((e,t)=>new Date(t.date).getTime()-new Date(e.date).getTime());function M(e){return h.find(t=>t.id===e)}function T(e=3){return h.slice(0,e)}function S(){return h}export{T as a,S as b,M as g};
+<p></p>`}],n=a.map(e=>({id:e.slug,title:e.title,excerpt:e.excerpt,content:e.content,date:e.date,tags:e.tags,readingTime:e.readingTime})).sort((e,t)=>new Date(t.date).getTime()-new Date(e.date).getTime());function o(e){return n.find(t=>t.id===e)}function r(e=3){return n.slice(0,e)}function i(){return n}export{r as a,i as b,o as g};

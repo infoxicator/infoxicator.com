@@ -29,7 +29,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       document.documentElement.setAttribute('data-theme', savedTheme)
     } else {
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-      const defaultTheme = prefersDark ? 'dark-side' : 'light'
+      const defaultTheme = prefersDark ? 'vibe-code' : 'light'
       setThemeState(defaultTheme)
       document.documentElement.setAttribute('data-theme', defaultTheme)
     }

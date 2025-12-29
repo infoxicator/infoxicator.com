@@ -1,6 +1,6 @@
 import { jsxs, jsx } from "react/jsx-runtime";
 import { Link } from "@tanstack/react-router";
-import { b as getAllPosts } from "./posts-nSWHB6eP.js";
+import { b as getAllPosts } from "./posts-CfSTh79L.js";
 function BlogIndex() {
   const posts = getAllPosts();
   return /* @__PURE__ */ jsxs("div", { className: "space-y-8", children: [

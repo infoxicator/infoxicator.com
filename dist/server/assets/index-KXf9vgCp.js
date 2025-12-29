@@ -1,6 +1,6 @@
 import { jsxs, jsx } from "react/jsx-runtime";
 import { Link } from "@tanstack/react-router";
-import { a as getRecentPosts } from "./posts-nSWHB6eP.js";
+import { a as getRecentPosts } from "./posts-CfSTh79L.js";
 function Home() {
   const recentPosts = getRecentPosts(10);
   return /* @__PURE__ */ jsxs("div", { className: "space-y-16", children: [

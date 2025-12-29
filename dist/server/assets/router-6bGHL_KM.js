@@ -76,7 +76,7 @@ function ThemeProvider({ children }) {
       document.documentElement.setAttribute("data-theme", savedTheme);
     } else {
       const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const defaultTheme = prefersDark ? "dark-side" : "light";
+      const defaultTheme = prefersDark ? "vibe-code" : "light";
       setThemeState(defaultTheme);
       document.documentElement.setAttribute("data-theme", defaultTheme);
     }
@@ -245,7 +245,7 @@ function ThemeSwitcherPanel() {
     }
   );
 }
-const appCss = "/assets/app-IGjWNPHW.css";
+const appCss = "/assets/app-CQLbm2vX.css";
 const seo = ({
   title,
   description,
@@ -414,17 +414,17 @@ function Footer() {
     ] })
   ] }) });
 }
-const $$splitNotFoundComponentImporter = () => import("./_postId-Cyj9aWDZ.js");
-const $$splitComponentImporter$2 = () => import("./_postId-x-u0D-Ki.js");
+const $$splitNotFoundComponentImporter = () => import("./_postId-CLasFhqp.js");
+const $$splitComponentImporter$2 = () => import("./_postId-F-3qpf38.js");
 const Route$2 = createFileRoute("/$postId")({
   component: lazyRouteComponent($$splitComponentImporter$2, "component"),
   notFoundComponent: lazyRouteComponent($$splitNotFoundComponentImporter, "notFoundComponent")
 });
-const $$splitComponentImporter$1 = () => import("./index-BsOiAijr.js");
+const $$splitComponentImporter$1 = () => import("./index-KXf9vgCp.js");
 const Route$1 = createFileRoute("/")({
   component: lazyRouteComponent($$splitComponentImporter$1, "component")
 });
-const $$splitComponentImporter = () => import("./blog.index-AVywtjDm.js");
+const $$splitComponentImporter = () => import("./blog.index-CieYw1OV.js");
 const Route = createFileRoute("/blog/")({
   component: lazyRouteComponent($$splitComponentImporter, "component")
 });
