@@ -1,6 +1,6 @@
 import { jsxs, jsx } from "react/jsx-runtime";
 import { Link } from "@tanstack/react-router";
-import { a as getAllPosts } from "./posts-CZixfL4C.js";
+import { b as getAllPosts } from "./posts-nSWHB6eP.js";
 function BlogIndex() {
   const posts = getAllPosts();
   return /* @__PURE__ */ jsxs("div", { className: "space-y-8", children: [
@@ -8,7 +8,7 @@ function BlogIndex() {
       /* @__PURE__ */ jsx("h1", { className: "text-3xl font-bold text-primary", children: "Blog" }),
       /* @__PURE__ */ jsx("p", { className: "text-secondary", children: "Thoughts on software engineering, web development, and building things." })
     ] }),
-    /* @__PURE__ */ jsx("div", { className: "space-y-6", children: posts.map((post) => /* @__PURE__ */ jsx("article", { className: "group p-4 -mx-4 rounded hover:bg-secondary transition-colors", children: /* @__PURE__ */ jsxs(Link, { to: "/blog/$postId", params: {
+    /* @__PURE__ */ jsx("div", { className: "space-y-6", children: posts.map((post) => /* @__PURE__ */ jsx("article", { className: "group p-4 -mx-4 rounded hover:bg-secondary transition-colors", children: /* @__PURE__ */ jsxs(Link, { to: "/$postId", params: {
       postId: post.id
     }, className: "block space-y-2", children: [
       /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3 text-sm text-muted", children: [

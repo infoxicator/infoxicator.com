@@ -684,7 +684,7 @@ function getAllPosts() {
   return blogPosts;
 }
 export {
-  getAllPosts as a,
-  getPostById as b,
-  getRecentPosts as g
+  getRecentPosts as a,
+  getAllPosts as b,
+  getPostById as g
 };

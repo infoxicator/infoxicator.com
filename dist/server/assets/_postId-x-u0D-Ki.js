@@ -1,7 +1,7 @@
 import { jsxs, jsx, Fragment } from "react/jsx-runtime";
 import { Link } from "@tanstack/react-router";
-import { b as getPostById } from "./posts-CZixfL4C.js";
-import { R as Route, N as NotFound } from "./router-BveHQd6s.js";
+import { g as getPostById } from "./posts-nSWHB6eP.js";
+import { R as Route, N as NotFound } from "./router-CgnxvBfe.js";
 import * as React from "react";
 import { codeToHtml } from "shiki";
 function MarkdownRenderer({ content }) {
@@ -453,9 +453,9 @@ function BlogPost() {
   return /* @__PURE__ */ jsxs(Fragment, { children: [
     /* @__PURE__ */ jsx(ScrollProgressBar, {}),
     /* @__PURE__ */ jsxs("article", { className: "space-y-8", children: [
-      /* @__PURE__ */ jsxs(Link, { to: "/blog", className: "inline-flex items-center gap-2 text-sm text-muted hover:text-accent transition-colors", children: [
+      /* @__PURE__ */ jsxs(Link, { to: "/", className: "inline-flex items-center gap-2 text-sm text-muted hover:text-accent transition-colors", children: [
         /* @__PURE__ */ jsx("span", { "aria-hidden": "true", children: "←" }),
-        "Back to blog"
+        "Back to home"
       ] }),
       /* @__PURE__ */ jsxs("header", { className: "space-y-4", children: [
         /* @__PURE__ */ jsxs("div", { className: "flex items-center gap-3 text-sm text-muted", children: [
@@ -471,7 +471,7 @@ function BlogPost() {
         /* @__PURE__ */ jsx("div", { className: "flex flex-wrap gap-2", children: post.tags.map((tag) => /* @__PURE__ */ jsx("span", { className: "text-xs px-2 py-1 bg-tertiary rounded text-muted", children: tag }, tag)) })
       ] }),
       /* @__PURE__ */ jsx("div", { className: "prose", children: /* @__PURE__ */ jsx(MarkdownRenderer, { content: post.content }) }),
-      /* @__PURE__ */ jsx("footer", { className: "pt-8 border-t border-theme", children: /* @__PURE__ */ jsxs(Link, { to: "/blog", className: "inline-flex items-center gap-2 text-sm text-muted hover:text-accent transition-colors", children: [
+      /* @__PURE__ */ jsx("footer", { className: "pt-8 border-t border-theme", children: /* @__PURE__ */ jsxs(Link, { to: "/", className: "inline-flex items-center gap-2 text-sm text-muted hover:text-accent transition-colors", children: [
         /* @__PURE__ */ jsx("span", { "aria-hidden": "true", children: "←" }),
         "Back to all posts"
       ] }) })

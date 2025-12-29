@@ -44,35 +44,26 @@ function DefaultCatchBoundary({ error }) {
   ] });
 }
 function NotFound({ children }) {
-  return /* @__PURE__ */ jsxs("div", { className: "space-y-2 p-2", children: [
-    /* @__PURE__ */ jsx("div", { className: "text-gray-600 dark:text-gray-400", children: children || /* @__PURE__ */ jsx("p", { children: "The page you are looking for does not exist." }) }),
-    /* @__PURE__ */ jsxs("p", { className: "flex items-center gap-2 flex-wrap", children: [
-      /* @__PURE__ */ jsx(
-        "button",
-        {
-          onClick: () => window.history.back(),
-          className: "bg-emerald-500 text-white px-2 py-1 rounded-sm uppercase font-black text-sm",
-          children: "Go back"
-        }
-      ),
-      /* @__PURE__ */ jsx(
-        Link,
-        {
-          to: "/",
-          className: "bg-cyan-600 text-white px-2 py-1 rounded-sm uppercase font-black text-sm",
-          children: "Start Over"
-        }
-      )
-    ] })
+  return /* @__PURE__ */ jsxs("div", { className: "flex flex-col items-center justify-center min-h-[60vh] text-center px-4", children: [
+    /* @__PURE__ */ jsx("div", { className: "text-8xl md:text-9xl font-light text-primary mb-6", children: ":(" }),
+    /* @__PURE__ */ jsx("h1", { className: "text-2xl md:text-4xl font-semibold text-primary mb-2", children: children || "Page not found" }),
+    /* @__PURE__ */ jsx("p", { className: "text-muted text-sm md:text-base mb-6", children: "Your coding agent hallucinated a link" }),
+    /* @__PURE__ */ jsx(
+      Link,
+      {
+        to: "/",
+        className: "text-lg md:text-xl text-accent hover:text-accent-hover underline underline-offset-4 transition-colors",
+        children: "Go Home"
+      }
+    )
   ] });
 }
 const ThemeContext = React.createContext(void 0);
 const themes = [
   { id: "light", name: "Light" },
-  { id: "dark", name: "Dark" },
-  { id: "dracula", name: "Dracula" },
-  { id: "nord", name: "Nord" },
-  { id: "monokai", name: "Monokai" }
+  { id: "dark-side", name: "Dark Side" },
+  { id: "terminal-green", name: "Terminal" },
+  { id: "vibe-code", name: "Vibe Code" }
 ];
 function ThemeProvider({ children }) {
   const [theme, setThemeState] = React.useState("light");
@@ -85,7 +76,7 @@ function ThemeProvider({ children }) {
       document.documentElement.setAttribute("data-theme", savedTheme);
     } else {
       const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const defaultTheme = prefersDark ? "dark" : "light";
+      const defaultTheme = prefersDark ? "dark-side" : "light";
       setThemeState(defaultTheme);
       document.documentElement.setAttribute("data-theme", defaultTheme);
     }
@@ -107,85 +98,154 @@ function useTheme() {
   }
   return context;
 }
-function ThemeSwitcher() {
-  const { theme, setTheme, themes: themes2 } = useTheme();
+const themeConfig = {
+  light: { bg: "#ffffff", accent: "#0066cc", isLight: true },
+  "dark-side": { bg: "#040405", accent: "#FF2A2A", isLight: false },
+  "terminal-green": { bg: "#020806", accent: "#00FF9C", isLight: false },
+  "vibe-code": { bg: "#0C0616", accent: "#6E1AE9", isLight: false }
+};
+const ThemeSwitcherContext = React.createContext(void 0);
+function ThemeSwitcherProvider({ children }) {
   const [isOpen, setIsOpen] = React.useState(false);
-  const dropdownRef = React.useRef(null);
-  React.useEffect(() => {
-    function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-  const currentTheme = themes2.find((t) => t.id === theme);
-  return /* @__PURE__ */ jsxs("div", { className: "relative", ref: dropdownRef, children: [
-    /* @__PURE__ */ jsxs(
-      "button",
-      {
-        onClick: () => setIsOpen(!isOpen),
-        className: "flex items-center gap-2 px-3 py-1.5 text-sm bg-secondary rounded border border-theme hover:bg-tertiary transition-colors",
-        "aria-label": "Select theme",
-        children: [
-          /* @__PURE__ */ jsx(ThemeIcon, { theme }),
-          /* @__PURE__ */ jsx("span", { className: "hidden sm:inline", children: currentTheme?.name }),
-          /* @__PURE__ */ jsx(
-            "svg",
-            {
-              className: `w-3 h-3 transition-transform ${isOpen ? "rotate-180" : ""}`,
-              fill: "none",
-              stroke: "currentColor",
-              viewBox: "0 0 24 24",
-              children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M19 9l-7 7-7-7" })
-            }
-          )
-        ]
-      }
-    ),
-    isOpen && /* @__PURE__ */ jsx("div", { className: "absolute right-0 mt-2 w-36 bg-secondary rounded border border-theme shadow-lg z-50", children: themes2.map((t) => /* @__PURE__ */ jsxs(
-      "button",
-      {
-        onClick: () => {
-          setTheme(t.id);
-          setIsOpen(false);
-        },
-        className: `w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-tertiary transition-colors first:rounded-t last:rounded-b ${theme === t.id ? "text-accent" : "text-primary"}`,
-        children: [
-          /* @__PURE__ */ jsx(ThemeIcon, { theme: t.id }),
-          t.name,
-          theme === t.id && /* @__PURE__ */ jsx("svg", { className: "w-3 h-3 ml-auto", fill: "currentColor", viewBox: "0 0 20 20", children: /* @__PURE__ */ jsx(
+  const toggle = React.useCallback(() => setIsOpen((prev) => !prev), []);
+  return /* @__PURE__ */ jsx(ThemeSwitcherContext.Provider, { value: { isOpen, setIsOpen, toggle }, children });
+}
+function useThemeSwitcher() {
+  const context = React.useContext(ThemeSwitcherContext);
+  if (!context) {
+    throw new Error("useThemeSwitcher must be used within ThemeSwitcherProvider");
+  }
+  return context;
+}
+function ThemeSwitcherButton() {
+  const { toggle } = useThemeSwitcher();
+  return /* @__PURE__ */ jsx(
+    "button",
+    {
+      onClick: toggle,
+      className: "flex items-center justify-center w-9 h-9 bg-secondary rounded hover:bg-tertiary transition-colors",
+      "aria-label": "Select theme",
+      children: /* @__PURE__ */ jsx(
+        "svg",
+        {
+          className: "w-5 h-5",
+          fill: "none",
+          stroke: "currentColor",
+          strokeWidth: 1.5,
+          viewBox: "0 0 24 24",
+          children: /* @__PURE__ */ jsx(
             "path",
             {
-              fillRule: "evenodd",
-              d: "M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z",
-              clipRule: "evenodd"
+              strokeLinecap: "round",
+              strokeLinejoin: "round",
+              d: "M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42"
             }
-          ) })
-        ]
-      },
-      t.id
-    )) })
-  ] });
-}
-function ThemeIcon({ theme }) {
-  const colors = {
-    light: "#f8f9fa",
-    dark: "#1a1a2e",
-    dracula: "#bd93f9",
-    nord: "#88c0d0",
-    monokai: "#f92672"
-  };
-  return /* @__PURE__ */ jsx(
-    "span",
-    {
-      className: "w-3 h-3 rounded-full border border-theme",
-      style: { backgroundColor: colors[theme] || colors.light }
+          )
+        }
+      )
     }
   );
 }
-const appCss = "/assets/app-DqOgknlc.css";
+function ThemeSwitcherPanel() {
+  const { theme, setTheme, themes: themes2 } = useTheme();
+  const { isOpen, setIsOpen } = useThemeSwitcher();
+  const panelRef = React.useRef(null);
+  React.useEffect(() => {
+    function handleClickOutside(event) {
+      if (panelRef.current && !panelRef.current.contains(event.target)) {
+        const button = event.target.closest('[aria-label="Select theme"]');
+        if (!button) {
+          setIsOpen(false);
+        }
+      }
+    }
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [isOpen, setIsOpen]);
+  return /* @__PURE__ */ jsx(
+    "div",
+    {
+      ref: panelRef,
+      className: "w-full overflow-hidden transition-all duration-300 ease-in-out",
+      style: { maxHeight: isOpen ? "100px" : "0px" },
+      children: /* @__PURE__ */ jsx("div", { className: "w-full border-b border-theme bg-secondary", children: /* @__PURE__ */ jsx("div", { className: "max-w-3xl mx-auto px-6 py-3 flex items-center justify-end gap-3", children: themes2.map((t) => {
+        const config = themeConfig[t.id];
+        const isSelected = theme === t.id;
+        return /* @__PURE__ */ jsxs(
+          "button",
+          {
+            onClick: () => {
+              setTheme(t.id);
+              setIsOpen(false);
+            },
+            className: "flex flex-col items-center gap-1 group",
+            "aria-label": t.name,
+            children: [
+              /* @__PURE__ */ jsx(
+                "div",
+                {
+                  className: `relative w-10 h-10 rounded-full transition-transform group-hover:scale-110 ${isSelected ? "ring-2 ring-offset-2 ring-[var(--accent)]" : ""}`,
+                  style: {
+                    backgroundColor: config.bg,
+                    borderWidth: 2,
+                    borderStyle: "solid",
+                    borderColor: config.accent
+                  },
+                  children: config.isLight ? /* @__PURE__ */ jsx(
+                    "svg",
+                    {
+                      className: "w-6 h-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
+                      fill: "none",
+                      stroke: config.accent,
+                      strokeWidth: 1.5,
+                      viewBox: "0 0 24 24",
+                      children: /* @__PURE__ */ jsx(
+                        "path",
+                        {
+                          strokeLinecap: "round",
+                          strokeLinejoin: "round",
+                          d: "M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
+                        }
+                      )
+                    }
+                  ) : /* @__PURE__ */ jsx(
+                    "svg",
+                    {
+                      className: "w-6 h-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
+                      fill: "none",
+                      stroke: config.accent,
+                      strokeWidth: 1.5,
+                      viewBox: "0 0 24 24",
+                      children: /* @__PURE__ */ jsx(
+                        "path",
+                        {
+                          strokeLinecap: "round",
+                          strokeLinejoin: "round",
+                          d: "M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"
+                        }
+                      )
+                    }
+                  )
+                }
+              ),
+              /* @__PURE__ */ jsx(
+                "span",
+                {
+                  className: `text-xs transition-colors ${isSelected ? "text-accent" : "text-muted group-hover:text-primary"}`,
+                  children: t.name
+                }
+              )
+            ]
+          },
+          t.id
+        );
+      }) }) })
+    }
+  );
+}
+const appCss = "/assets/app-IGjWNPHW.css";
 const seo = ({
   title,
   description,
@@ -211,7 +271,7 @@ const seo = ({
   ];
   return tags;
 };
-const Route$4 = createRootRoute({
+const Route$3 = createRootRoute({
   head: () => ({
     meta: [
       {
@@ -276,11 +336,12 @@ function RootLayout({ children }) {
   return /* @__PURE__ */ jsxs("html", { children: [
     /* @__PURE__ */ jsx("head", { children: /* @__PURE__ */ jsx(HeadContent, {}) }),
     /* @__PURE__ */ jsxs("body", { className: "min-h-screen flex flex-col", children: [
-      /* @__PURE__ */ jsxs(ThemeProvider, { children: [
+      /* @__PURE__ */ jsx(ThemeProvider, { children: /* @__PURE__ */ jsxs(ThemeSwitcherProvider, { children: [
+        /* @__PURE__ */ jsx(ThemeSwitcherPanel, {}),
         /* @__PURE__ */ jsx(Header, {}),
         /* @__PURE__ */ jsx("main", { className: "flex-1 w-full max-w-3xl mx-auto px-6 py-8", children }),
         /* @__PURE__ */ jsx(Footer, {})
-      ] }),
+      ] }) }),
       /* @__PURE__ */ jsx(Scripts, {})
     ] })
   ] });
@@ -308,7 +369,7 @@ function Header() {
           children: "blog"
         }
       ),
-      /* @__PURE__ */ jsx(ThemeSwitcher, {})
+      /* @__PURE__ */ jsx(ThemeSwitcherButton, {})
     ] })
   ] }) });
 }
@@ -353,54 +414,41 @@ function Footer() {
     ] })
   ] }) });
 }
-const $$splitComponentImporter$3 = () => import("./blog-9Hd3AP52.js");
-const Route$3 = createFileRoute("/blog")({
-  component: lazyRouteComponent($$splitComponentImporter$3, "component")
-});
-const $$splitComponentImporter$2 = () => import("./index-Ds1guswI.js");
-const Route$2 = createFileRoute("/")({
-  component: lazyRouteComponent($$splitComponentImporter$2, "component")
-});
-const $$splitComponentImporter$1 = () => import("./blog.index-D7fmgsgd.js");
-const Route$1 = createFileRoute("/blog/")({
-  component: lazyRouteComponent($$splitComponentImporter$1, "component")
-});
-const $$splitNotFoundComponentImporter = () => import("./blog._postId-B0VL1MAr.js");
-const $$splitComponentImporter = () => import("./blog._postId-DAqKpxDy.js");
-const Route = createFileRoute("/blog/$postId")({
-  component: lazyRouteComponent($$splitComponentImporter, "component"),
+const $$splitNotFoundComponentImporter = () => import("./_postId-Cyj9aWDZ.js");
+const $$splitComponentImporter$2 = () => import("./_postId-x-u0D-Ki.js");
+const Route$2 = createFileRoute("/$postId")({
+  component: lazyRouteComponent($$splitComponentImporter$2, "component"),
   notFoundComponent: lazyRouteComponent($$splitNotFoundComponentImporter, "notFoundComponent")
 });
-const BlogRoute = Route$3.update({
-  id: "/blog",
-  path: "/blog",
-  getParentRoute: () => Route$4
+const $$splitComponentImporter$1 = () => import("./index-BsOiAijr.js");
+const Route$1 = createFileRoute("/")({
+  component: lazyRouteComponent($$splitComponentImporter$1, "component")
 });
-const IndexRoute = Route$2.update({
-  id: "/",
-  path: "/",
-  getParentRoute: () => Route$4
+const $$splitComponentImporter = () => import("./blog.index-AVywtjDm.js");
+const Route = createFileRoute("/blog/")({
+  component: lazyRouteComponent($$splitComponentImporter, "component")
 });
-const BlogIndexRoute = Route$1.update({
-  id: "/",
-  path: "/",
-  getParentRoute: () => BlogRoute
-});
-const BlogPostIdRoute = Route.update({
+const PostIdRoute = Route$2.update({
   id: "/$postId",
   path: "/$postId",
-  getParentRoute: () => BlogRoute
+  getParentRoute: () => Route$3
 });
-const BlogRouteChildren = {
-  BlogPostIdRoute,
-  BlogIndexRoute
-};
-const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren);
+const IndexRoute = Route$1.update({
+  id: "/",
+  path: "/",
+  getParentRoute: () => Route$3
+});
+const BlogIndexRoute = Route.update({
+  id: "/blog/",
+  path: "/blog/",
+  getParentRoute: () => Route$3
+});
 const rootRouteChildren = {
   IndexRoute,
-  BlogRoute: BlogRouteWithChildren
+  PostIdRoute,
+  BlogIndexRoute
 };
-const routeTree = Route$4._addFileChildren(rootRouteChildren)._addFileTypes();
+const routeTree = Route$3._addFileChildren(rootRouteChildren)._addFileTypes();
 function getRouter() {
   const router2 = createRouter({
     routeTree,
@@ -417,6 +465,6 @@ const router = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProper
 }, Symbol.toStringTag, { value: "Module" }));
 export {
   NotFound as N,
-  Route as R,
+  Route$2 as R,
   router as r
 };
