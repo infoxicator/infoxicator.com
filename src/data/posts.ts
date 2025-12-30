@@ -8,6 +8,7 @@ export interface BlogPost {
   date: string
   tags: string[]
   readingTime: string
+  image?: string
 }
 
 export const blogPosts: BlogPost[] = allPosts
@@ -19,6 +20,7 @@ export const blogPosts: BlogPost[] = allPosts
     date: post.date,
     tags: post.tags,
     readingTime: post.readingTime,
+    image: post.image,
   }))
   .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 

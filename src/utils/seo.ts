@@ -1,13 +1,16 @@
-import { buildUrl } from './site'
+import { SITE_NAME, SITE_TWITTER_HANDLE, buildUrl } from './site'
 
 type SeoInput = {
   title: string
   description?: string
   image?: string
+  imageAlt?: string
   keywords?: string
   url?: string
   type?: 'website' | 'article'
   twitterHandle?: string
+  siteName?: string
+  robots?: string
   publishedTime?: string
   tags?: string[]
 }
@@ -27,14 +30,18 @@ export const seo = ({
   description,
   keywords,
   image,
+  imageAlt,
   url,
   type = 'website',
-  twitterHandle = '@infoxicator',
+  twitterHandle = SITE_TWITTER_HANDLE,
+  siteName = SITE_NAME,
+  robots,
   publishedTime,
   tags,
 }: SeoInput) => {
   const resolvedImage = resolveUrl(image)
   const resolvedUrl = resolveUrl(url)
+  const resolvedImageAlt = imageAlt ?? title
   const meta = [{ title }]
 
   if (description) {
@@ -43,6 +50,10 @@ export const seo = ({
 
   if (keywords) {
     meta.push({ name: 'keywords', content: keywords })
+  }
+
+  if (robots) {
+    meta.push({ name: 'robots', content: robots })
   }
 
   meta.push({ name: 'twitter:title', content: title })
@@ -64,6 +75,10 @@ export const seo = ({
   meta.push({ property: 'og:type', content: type })
   meta.push({ property: 'og:title', content: title })
 
+  if (siteName) {
+    meta.push({ property: 'og:site_name', content: siteName })
+  }
+
   if (description) {
     meta.push({ property: 'og:description', content: description })
   }
@@ -74,7 +89,13 @@ export const seo = ({
 
   if (resolvedImage) {
     meta.push({ name: 'twitter:image', content: resolvedImage })
+    if (resolvedImageAlt) {
+      meta.push({ name: 'twitter:image:alt', content: resolvedImageAlt })
+    }
     meta.push({ property: 'og:image', content: resolvedImage })
+    if (resolvedImageAlt) {
+      meta.push({ property: 'og:image:alt', content: resolvedImageAlt })
+    }
   }
 
   if (type === 'article' && publishedTime) {

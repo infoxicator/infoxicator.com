@@ -1,7 +1,7 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { getAllPosts } from '~/data/posts'
 import { seo } from '~/utils/seo'
-import { buildUrl } from '~/utils/site'
+import { SITE_AUTHOR, SITE_NAME, buildUrl } from '~/utils/site'
 
 export const Route = createFileRoute('/blog/')({
   head: () => ({
@@ -11,8 +11,27 @@ export const Route = createFileRoute('/blog/')({
         'Thoughts on software engineering, web development, and building things with AI.',
       url: '/blog/',
       image: '/profile.jpg',
+      imageAlt: 'Ruben Casas profile photo',
     }),
     links: [{ rel: 'canonical', href: buildUrl('/blog/') }],
+    headScripts: [
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'Blog',
+          name: `${SITE_NAME} Blog`,
+          url: buildUrl('/blog/'),
+          description:
+            'Thoughts on software engineering, web development, and building things with AI.',
+          publisher: {
+            '@type': 'Person',
+            name: SITE_AUTHOR,
+            url: buildUrl('/'),
+          },
+        }),
+      },
+    ],
   }),
   component: BlogIndex,
 })

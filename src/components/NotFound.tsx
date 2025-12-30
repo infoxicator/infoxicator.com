@@ -1,6 +1,35 @@
 import { Link } from '@tanstack/react-router'
+import { useEffect } from 'react'
+import { SITE_NAME } from '~/utils/site'
 
 export function NotFound({ children }: { children?: any }) {
+  useEffect(() => {
+    const previousTitle = document.title
+    document.title = `Page not found | ${SITE_NAME}`
+
+    const existing = document.querySelector('meta[name="robots"]') as HTMLMetaElement | null
+    const previousContent = existing?.getAttribute('content') ?? null
+    const meta = existing ?? document.createElement('meta')
+    meta.setAttribute('name', 'robots')
+    meta.setAttribute('content', 'noindex, nofollow')
+    if (!existing) {
+      document.head.appendChild(meta)
+    }
+
+    return () => {
+      document.title = previousTitle
+      if (existing) {
+        if (previousContent === null) {
+          meta.remove()
+        } else {
+          meta.setAttribute('content', previousContent)
+        }
+        return
+      }
+      meta.remove()
+    }
+  }, [])
+
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
       {/* Sad face emoticon */}

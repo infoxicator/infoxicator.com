@@ -12,7 +12,6 @@ import { NotFound } from '~/components/NotFound'
 import { ThemeProvider } from '~/components/ThemeProvider'
 import { ThemeSwitcherButton, ThemeSwitcherPanel, ThemeSwitcherProvider } from '~/components/ThemeSwitcher'
 import appCss from '~/styles/app.css?url'
-import { seo } from '~/utils/seo'
 
 export const Route = createRootRoute({
   head: () => ({
@@ -28,13 +27,6 @@ export const Route = createRootRoute({
         name: 'theme-color',
         content: '#ffffff',
       },
-      ...seo({
-        title: 'Infoxicator | Ruben Casas',
-        description:
-          'Personal blog and portfolio of Ruben Casas - Software Engineer, Micro Frontend enthusiast, and lifelong learner.',
-        url: '/',
-        image: '/profile.jpg',
-      }),
     ],
     links: [
       { rel: 'stylesheet', href: appCss },
@@ -57,6 +49,12 @@ export const Route = createRootRoute({
       },
       { rel: 'manifest', href: '/site.webmanifest' },
       { rel: 'icon', href: '/favicon.ico' },
+      {
+        rel: 'alternate',
+        type: 'application/rss+xml',
+        title: 'Infoxicator RSS Feed',
+        href: '/rss.xml',
+      },
     ],
     scripts: [
       {

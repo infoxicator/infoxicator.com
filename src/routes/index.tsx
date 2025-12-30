@@ -1,18 +1,55 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { getRecentPosts } from '~/data/posts'
 import { seo } from '~/utils/seo'
-import { buildUrl } from '~/utils/site'
+import { SITE_AUTHOR, SITE_NAME, SITE_SOCIALS, buildUrl } from '~/utils/site'
 
 export const Route = createFileRoute('/')({
   head: () => ({
-    meta: seo({
-      title: 'Infoxicator | Ruben Casas',
-      description:
-        'Personal blog and portfolio of Ruben Casas - Software Engineer, Micro Frontend enthusiast, and lifelong learner.',
-      url: '/',
-      image: '/profile.jpg',
-    }),
+    meta: (() => {
+      const description =
+        'Personal blog and portfolio of Ruben Casas - Software Engineer, Conference Speaker, Tech Blogger.'
+      return seo({
+        title: 'Ruben Casas',
+        description,
+        url: '/',
+        image: '/profile.jpg',
+        imageAlt: 'Ruben Casas profile photo',
+      })
+    })(),
     links: [{ rel: 'canonical', href: buildUrl('/') }],
+    headScripts: [
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@graph': [
+            {
+              '@type': 'Person',
+              name: SITE_AUTHOR,
+              url: buildUrl('/'),
+              sameAs: [
+                SITE_SOCIALS.twitter,
+                SITE_SOCIALS.github,
+                SITE_SOCIALS.linkedin,
+                SITE_SOCIALS.youtube,
+              ],
+            },
+            {
+              '@type': 'WebSite',
+              name: SITE_NAME,
+              url: buildUrl('/'),
+              description:
+                'Personal blog and portfolio of Ruben Casas - Software Engineer, Conference Speaker, Tech Blogger.',
+              publisher: {
+                '@type': 'Person',
+                name: SITE_AUTHOR,
+                url: buildUrl('/'),
+              },
+            },
+          ],
+        }),
+      },
+    ],
   }),
   component: Home,
 })

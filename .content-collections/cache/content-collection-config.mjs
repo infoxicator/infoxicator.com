@@ -1,6 +1,13 @@
 // content-collections.ts
 import { defineCollection, defineConfig } from "@content-collections/core";
 import { z } from "zod";
+var extractFirstImage = (content) => {
+  const htmlMatch = content.match(/<img[^>]+src=["']([^"']+)["']/i);
+  if (htmlMatch?.[1]) return htmlMatch[1];
+  const markdownMatch = content.match(/!\[[^\]]*]\(([^)\s]+)(?:\s+["'][^"']*["'])?\)/);
+  if (markdownMatch?.[1]) return markdownMatch[1];
+  return void 0;
+};
 var posts = defineCollection({
   name: "posts",
   directory: "./src/content/posts",
@@ -10,12 +17,14 @@ var posts = defineCollection({
     excerpt: z.string(),
     date: z.string().date(),
     tags: z.array(z.string()),
-    readingTime: z.string()
+    readingTime: z.string(),
+    image: z.string().optional()
   }),
   transform: ({ content, ...post }) => ({
     ...post,
     slug: post._meta.path,
-    content: content.trim()
+    content: content.trim(),
+    image: post.image ?? extractFirstImage(content)
   })
 });
 var content_collections_default = defineConfig({

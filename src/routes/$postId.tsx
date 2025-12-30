@@ -4,7 +4,7 @@ import { NotFound } from '~/components/NotFound'
 import { MarkdownRenderer } from '~/components/MarkdownRenderer'
 import { ScrollProgressBar } from '~/components/ScrollProgressBar'
 import { seo } from '~/utils/seo'
-import { buildUrl } from '~/utils/site'
+import { SITE_AUTHOR, SITE_NAME, buildUrl } from '~/utils/site'
 
 export const Route = createFileRoute('/$postId')({
   head: ({ params }) => {
@@ -18,10 +18,18 @@ export const Route = createFileRoute('/$postId')({
           description: 'The requested post could not be found.',
           url,
           image: '/profile.jpg',
+          robots: 'noindex, nofollow',
         }),
         links: [{ rel: 'canonical', href: buildUrl(url) }],
       }
     }
+
+    const image = post.image ?? '/profile.jpg'
+    const resolvedImage =
+      image.startsWith('http://') || image.startsWith('https://')
+        ? image
+        : buildUrl(image)
+    const canonicalUrl = buildUrl(url)
 
     return {
       meta: seo({
@@ -31,9 +39,44 @@ export const Route = createFileRoute('/$postId')({
         type: 'article',
         publishedTime: post.date,
         tags: post.tags,
-        image: '/profile.jpg',
+        image,
+        imageAlt: post.title,
       }),
-      links: [{ rel: 'canonical', href: buildUrl(url) }],
+      links: [{ rel: 'canonical', href: canonicalUrl }],
+      headScripts: [
+        {
+          type: 'application/ld+json',
+          children: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BlogPosting',
+            headline: post.title,
+            description: post.excerpt,
+            datePublished: post.date,
+            dateModified: post.date,
+            image: resolvedImage,
+            keywords: post.tags.join(', '),
+            mainEntityOfPage: {
+              '@type': 'WebPage',
+              '@id': canonicalUrl,
+            },
+            author: {
+              '@type': 'Person',
+              name: SITE_AUTHOR,
+              url: buildUrl('/'),
+            },
+            publisher: {
+              '@type': 'Person',
+              name: SITE_AUTHOR,
+              url: buildUrl('/'),
+            },
+            isPartOf: {
+              '@type': 'Blog',
+              name: `${SITE_NAME} Blog`,
+              url: buildUrl('/blog/'),
+            },
+          }),
+        },
+      ],
     }
   },
   component: BlogPost,
