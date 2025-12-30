@@ -10,8 +10,8 @@ export const Route = createFileRoute('/blog/')({
       description:
         'Thoughts on software engineering, web development, and building things with AI.',
       url: '/blog/',
-      image: '/profile.jpg',
-      imageAlt: 'Ruben Casas profile photo',
+      image: '/og-main.png',
+      imageAlt: 'Ruben Casas profile card',
     }),
     links: [{ rel: 'canonical', href: buildUrl('/blog/') }],
     headScripts: [
