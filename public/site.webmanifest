@@ -1,6 +1,9 @@
 {
-  "name": "",
-  "short_name": "",
+  "name": "Infoxicator",
+  "short_name": "Infoxicator",
+  "description": "Personal blog and portfolio of Ruben Casas.",
+  "start_url": "/",
+  "scope": "/",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",

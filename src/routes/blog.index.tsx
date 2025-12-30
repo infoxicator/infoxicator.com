@@ -1,7 +1,19 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { getAllPosts } from '~/data/posts'
+import { seo } from '~/utils/seo'
+import { buildUrl } from '~/utils/site'
 
 export const Route = createFileRoute('/blog/')({
+  head: () => ({
+    meta: seo({
+      title: 'Blog | Infoxicator',
+      description:
+        'Thoughts on software engineering, web development, and building things with AI.',
+      url: '/blog/',
+      image: '/profile.jpg',
+    }),
+    links: [{ rel: 'canonical', href: buildUrl('/blog/') }],
+  }),
   component: BlogIndex,
 })
 
@@ -13,7 +25,7 @@ function BlogIndex() {
       <header className="space-y-4">
         <h1 className="text-3xl font-bold text-primary">Blog</h1>
         <p className="text-secondary">
-          Thoughts on software engineering, web development, and building things with Ai.
+          Thoughts on software engineering, web development, and building things with AI.
         </p>
       </header>
 

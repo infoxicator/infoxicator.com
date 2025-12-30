@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build && tsc --noEmit",
+    "prebuild": "node scripts/generate-sitemap.mjs",
+    "generate:sitemap": "node scripts/generate-sitemap.mjs",
     "preview": "vite preview",
     "start": "pnpx srvx --prod -s ../client dist/server/server.js"
   },

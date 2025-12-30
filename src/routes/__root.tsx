@@ -24,10 +24,16 @@ export const Route = createRootRoute({
         name: 'viewport',
         content: 'width=device-width, initial-scale=1',
       },
+      {
+        name: 'theme-color',
+        content: '#ffffff',
+      },
       ...seo({
         title: 'Infoxicator | Ruben Casas',
         description:
           'Personal blog and portfolio of Ruben Casas - Software Engineer, Micro Frontend enthusiast, and lifelong learner.',
+        url: '/',
+        image: '/profile.jpg',
       }),
     ],
     links: [
@@ -49,7 +55,7 @@ export const Route = createRootRoute({
         sizes: '16x16',
         href: '/favicon-16x16.png',
       },
-      { rel: 'manifest', href: '/site.webmanifest', color: '#fffff' },
+      { rel: 'manifest', href: '/site.webmanifest' },
       { rel: 'icon', href: '/favicon.ico' },
     ],
     scripts: [
@@ -88,7 +94,7 @@ function RootComponent() {
 
 function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html>
+    <html lang="en">
       <head>
         <HeadContent />
       </head>
