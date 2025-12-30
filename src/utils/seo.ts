@@ -1,5 +1,7 @@
 import { SITE_NAME, SITE_TWITTER_HANDLE, buildUrl } from './site'
 
+type MetaDescriptor = { title?: string } & Record<string, string | undefined>
+
 type SeoInput = {
   title: string
   description?: string
@@ -42,7 +44,7 @@ export const seo = ({
   const resolvedImage = resolveUrl(image)
   const resolvedUrl = resolveUrl(url)
   const resolvedImageAlt = imageAlt ?? title
-  const meta = [{ title }]
+  const meta: MetaDescriptor[] = [{ title }]
 
   if (description) {
     meta.push({ name: 'description', content: description })
