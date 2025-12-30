@@ -24,7 +24,7 @@ export const Route = createFileRoute('/$postId')({
       }
     }
 
-    const image = post.image ?? '/profile.jpg'
+    const image = post.image ?? `/og/${post.id}.svg`
     const resolvedImage =
       image.startsWith('http://') || image.startsWith('https://')
         ? image
