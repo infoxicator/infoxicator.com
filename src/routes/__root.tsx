@@ -146,7 +146,7 @@ function Footer() {
         <span>&copy; {new Date().getFullYear()} Ruben Casas</span>
         <div className="flex items-center gap-4">
           <a
-            href="https://twitter.com/infoxicator"
+            href="https://x.com/Infoxicador"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-primary transition-colors flex items-center gap-1.5"
@@ -170,7 +170,7 @@ function Footer() {
             github
           </a>
           <a
-            href="https://linkedin.com/in/ACoAABJb0mgBc6L_x1w-l_cGNMY4VpnDPZ2vEQQ"
+            href="https://www.linkedin.com/in/ruben-casas-17100383/"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-primary transition-colors flex items-center gap-1.5"
