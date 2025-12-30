@@ -35,3 +35,14 @@ export function getRecentPosts(count: number = 3): BlogPost[] {
 export function getAllPosts(): BlogPost[] {
   return blogPosts
 }
+
+export function getAdjacentPosts(id: string): { prev: BlogPost | null; next: BlogPost | null } {
+  const index = blogPosts.findIndex((post) => post.id === id)
+  if (index === -1) {
+    return { prev: null, next: null }
+  }
+  return {
+    prev: index < blogPosts.length - 1 ? blogPosts[index + 1] : null,
+    next: index > 0 ? blogPosts[index - 1] : null,
+  }
+}
