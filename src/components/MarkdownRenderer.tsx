@@ -640,7 +640,8 @@ async function renderHtmlNode(
       const width = element.getAttribute('width') || '100%'
       const height = element.getAttribute('height') || undefined
       const title = element.getAttribute('title') || 'Embedded content'
-      const loading = element.getAttribute('loading') || 'lazy'
+      const loadingAttr = element.getAttribute('loading')
+      const loading = loadingAttr === 'lazy' || loadingAttr === 'eager' ? loadingAttr : undefined
       const allow = element.getAttribute('allow') || undefined
       const frameBorder = element.getAttribute('frameborder') || undefined
       const allowFullScreen = element.hasAttribute('allowfullscreen')
