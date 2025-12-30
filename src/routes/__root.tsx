@@ -11,6 +11,7 @@ import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary'
 import { NotFound } from '~/components/NotFound'
 import { ThemeProvider } from '~/components/ThemeProvider'
 import { ThemeSwitcherButton, ThemeSwitcherPanel, ThemeSwitcherProvider } from '~/components/ThemeSwitcher'
+import { SearchButton, SearchModal, SearchProvider } from '~/components/Search'
 import appCss from '~/styles/app.css?url'
 
 export const Route = createRootRoute({
@@ -99,12 +100,15 @@ function RootLayout({ children }: { children: React.ReactNode }) {
       <body className="min-h-screen flex flex-col">
         <ThemeProvider>
           <ThemeSwitcherProvider>
-            <ThemeSwitcherPanel />
-            <Header />
-            <main className="flex-1 w-full max-w-3xl mx-auto px-6 py-8">
-              {children}
-            </main>
-            <Footer />
+            <SearchProvider>
+              <ThemeSwitcherPanel />
+              <Header />
+              <main className="flex-1 w-full max-w-3xl mx-auto px-6 py-8">
+                {children}
+              </main>
+              <Footer />
+              <SearchModal />
+            </SearchProvider>
           </ThemeSwitcherProvider>
         </ThemeProvider>
         <Scripts />
@@ -136,6 +140,7 @@ function Header() {
           >
             blog
           </Link>
+          <SearchButton />
           <ThemeSwitcherButton />
         </nav>
       </div>
