@@ -1,12 +1,12 @@
 ---
 title: "Side Projects? I don't have time for that!"
-excerpt: "."
+excerpt: "From late-night student side projects to family life, I thought the side-project era was over until AI agents made shipping feel possible again; here is a tour of nine projects I shipped this year and the lessons on compounding and priorities."
 date: "2025-12-31"
 tags:
   - AI
   - Agents
   - UI
-readingTime: "8 min read"
+readingTime: "9 min read"
 ---
 
 ## The importance of Side Projects
@@ -14,7 +14,7 @@ readingTime: "8 min read"
 When I was doing my Masters degree I used to come back from my part time job at 7pm and start working on side projects until 11pm. I didn't even have time for cooking so I used to get a chinese takeaway and start playing with whatever new technology I was interested in.
 
 Proof of how many fortune cookies I collected in those days in a single week 😅
-![Fortune Cookies](public/images/posts/side-projects-i-dont-have-time/fortune-cookies.JPG)
+![Fortune Cookies](/images/posts/side-projects-i-dont-have-time/fortune-cookies.JPG)
 
 That's why I recommend to anyone getting started in tech to do things on the side, I learned more from side projects than the stuff I learned during my Master's degree which I had to pay £13k for!
 
@@ -46,7 +46,7 @@ Here are the things I ship, with some small amount of effort in the second half 
 
 I have been playing with MCP-UI since it was launched and wanted to sprinkle a little bit of generative UI on top. So I built a weather agent that gets the current temperature and styles it on the fly with any style provided by the user i.e Windows 95 retro
 
-![Weather Agent](public/images/posts/side-projects-i-dont-have-time/weather-agent.jpeg)
+![Weather Agent](/images/posts/side-projects-i-dont-have-time/weather-agent.jpeg)
 
 **Tech Stack**: 
 - Postman Flows
@@ -59,7 +59,7 @@ I have been playing with MCP-UI since it was launched and wanted to sprinkle a l
 
 The Launch of Nano banana definitely changed my Vibe Coding game, I built most of my prototypes with it and pushed my imagination. I built a website that allows you to transport you back in time just by uploading your picture:
 
-![Nano Banana Time Machine](public/images/posts/side-projects-i-dont-have-time/nano-banana-time-machine.jpeg)
+![Nano Banana Time Machine](/images/posts/side-projects-i-dont-have-time/nano-banana-time-machine.jpeg)
 
 
 **Website**: [www.iwasthere.today](https://iwasthere.today/)
@@ -75,7 +75,7 @@ The Launch of Nano banana definitely changed my Vibe Coding game, I built most o
 
 I didn't think that in 2025 I would launch my own e-commerce store, but here we are! One of the most compelling use cases of MCP-Ui (MCP Apps) is e-commerce. so I decided to launch my own shop to sell t-shirts that can be purchased using MCP and any of the clients that support MCP-UI
 
-![t-shirts from the shop](public/images/posts/side-projects-i-dont-have-time/mcp-ui-shop.jpeg)
+![t-shirts from the shop](/images/posts/side-projects-i-dont-have-time/mcp-ui-shop.jpeg)
 
 
 **Website**: [https://mcp-ui.shop/](https://mcp-ui.shop/)
@@ -91,7 +91,7 @@ I didn't think that in 2025 I would launch my own e-commerce store, but here we 
 
 I vibecoded a book from scratch for my 4 year old who's obsessed with her stuffed dog. She came up with the story, the locations, we generated the images together and then stitched it up using Canva. This was a great time bonding with my kiddo and showing her what's possible (anything) with technology. We have created 3 books now!
 
-![The Adventures of Fluffy in Japan](public/images/posts/side-projects-i-dont-have-time/adventures-of-fluffy.jpeg)
+![The Adventures of Fluffy in Japan](/images/posts/side-projects-i-dont-have-time/adventures-of-fluffy.jpeg)
 
 
 **Tech Stack** 
@@ -103,7 +103,7 @@ I vibecoded a book from scratch for my 4 year old who's obsessed with her stuffe
 ### 5. TBPN Video Generator
 
 My friend [Tobin South](https://x.com/TobinSouth) nerd snipped me one night, after he created a picture of the tbpn style announcements for [Liad](https://x.com/liadyosef) and [Ido](https://x.com/idosal1) joining Monday.com so I decided to build a TBPN generator but not for images but for video! 
-![Tobin Slack Thread](public/images/posts/side-projects-i-dont-have-time/tbpn-tobin.png)
+![Tobin Slack Thread](/images/posts/side-projects-i-dont-have-time/tbpn-tobin.png)
 
 
 It creates a comedy story for when someone joins a company and generates a slide show on the fly using "generative UI / Video". I also ended up adding a bunch of templates including one for when you [attend a conference](https://tbpn-video-generator.vercel.app/react-summit) and you meet someone in person.
@@ -122,7 +122,7 @@ It creates a comedy story for when someone joins a company and generates a slide
 
 When ChatGPT launched apps, was a great moment of validation for MCP-UI! I decided to build my first app on top of my Shopify Store and allow people not just to buy the t-shirts, but also try them on, with some Ai magic ✨
 
-![ChatGPT Apps](public/images/posts/side-projects-i-dont-have-time/chatgpt-app-t-shirt.png)
+![ChatGPT Apps](/images/posts/side-projects-i-dont-have-time/chatgpt-app-t-shirt.png)
 
 ** Youtube Video**: [https://www.youtube.com/watch?v=XHgxGczwERo](https://www.youtube.com/watch?v=XHgxGczwERo)
 
@@ -137,7 +137,7 @@ When ChatGPT launched apps, was a great moment of validation for MCP-UI! I decid
 
 After building the TBPN Video generator, I decided to make something a bit more useful with it. So when someone new joins postman, there is a welcome message that gets posted in one of the public slack channels. When I add the 📽️ emoji reaction to the message. An automated workflow takes the person who joined information (profile picture, job title, etc) summarises the message and creates a personalised welcome video.
 
-![Example Welcome Video](public/images/posts/side-projects-i-dont-have-time/sterling-postman.png)
+![Example Welcome Video](/images/posts/side-projects-i-dont-have-time/sterling-postman.png)
 
 **Website**: [https://postman-new-hire-video.vercel.app](https://tbpn-https://postman-new-hire-video.vercel.app/share/d50704b2-8e56-4a42-87c4-b59148f78c9c)
 
@@ -157,7 +157,7 @@ I played it with [Erik from Code Rabbit](https://x.com/esthor) and a few friends
 
 A newly added feature was "Kitze Mode" to conquer all the fast food places in America with [TheKitze](https://x.com/thekitze) as your coach! 😂
 
-![City Quest](public/images/posts/side-projects-i-dont-have-time/city-quest-thumb.png)
+![City Quest](/images/posts/side-projects-i-dont-have-time/city-quest-thumb.png)
 
 **Website**: [https://city-quest.netlify.app](https://city-quest.netlify.app)
 ** Youtube Video**: [https://www.youtube.com/watch?v=MJ5RtWxOiZc&t=30s](https://www.youtube.com/watch?v=MJ5RtWxOiZc&t=30s)
@@ -191,7 +191,7 @@ Every project builds on top of the one before... the stack the learnings the ide
 - **Don't over do it!**
 I started to over do it sometimes... even vibecoded on a plane at some point but it was because I was enjoying it too much. Suffice to say it could become a problem, always prioritise family and other things...
 
-![Vibe Coding on a Plane](public/images/posts/side-projects-i-dont-have-time/vibe-coding-on-plane.jpeg)
+![Vibe Coding on a Plane](/images/posts/side-projects-i-dont-have-time/vibe-coding-on-plane.jpeg)
 
 - There's always time!
 
