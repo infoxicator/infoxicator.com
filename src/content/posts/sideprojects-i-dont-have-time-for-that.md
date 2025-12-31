@@ -173,7 +173,7 @@ A newly added feature was "Kitze Mode" to conquer all the fast food places in Am
 
 I finally decided to rewrite my personal site, the previous one was embarrassing, not maintained and on a broken version of NextJ 10.  I refused to do it for a long time until I had an innovative idea but at the end, I applied the rule of side projects and vibe coding. Shipping something is better than shipping nothing... hopefully I will include cool easter eggs and ideas to my site... but I am quite pleased with it.
 
-**Website**: [https://city-quest.netlify.app](https://city-quest.netlify.app)
+**Website**: [https://infoxicator.com/](https://infoxicator.com/)
 
 **Tech Stack** 
 - TanStack Start
