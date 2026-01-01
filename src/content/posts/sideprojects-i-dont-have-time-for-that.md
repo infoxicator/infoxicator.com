@@ -28,7 +28,7 @@ However, this year I found the joy of building things, I still don't have time b
 
 Gergely from The Pragmatic Engineer puts it nicely: 
 
-| "I get a lot more work done on my side projects, with fare less effort" 
+| "I get a lot more work done on my side projects, with far less effort" 
 
 {% twitter 2006301134236135708 %}
 
@@ -40,7 +40,7 @@ All of those unfinished projects from the wishlist finally found someone who cou
 
 ## Too Much Talk, Show me the stuff!
 
-Here are the things I ship, with some small amount of effort in the second half of this year. Working be"tween 10pm and 12am while my wife and the kids are asleep and still spending an unhealthy amount of time on twitter:
+Here are the things I shipped, with some small amount of effort in the second half of this year (2025). Working between 10pm and 12am while my wife and the kids are asleep and still spending an unhealthy amount of time on twitter:
 
 ### 1. Weather Agent with MCP-Ui
 
