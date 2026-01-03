@@ -9,11 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SpeakingRouteImport } from './routes/speaking'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as PostIdRouteImport } from './routes/$postId'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 
+const SpeakingRoute = SpeakingRouteImport.update({
+  id: '/speaking',
+  path: '/speaking',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
@@ -39,12 +45,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$postId': typeof PostIdRoute
   '/search': typeof SearchRoute
+  '/speaking': typeof SpeakingRoute
   '/blog': typeof BlogIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$postId': typeof PostIdRoute
   '/search': typeof SearchRoute
+  '/speaking': typeof SpeakingRoute
   '/blog': typeof BlogIndexRoute
 }
 export interface FileRoutesById {
@@ -52,25 +60,34 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/$postId': typeof PostIdRoute
   '/search': typeof SearchRoute
+  '/speaking': typeof SpeakingRoute
   '/blog/': typeof BlogIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$postId' | '/search' | '/blog'
+  fullPaths: '/' | '/$postId' | '/search' | '/speaking' | '/blog'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$postId' | '/search' | '/blog'
-  id: '__root__' | '/' | '/$postId' | '/search' | '/blog/'
+  to: '/' | '/$postId' | '/search' | '/speaking' | '/blog'
+  id: '__root__' | '/' | '/$postId' | '/search' | '/speaking' | '/blog/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   PostIdRoute: typeof PostIdRoute
   SearchRoute: typeof SearchRoute
+  SpeakingRoute: typeof SpeakingRoute
   BlogIndexRoute: typeof BlogIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/speaking': {
+      id: '/speaking'
+      path: '/speaking'
+      fullPath: '/speaking'
+      preLoaderRoute: typeof SpeakingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/search': {
       id: '/search'
       path: '/search'
@@ -106,6 +123,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   PostIdRoute: PostIdRoute,
   SearchRoute: SearchRoute,
+  SpeakingRoute: SpeakingRoute,
   BlogIndexRoute: BlogIndexRoute,
 }
 export const routeTree = rootRouteImport

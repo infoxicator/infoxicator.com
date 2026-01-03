@@ -118,6 +118,8 @@ function RootLayout({ children }: { children: React.ReactNode }) {
 }
 
 function Header() {
+  const isDev = import.meta.env.DEV
+
   return (
     <header className="w-full border-b border-theme">
       <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -140,6 +142,13 @@ function Header() {
           >
             blog
           </Link>
+            <Link
+              to="/speaking"
+              className="text-sm text-muted hover:text-primary transition-colors"
+              activeProps={{ className: 'text-sm text-accent nav-link-active' }}
+            >
+              speaking
+            </Link>
           <SearchButton />
           <ThemeSwitcherButton />
         </nav>
