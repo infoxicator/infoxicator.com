@@ -14,6 +14,8 @@ export interface SpeakingItem {
   // For talks and livestreams
   youtubeId?: string
   slides?: string
+  // Fallback image when no youtubeId is provided
+  image?: string
   // For meetups
   location?: string
   images?: string[]
@@ -27,9 +29,20 @@ export const speakingItems: SpeakingItem[] = [
     title: 'This Is How We Made Postman Launch Twice as Fast by Ruben Casas',
     event: 'React Summit US 2025',
     date: '2025-11-21',
+    image: '/images/speaking/postman-in-half-time.jpeg',
     description:
       'CEO tests Postman on cheap laptop, reveals performance issue. Ruben Casas gives 5 tips to enhance app performance, emphasizing the importance of measuring and focusing on a key metric like TTF from mobile gaming.',
     url: 'https://gitnation.com/contents/this-is-how-we-made-postman-launch-twice-as-fast',
+  },
+  {
+    id: 'pomerium-livestream-chatgpt-apps',
+    type: 'talk',
+    title: 'Pomerium Livestream: ChatGPT Apps',
+    event: 'Pomerium',
+    date: '2025-12-16',
+    description:
+      'Join us for a live discussion with Ruben Casas, Staff Engineer at Postman, as we explore the latest advancements in ChatGPT apps and how they are transforming the way we interact with AI.',
+    youtubeId: '0u8ZHnWi4j0',
   },
   // 2. Livestream
   {
@@ -63,6 +76,7 @@ export const speakingItems: SpeakingItem[] = [
     description:
       'Hey, React London Community! Spring is in the air! Join us on April 3 for an exciting React Meetup filled with insightful talks, networking, and community connections!',
     location: 'London, UK',
+    image: '/images/speaking/react-advanced-meetup.jpg',
     url: 'https://guild.host/events/react-advanced-london-rlt0qo',
   },
   // 5. Podcast - PodRocket Software Migrations

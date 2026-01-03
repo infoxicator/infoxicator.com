@@ -5,6 +5,7 @@ import {
   Outlet,
   Scripts,
   createRootRoute,
+  useRouterState,
 } from '@tanstack/react-router'
 import * as React from 'react'
 import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary'
@@ -118,23 +119,20 @@ function RootLayout({ children }: { children: React.ReactNode }) {
 }
 
 function Header() {
-  const isDev = import.meta.env.DEV
+  const isHomePage = useRouterState({
+    select: (state) => state.location.pathname === '/',
+  })
 
   return (
     <header className="w-full border-b border-theme">
       <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
-        <Link to="/" className="text-lg font-semibold text-primary hover:text-accent transition-colors">
+        <Link
+          to="/"
+          className={`text-lg font-semibold text-primary hover:text-accent transition-colors ${isHomePage ? 'nav-link-active' : ''}`}
+        >
           ~/infoxicator
         </Link>
         <nav className="flex items-center gap-6">
-          <Link
-            to="/"
-            className="text-sm text-muted hover:text-primary transition-colors"
-            activeProps={{ className: 'text-sm text-accent nav-link-active' }}
-            activeOptions={{ exact: true }}
-          >
-            home
-          </Link>
           <Link
             to="/blog"
             className="text-sm text-muted hover:text-primary transition-colors"
@@ -142,13 +140,13 @@ function Header() {
           >
             blog
           </Link>
-            <Link
-              to="/speaking"
-              className="text-sm text-muted hover:text-primary transition-colors"
-              activeProps={{ className: 'text-sm text-accent nav-link-active' }}
-            >
-              speaking
-            </Link>
+          <Link
+            to="/speaking"
+            className="text-sm text-muted hover:text-primary transition-colors"
+            activeProps={{ className: 'text-sm text-accent nav-link-active' }}
+          >
+            speaking
+          </Link>
           <SearchButton />
           <ThemeSwitcherButton />
         </nav>

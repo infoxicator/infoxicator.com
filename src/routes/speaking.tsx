@@ -46,21 +46,10 @@ function SpeakingPage() {
         <p className="text-secondary">
           Conference talks, podcast appearances, and community meetups.
         </p>
-      </header>
-
-      <div className="space-y-6">
-        {items.map((item) => (
-          <SpeakingCard key={item.id} item={item} />
-        ))}
-      </div>
-
-      {/* Footer CTA */}
+              {/* Footer CTA */}
       <section className="border border-theme rounded-lg p-6 bg-secondary text-center space-y-3">
         <p className="text-primary font-mono">
           <span className="text-accent">$</span> interested_in_having_me_speak?
-        </p>
-        <p className="text-secondary text-sm">
-          I'm available for conferences, podcasts, and meetups. Let's chat!
         </p>
         <a
           href="https://x.com/Infoxicador"
@@ -71,6 +60,13 @@ function SpeakingPage() {
           <span className="text-accent">{'>'}</span> dm_me_on_twitter
         </a>
       </section>
+      </header>
+
+      <div className="space-y-6">
+        {items.map((item) => (
+          <SpeakingCard key={item.id} item={item} />
+        ))}
+      </div>
     </div>
   )
 }
@@ -108,8 +104,8 @@ function SpeakingCard({ item }: { item: SpeakingItem }) {
     ),
   }[item.type]
 
-  // Talk or livestream with YouTube embed
-  if ((item.type === 'talk' || item.type === 'livestream') && item.youtubeId) {
+  // Talk or livestream with YouTube embed or fallback image
+  if ((item.type === 'talk' || item.type === 'livestream') && (item.youtubeId || item.image)) {
     return (
       <article className="group border border-theme rounded-lg overflow-hidden bg-secondary">
         {/* Terminal-style header */}
@@ -133,15 +129,24 @@ function SpeakingCard({ item }: { item: SpeakingItem }) {
           </span>
         </div>
 
-        {/* YouTube Embed */}
+        {/* YouTube Embed or Fallback Image */}
         <div className="aspect-video">
-          <iframe
-            src={`https://www.youtube.com/embed/${item.youtubeId}`}
-            title={item.title}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            className="w-full h-full"
-          />
+          {item.youtubeId ? (
+            <iframe
+              src={`https://www.youtube.com/embed/${item.youtubeId}`}
+              title={item.title}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="w-full h-full"
+            />
+          ) : (
+            <img
+              src={item.image}
+              alt={item.title}
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
+          )}
         </div>
 
         {/* Talk Info */}
@@ -165,8 +170,8 @@ function SpeakingCard({ item }: { item: SpeakingItem }) {
     )
   }
 
-  // Meetup with images
-  if (item.type === 'meetup' && item.images && item.images.length > 0) {
+  // Meetup with images (array or single fallback)
+  if (item.type === 'meetup' && (item.images?.length || item.image)) {
     return (
       <article className="group border border-theme rounded-lg overflow-hidden">
         {/* Terminal-style header */}
@@ -191,17 +196,28 @@ function SpeakingCard({ item }: { item: SpeakingItem }) {
         </div>
 
         {/* Meetup Images */}
-        <div className={`grid ${item.images.length > 1 ? 'grid-cols-2' : 'grid-cols-1'} gap-1 bg-secondary`}>
-          {item.images.map((image, index) => (
+        {item.images && item.images.length > 0 ? (
+          <div className={`grid ${item.images.length > 1 ? 'grid-cols-2' : 'grid-cols-1'} gap-1 bg-secondary`}>
+            {item.images.map((image, index) => (
+              <img
+                key={index}
+                src={image}
+                alt={`${item.title} - Image ${index + 1}`}
+                className="w-full h-48 object-cover"
+                loading="lazy"
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="aspect-video">
             <img
-              key={index}
-              src={image}
-              alt={`${item.title} - Image ${index + 1}`}
-              className="w-full h-48 object-cover"
+              src={item.image}
+              alt={item.title}
+              className="w-full h-full object-cover"
               loading="lazy"
             />
-          ))}
-        </div>
+          </div>
+        )}
 
         {/* Meetup Info */}
         <div className="p-4 space-y-2 bg-secondary">
@@ -232,7 +248,7 @@ function SpeakingCard({ item }: { item: SpeakingItem }) {
       {item.url && (
         <div className="pt-2">
           <span className="inline-flex items-center gap-1 text-sm text-accent font-mono">
-            {'>'} listen
+            {'>'} {item.type === 'podcast' ? 'Listen' : 'Watch'}
           </span>
         </div>
       )}
@@ -261,6 +277,18 @@ function SpeakingCard({ item }: { item: SpeakingItem }) {
           </time>
         </span>
       </div>
+
+      {/* Fallback Image */}
+      {item.image && (
+        <div className="aspect-video">
+          <img
+            src={item.image}
+            alt={item.title}
+            className="w-full h-full object-cover"
+            loading="lazy"
+          />
+        </div>
+      )}
 
       {/* Content */}
       {item.url ? (
