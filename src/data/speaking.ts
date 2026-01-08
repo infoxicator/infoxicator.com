@@ -86,6 +86,7 @@ export const speakingItems: SpeakingItem[] = [
     title: 'Software migrations at scale with Ruben Casas',
     event: 'PodRocket',
     date: '2024-09-12',
+    image: '/images/speaking/podrocket-migrations.jpeg',
     description:
       'Ruben Casas discusses software migrations at scale, understanding different migration patterns, making critical decisions on whether a full rewrite is necessary, and more. This episode covers all the essentials you need to navigate your next big software transformation.',
     url: 'https://podrocket.logrocket.com/software-migrations-at-scale-ruben-casas',
@@ -120,6 +121,7 @@ export const speakingItems: SpeakingItem[] = [
     title: 'Inside Postman\'s Journey to Build a VS Code Extension',
     event: 'Compressed.fm',
     date: '2024-06-14',
+    image: '/images/speaking/compressed-fm-vscode.png',
     description:
       'This episode covers the detailed process of taking Postman\'s VS Code extension from a proof of concept to a fully-fledged product. Reuben Casas shares insights on the technical hurdles, team dynamics, and the iterative development process.',
     url: 'https://www.compressed.fm/episode/178',
@@ -131,6 +133,7 @@ export const speakingItems: SpeakingItem[] = [
     title: 'Do you need a State Manager in 2024?',
     event: 'CityJS Conference',
     date: '2024-02-27',
+    image: '/images/speaking/cityjs-meetup.jpeg',
     description:
       'Do you need a State Manager in 2024? Ruben Casas is coming back to give us useful answers for our #React development!',
     location: 'London, UK',
@@ -177,7 +180,7 @@ export const speakingItems: SpeakingItem[] = [
     event: 'InfoQ',
     date: '2023-10-30',
     description:
-      'Ruben Casas discusses the evolution of frontend applications at scale, starting from monoliths, evolving to modular monoliths, integrated applications, monorepos and arriving at micro frontends.',
+      'Talk delivered in person at the QCon London 2023 in the Elizabeth II Centre. Ruben Casas discusses the evolution of frontend applications at scale, starting from monoliths, evolving to modular monoliths, integrated applications, monorepos and arriving at micro frontends.',
     youtubeId: 'W4biNjfmvvI',
   },
   // 14. Conference Talk - YouTube tI8RYB5rcVw
@@ -209,6 +212,7 @@ export const speakingItems: SpeakingItem[] = [
     title: 'The Evolution Of Frontend Architecture',
     event: 'CloudConf Italy',
     date: '2023-05-16',
+    image: '/images/speaking/cloudconf.jpeg',
     description:
       'Exploring how frontend architecture has evolved over the years and where it is heading in the future.',
     images: [
@@ -244,19 +248,10 @@ export const speakingItems: SpeakingItem[] = [
     title: 'Monolith to Micro-Frontends',
     event: 'React Advanced 2022',
     date: '2022-10-21',
+    "image": "/images/speaking/monolith-to-micro-frontends.png",
     description:
       'How to transform monolithic React applications into modular, decoupled frontend architectures. Covering migration patterns like the Strangler and Reverse Strangler patterns.',
     url: 'https://gitnation.com/contents/monolith-to-micro-frontends',
-  },
-  {
-    id: 'talk-microfrontend-revolution-amex',
-    type: 'talk',
-    title: 'The Micro-Frontend Revolution at Amex',
-    event: 'Node Congress 2021',
-    date: '2021-06-24',
-    description:
-      'How American Express scaled its web application across thousands of engineers using micro-frontends architecture, in production since 2016.',
-    url: 'https://gitnation.com/contents/the-micro-frontend-revolution-at-amex',
   },
 ]
 
