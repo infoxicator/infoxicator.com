@@ -218,6 +218,7 @@ export const speakingItems: SpeakingItem[] = [
     images: [
       'https://media2.dev.to/dynamic/image/width=800%2Cheight=%2Cfit=scale-down%2Cgravity=auto%2Cformat=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fichk1a9y8oa2s34j0536.jpeg',
     ],
+    url: 'https://x.com/Infoxicador/status/1666567134380531714?s=20'
   },
   // 17. Livestream - YouTube GOhRwqCX08g
   {

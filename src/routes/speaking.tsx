@@ -106,8 +106,8 @@ function SpeakingCard({ item }: { item: SpeakingItem }) {
 
   // Talk or livestream with YouTube embed or fallback image
   if ((item.type === 'talk' || item.type === 'livestream') && (item.youtubeId || item.image)) {
-    return (
-      <article className="group border border-theme rounded-lg overflow-hidden bg-secondary">
+    const cardContent = (
+      <>
         {/* Terminal-style header */}
         <div className="flex items-center gap-2 px-4 py-2 bg-tertiary border-b border-theme">
           <div className="flex gap-1.5">
@@ -156,16 +156,40 @@ function SpeakingCard({ item }: { item: SpeakingItem }) {
           </h2>
           <p className="text-secondary text-sm">{item.description}</p>
           {item.slides && (
-            <a
-              href={item.slides}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-sm text-accent hover:text-accent-hover transition-colors font-mono"
-            >
+            <span className="inline-flex items-center gap-1 text-sm text-accent font-mono">
               {'>'} view_slides
-            </a>
+            </span>
           )}
         </div>
+      </>
+    )
+
+    // If there's a YouTube embed, don't wrap in link (iframe needs to be interactive)
+    if (item.youtubeId) {
+      return (
+        <article className="group border border-theme rounded-lg overflow-hidden bg-secondary">
+          {cardContent}
+        </article>
+      )
+    }
+
+    // No YouTube embed - make whole card clickable if URL exists
+    if (item.url) {
+      return (
+        <a
+          href={item.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group block border border-theme rounded-lg overflow-hidden bg-secondary hover:bg-tertiary transition-colors"
+        >
+          {cardContent}
+        </a>
+      )
+    }
+
+    return (
+      <article className="group border border-theme rounded-lg overflow-hidden bg-secondary">
+        {cardContent}
       </article>
     )
   }
