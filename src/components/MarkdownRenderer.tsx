@@ -886,17 +886,27 @@ function renderInlineElements(text: string): React.ReactNode {
       )
     }
 
-    // Handle bold and other text
-    const boldParts = part.split(/(\*\*[^*]+\*\*)/)
-    return boldParts.map((bp, j) => {
-      if (bp.startsWith('**') && bp.endsWith('**')) {
+    // Handle bold, italics, and other text
+    const emphasisParts = part.split(/(\*\*[^*]+\*\*|\*[^*]+\*|_[^_]+_)/)
+    return emphasisParts.map((ep, j) => {
+      if (ep.startsWith('**') && ep.endsWith('**')) {
         return (
           <strong key={`${i}-${j}`} className="font-semibold text-primary">
-            {bp.slice(2, -2)}
+            {ep.slice(2, -2)}
           </strong>
         )
       }
-      return bp
+      if (
+        (ep.startsWith('*') && ep.endsWith('*')) ||
+        (ep.startsWith('_') && ep.endsWith('_'))
+      ) {
+        return (
+          <em key={`${i}-${j}-em`} className="italic">
+            {ep.slice(1, -1)}
+          </em>
+        )
+      }
+      return ep
     })
   })
 }
