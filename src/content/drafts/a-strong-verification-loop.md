@@ -22,3 +22,5 @@ ralph wiggum without verification doesn't work
 llms need our context to produce the desired outcome 
 
 tweet claude rubber duck
+
+the new triangle / testing thropy

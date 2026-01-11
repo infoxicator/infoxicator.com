@@ -119,9 +119,15 @@ function RootLayout({ children }: { children: React.ReactNode }) {
 }
 
 function Header() {
-  const isHomePage = useRouterState({
-    select: (state) => state.location.pathname === '/',
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
   })
+  const isHomePage = pathname === '/'
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false)
+
+  React.useEffect(() => {
+    setIsMenuOpen(false)
+  }, [pathname])
 
   return (
     <header className="w-full border-b border-theme">
@@ -132,7 +138,7 @@ function Header() {
         >
           ~/infoxicator
         </Link>
-        <nav className="flex items-center gap-6">
+        <nav className="hidden md:flex items-center gap-6">
           <Link
             to="/blog"
             className="text-sm text-muted hover:text-primary transition-colors"
@@ -150,6 +156,70 @@ function Header() {
           <SearchButton />
           <ThemeSwitcherButton />
         </nav>
+        <div className="md:hidden flex items-center gap-2">
+          <SearchButton />
+          <ThemeSwitcherButton />
+          <button
+            type="button"
+            className="flex items-center justify-center w-9 h-9 bg-secondary rounded hover:bg-tertiary transition-colors"
+            aria-label="Toggle menu"
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-menu"
+            onClick={() => setIsMenuOpen((prev) => !prev)}
+          >
+            {isMenuOpen ? (
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
+              </svg>
+            )}
+          </button>
+        </div>
+      </div>
+      <div
+        id="mobile-menu"
+        className={`md:hidden overflow-hidden transition-[max-height] duration-300 ease-in-out ${
+          isMenuOpen ? 'max-h-64' : 'max-h-0'
+        }`}
+        aria-hidden={!isMenuOpen}
+      >
+        <div className="px-6 pb-4 pt-2 border-t border-theme bg-secondary">
+          <nav className="flex flex-col gap-3">
+            <Link
+              to="/blog"
+              onClick={() => setIsMenuOpen(false)}
+              className="text-sm text-muted hover:text-primary transition-colors"
+              activeProps={{ className: 'text-sm text-accent nav-link-active' }}
+            >
+              blog
+            </Link>
+            <Link
+              to="/speaking"
+              onClick={() => setIsMenuOpen(false)}
+              className="text-sm text-muted hover:text-primary transition-colors"
+              activeProps={{ className: 'text-sm text-accent nav-link-active' }}
+            >
+              speaking
+            </Link>
+          </nav>
+        </div>
       </div>
     </header>
   )
