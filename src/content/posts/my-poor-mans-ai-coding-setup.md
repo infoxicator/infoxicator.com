@@ -19,8 +19,49 @@ If you feel FOMO, overwhelmed, don't know where to start... **you are not alone!
 
 Here is the current way I build with Ai at work, this is what works for me... for **production code** that cannot be "slop", that needs to be reviewed and approved by co-workers and that has to deal with the realities of production software, like large brownfield codebases, trade offs, business priorities and tech debt...
 
-> This is not a guide... all of these are subjective and matter of preference
 
+## Caveats / Constraints Working with Production Software
+
+The way I use AI to code on a greenfield project, differs significantly from coding on old / production codebases. Models can now work effectively in large codebases, but there are constraints we should aware of and improvements to the code itself that you can make and could increase speed and output considerably.
+
+### Spaghetti Code
+
+Models that have to traverse large parts of unrelated code bloat the context window!, this is also slow and token inefficient. Reducing circular dependencies and encapsulating components, functions, modularity, great boundaries and architecture has ever been more important.
+
+**If your application is rotten, it will also rot your context!**
+
+### To Rewrite or Not Rewrite
+
+When models context windows fill, they use something called **"context compaction"**. I can use the same analogy with old codebases, when they fill up with tech debt and old decisions that are no longer relevant, sometimes is better to capture the intent, summarise the current state and commit it into a new session (some people call this a "rewrite") and guess what! it's never been cheaper to rewrite something!
+
+### Missing Verification Loop
+
+Models that cannot verify their work, require more steering and cannot work continuously. Human verification is ever more important but that verification needs to be committed and saved (via tests, lint rules, type checking, agent context) for future changes. Models are very good at writing tests! but they will not replace the true verification which is when humans decide if the system is "correct" or not.
+
+### Testing Chicken and Egg paradox
+
+Code that is not modular is hard to test, missing tests break the verification loop which produces code that is difficult to change and test. To break this vicious cycle, the code needs to be tested (human verified and committed) and closing the verification loop to ensure new code and improvements can be safely added by humans and coding agents in the future.
+
+### Code is not the bottleneck anymore, verification is!
+
+> “If your pull request doesn’t contain evidence that it works, you’re not shipping faster - you’re just moving work downstream”  - Addy Osmani
+
+Agents can produce reliable code fast, ensuring that code is correct and it does what is intended without breaking the rest of the system is now the bottleneck. The major culprits include code reviews, manual testing and slow automated testing. Improvements to spedup and unblock these areas will improve the velocity of shipping code to production.
+
+### The Kitchen Sink paradox
+Models are like humans if they see a dirty sink they will just add another plate on top!. Models will not refactor and make the code better unless you tell them to. Every time you make a change, also ask the model to ship an improvement to that part of the code especially around verification loops (test, types etc)
+
+### Risk of change is a limiting factor
+
+Code is cheap now, we should try more things and not be afraid of significant changes and improving existing code just because it is “old” or too long / complex to understand. The problem with changing too many things in a established codebase / product is the risk of regressions. Tight verification loops are key and could mitigate the risk. But even with excellent testing practices (which are rare) more code, more changes, means more bugs, more risks which businesses need to accept.
+
+---
+
+## How I Actually Use Ai Coding In My Day Job
+
+With those constraints in mind, this is how I actually apply Ai in my daily work, not for demos or side projects, but inside real production codebases.
+
+> This is not a guide... all of these are subjective and matter of preference
 
 ## My Setup
 I use **both Codex and Claude Code** and use them in parallel or interchangeably depending on the task.
@@ -113,6 +154,8 @@ They also require you to think about conflicts and branching / worktrees stuff i
 
 - Well defined work in projects with strong verification loops (tests)
 
+---
+
 ## Ralph Loop Coding
 
 The technique everyone is talking about... I started experimenting with it and it seems like the end game for hands off / parallel automated work. 
@@ -141,40 +184,7 @@ But the Claude plugin doesn't make it justice... If you want to see the comparis
 
 - **Automate repetitive tasks:** Claude Code supports slash commands and subagents to automate repetitive tasks (push commit, review, tests etc)
 
-## Caveats / Constraints Working with Production Software
 
-The way I use AI to code on a greenfield project, differs significantly from coding on old / production codebases. Models can now work effectively in large codebases, but there are constraints we should aware of and improvements to the code itself that you can make and could increase speed and output considerably.
-
-### Spaghetti Code
-
-Models that have to traverse large parts of unrelated code bloats the context window, is slow and token inefficient. Reducing circular dependencies and encapsulating components, functions, modularity, great boundaries and architecture has ever been more important!
-
-If your application is rotten, it will also rot your context!
-
-### To Rewrite or Not Rewrite
-
-When models context windows fill, they use something called **"context compaction"**. I can use the same analogy with old codebases, when they fill up with tech debt and old decisions that are no longer relevant, sometimes is better to capture the intent, summarise the current state and commit it into a new session (some people call this a "rewrite") and guess what! it's never been cheaper to rewrite something!
-
-### Missing Verification Loop
-
-Models that cannot verify their work, require more steering and cannot work continuously. Human verification is ever more important but that verification needs to be committed and saved (via tests, lint rules, type checking, agent context) for future changes. Models are very good at writing tests! but they will not replace the true verification which is when humans decide if the system is "correct" or not.
-
-### Testing Chicken and Egg paradox
-
-Code that is not modular is hard to test, missing tests break the verification loop which produces code that is difficult to change and test. To break this vicious cycle, the code needs to be tested (human verified and that committed) and closing the verification loop to ensure new code and improvements can be safely added by humans and coding agents in the future.
-
-### Code is not the bottleneck anymore, verification is!
-
-> “If your pull request doesn’t contain evidence that it works, you’re not shipping faster - you’re just moving work downstream”  - Addy Osmani
-
-Agents can produce reliable code fast, ensuring that code is correct and it does what is intended without breaking the rest of the system is now the bottleneck. The major culprits include code reviews, manual testing and slow automated testing. Improvements to spedup and unblock these areas will improve the velocity of shipping code to production.
-
-### The Kitchen Sink paradox
-Models are like humans if they see a dirty sink they will just add another plate on top!. Models will not refactor and make the code better unless you tell them to. Every time you make a change, also ask the model to ship an improvement to that part of the code especially around verification loops (test, types etc)
-
-### Risk of change is a limiting factor
-
-Code is cheap now, we should try more things and not be afraid of significant changes and improving existing code just because it is “old” or too long / complex to understand. The problem with changing too many things in a established codebase / product is the risk of regressions. Tight verification loops are key and could mitigate the risk. But even with excellent testing practices (which are rare) more code, more changes, means more bugs, more risks which businesses need to accept.
 
 ## Conclusion
 

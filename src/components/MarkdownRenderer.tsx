@@ -106,6 +106,15 @@ function parseMarkdownSync(content: string): React.ReactNode[] {
     }
 
     const trimmedLine = line.trim()
+    if (isHorizontalRule(trimmedLine)) {
+      elements.push(
+        <hr
+          key={i}
+          className="my-8 border-0 border-t border-theme"
+        />
+      )
+      continue
+    }
     if (trimmedLine.startsWith('<') && trimmedLine.endsWith('>')) {
       elements.push(
         <div
@@ -287,6 +296,15 @@ async function parseMarkdown(content: string): Promise<React.ReactNode[]> {
     }
 
     const trimmedLine = line.trim()
+    if (isHorizontalRule(trimmedLine)) {
+      elements.push(
+        <hr
+          key={i}
+          className="my-8 border-0 border-t border-theme"
+        />
+      )
+      continue
+    }
     if (trimmedLine.startsWith('<') && trimmedLine.endsWith('>')) {
       const htmlElements = await parseHtmlFragment(trimmedLine, `html-${i}`)
       elements.push(...htmlElements)
@@ -691,11 +709,18 @@ async function renderHtmlNode(
     }
     case 'br':
       return <br key={key} />
+    case 'hr':
+      return <hr key={key} className="my-8 border-0 border-t border-theme" />
     default: {
       const children = await renderHtmlNodes(Array.from(element.childNodes), key)
       return children.length ? <span key={key}>{children}</span> : null
     }
   }
+}
+
+function isHorizontalRule(line: string): boolean {
+  const stripped = line.trim().replace(/\s+/g, '')
+  return stripped.length >= 3 && /^(\*{3,}|-{3,}|_{3,})$/.test(stripped)
 }
 
 async function highlightCode(code: string, lang: string): Promise<string> {
