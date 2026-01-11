@@ -1,5 +1,5 @@
 ---
-title: "My Poor Man's AI Coding Setup (Jan 2026)"
+title: "The Reality of AI Coding in Production (and My Poor Man’s Setup)"
 excerpt: "A practical tour of my AI coding setup: Codex, Claude Code, IDE extensions, and CLIs, plus Ralph loop coding, verification loops, and the realities of shipping production software."
 date: "2026-01-10"
 tags:
