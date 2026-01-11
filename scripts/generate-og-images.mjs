@@ -25,8 +25,26 @@ const escapeXml = (value = '') => {
 }
 
 const extractFrontmatterValue = (content, key) => {
-  const match = content.match(new RegExp(`^${key}:\\s*["']?([^"'\n]+)["']?\\s*$`, 'm'))
-  return match ? match[1].trim() : undefined
+  const frontmatterMatch = content.match(/^---\s*([\s\S]*?)\s*---/)
+  if (!frontmatterMatch) {
+    return undefined
+  }
+
+  const frontmatter = frontmatterMatch[1]
+  const match = frontmatter.match(new RegExp(`^${key}:\\s*(.+)$`, 'm'))
+  if (!match) {
+    return undefined
+  }
+
+  let value = match[1].trim()
+  if (
+    (value.startsWith('"') && value.endsWith('"')) ||
+    (value.startsWith("'") && value.endsWith("'"))
+  ) {
+    value = value.slice(1, -1)
+  }
+
+  return value.trim()
 }
 
 const wrapText = (text, maxChars, maxLines) => {
