@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SpeakingRouteImport } from './routes/speaking'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as ProjectsRouteImport } from './routes/projects'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as PostIdRouteImport } from './routes/$postId'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
@@ -23,6 +25,16 @@ const SpeakingRoute = SpeakingRouteImport.update({
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsRoute = ProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PostIdRoute = PostIdRouteImport.update({
@@ -44,6 +56,8 @@ const BlogIndexRoute = BlogIndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$postId': typeof PostIdRoute
+  '/about': typeof AboutRoute
+  '/projects': typeof ProjectsRoute
   '/search': typeof SearchRoute
   '/speaking': typeof SpeakingRoute
   '/blog': typeof BlogIndexRoute
@@ -51,6 +65,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$postId': typeof PostIdRoute
+  '/about': typeof AboutRoute
+  '/projects': typeof ProjectsRoute
   '/search': typeof SearchRoute
   '/speaking': typeof SpeakingRoute
   '/blog': typeof BlogIndexRoute
@@ -59,21 +75,47 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$postId': typeof PostIdRoute
+  '/about': typeof AboutRoute
+  '/projects': typeof ProjectsRoute
   '/search': typeof SearchRoute
   '/speaking': typeof SpeakingRoute
   '/blog/': typeof BlogIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$postId' | '/search' | '/speaking' | '/blog'
+  fullPaths:
+    | '/'
+    | '/$postId'
+    | '/about'
+    | '/projects'
+    | '/search'
+    | '/speaking'
+    | '/blog'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$postId' | '/search' | '/speaking' | '/blog'
-  id: '__root__' | '/' | '/$postId' | '/search' | '/speaking' | '/blog/'
+  to:
+    | '/'
+    | '/$postId'
+    | '/about'
+    | '/projects'
+    | '/search'
+    | '/speaking'
+    | '/blog'
+  id:
+    | '__root__'
+    | '/'
+    | '/$postId'
+    | '/about'
+    | '/projects'
+    | '/search'
+    | '/speaking'
+    | '/blog/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   PostIdRoute: typeof PostIdRoute
+  AboutRoute: typeof AboutRoute
+  ProjectsRoute: typeof ProjectsRoute
   SearchRoute: typeof SearchRoute
   SpeakingRoute: typeof SpeakingRoute
   BlogIndexRoute: typeof BlogIndexRoute
@@ -93,6 +135,20 @@ declare module '@tanstack/react-router' {
       path: '/search'
       fullPath: '/search'
       preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects': {
+      id: '/projects'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof ProjectsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/$postId': {
@@ -122,6 +178,8 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   PostIdRoute: PostIdRoute,
+  AboutRoute: AboutRoute,
+  ProjectsRoute: ProjectsRoute,
   SearchRoute: SearchRoute,
   SpeakingRoute: SpeakingRoute,
   BlogIndexRoute: BlogIndexRoute,

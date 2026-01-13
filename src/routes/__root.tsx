@@ -13,6 +13,7 @@ import { NotFound } from '~/components/NotFound'
 import { ThemeProvider } from '~/components/ThemeProvider'
 import { ThemeSwitcherButton, ThemeSwitcherPanel, ThemeSwitcherProvider } from '~/components/ThemeSwitcher'
 import { SearchButton, SearchModal, SearchProvider } from '~/components/Search'
+import { IS_DEV } from '~/utils/dev'
 import appCss from '~/styles/app.css?url'
 
 export const Route = createRootRoute({
@@ -153,6 +154,22 @@ function Header() {
           >
             speaking
           </Link>
+          <Link
+            to="/projects"
+            className="text-sm text-muted hover:text-primary transition-colors"
+            activeProps={{ className: 'text-sm text-accent nav-link-active' }}
+          >
+            projects
+          </Link>
+          {IS_DEV && (
+            <Link
+              to="/about"
+              className="text-sm text-muted hover:text-primary transition-colors"
+              activeProps={{ className: 'text-sm text-accent nav-link-active' }}
+            >
+              about
+            </Link>
+          )}
           <SearchButton />
           <ThemeSwitcherButton />
         </nav>
@@ -218,6 +235,24 @@ function Header() {
             >
               speaking
             </Link>
+            <Link
+              to="/projects"
+              onClick={() => setIsMenuOpen(false)}
+              className="text-sm text-muted hover:text-primary transition-colors"
+              activeProps={{ className: 'text-sm text-accent nav-link-active' }}
+            >
+              projects
+            </Link>
+            {IS_DEV && (
+              <Link
+                to="/about"
+                onClick={() => setIsMenuOpen(false)}
+                className="text-sm text-muted hover:text-primary transition-colors"
+                activeProps={{ className: 'text-sm text-accent nav-link-active' }}
+              >
+                about
+              </Link>
+            )}
           </nav>
         </div>
       </div>
