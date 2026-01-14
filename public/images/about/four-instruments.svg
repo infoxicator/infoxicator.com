@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1B1F3B"/>
+      <stop offset="100%" stop-color="#F4B942"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="900" fill="url(#g)"/>
+  <rect x="60" y="60" width="1080" height="780" fill="none" stroke="#FFFFFF" stroke-opacity="0.35" stroke-width="4"/>
+  <text x="100" y="170" fill="#FFFFFF" font-family="monospace" font-size="56">4 Instruments</text>
+  <text x="100" y="230" fill="#FFFFFF" font-family="monospace" font-size="24" opacity="0.8">Strings, keys, rhythm, more</text>
+</svg>

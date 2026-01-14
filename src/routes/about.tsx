@@ -3,6 +3,52 @@ import { seo } from '~/utils/seo'
 import { SITE_AUTHOR, buildUrl } from '~/utils/site'
 import { IS_DEV } from '~/utils/dev'
 
+const HOBBIES = [
+  {
+    title: 'Wingfoiling',
+    description: 'Wind + water + board',
+    image: '/images/about/wingfoiling.svg',
+    className: 'col-span-2 row-span-2',
+  },
+  {
+    title: 'Cold Water Swimming',
+    description: 'Reset button',
+    image: '/images/about/cold-water-swimming.svg',
+  },
+  {
+    title: 'Paddleboarding',
+    description: 'Balance + calm',
+    image: '/images/about/paddleboarding.svg',
+  },
+  {
+    title: '4 Instruments',
+    description: 'Strings, keys, rhythm, more',
+    image: '/images/about/four-instruments.svg',
+  },
+  {
+    title: 'London Tour Guide',
+    description: 'Former life',
+    image: '/images/about/london-tour-guide.svg',
+  },
+]
+
+const CHARACTER_SHEET = [
+  { label: 'Class', value: 'Staff Vibe Engineer @ Postman' },
+  { label: 'Subclass', value: 'Google Dev Expert' },
+  { label: 'Origin', value: 'Colombia' },
+  { label: 'Base', value: 'South East England, UK' },
+  { label: 'Languages', value: 'English / Spanish' },
+  { label: 'Party', value: 'Married + two kids' },
+  { label: 'Roles', value: 'Public speaker, blogger' },
+]
+
+const SPECIAL_MOVES = [
+  'Developer tooling',
+  'AI agents',
+  'MCP apps',
+  'Frontend architecture at scale',
+]
+
 export const Route = createFileRoute('/about')({
   beforeLoad: () => {
     if (!IS_DEV) {
@@ -13,7 +59,7 @@ export const Route = createFileRoute('/about')({
     meta: seo({
       title: 'About | Ruben Casas',
       description:
-        'Learn more about Ruben Casas - Staff Engineer at Postman, conference speaker, and tech blogger based in London.',
+        'Learn more about Ruben Casas - Staff Vibe Engineer at Postman, Google Dev Expert, speaker, and blogger exploring AI agents and frontend architecture at scale.',
       url: '/about/',
       image: '/profile.jpg',
       imageAlt: 'Ruben Casas',
@@ -27,7 +73,8 @@ export const Route = createFileRoute('/about')({
           '@type': 'AboutPage',
           name: 'About Ruben Casas',
           url: buildUrl('/about/'),
-          description: 'Learn more about Ruben Casas - Staff Engineer, speaker, and tech blogger.',
+          description:
+            'Learn more about Ruben Casas - Staff Vibe Engineer, Google Dev Expert, speaker, and tech blogger.',
           mainEntity: {
             '@type': 'Person',
             name: SITE_AUTHOR,
@@ -48,23 +95,51 @@ function AboutPage() {
         <span className="text-amber-500">⚠</span> dev_mode: This page is only visible in development
       </div>
 
-      {/* Hero Section - Editorial Style */}
+      {/* Hero Section - Character Sheet */}
       <header className="relative">
         <div className="grid md:grid-cols-[1fr_1.2fr] gap-8 items-end">
           {/* Text Column */}
           <div className="space-y-6 order-2 md:order-1">
             <div className="space-y-2">
               <p className="text-muted font-mono text-sm tracking-wider uppercase">
-                ~/about --verbose
+                character_sheet.json
               </p>
               <h1 className="text-4xl md:text-5xl font-bold text-primary leading-tight">
-                Building the
-                <span className="block text-accent">future of APIs</span>
+                Ruben Casas
               </h1>
+              <p className="text-accent font-mono text-sm">
+                Staff Vibe Engineer · Postman
+              </p>
             </div>
-            <p className="text-secondary text-lg leading-relaxed">
-              I'm Ruben, a Staff Engineer at Postman working on making APIs more accessible to developers worldwide. When I'm not coding, you'll find me speaking at conferences or writing about the latest in web development.
-            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {CHARACTER_SHEET.map((item) => (
+                <div
+                  key={item.label}
+                  className="border border-theme bg-secondary rounded-lg p-3"
+                >
+                  <p className="text-muted font-mono text-xs">{item.label}</p>
+                  <p className="text-primary text-sm">{item.value}</p>
+                </div>
+              ))}
+            </div>
+            <div className="border border-theme bg-secondary rounded-lg p-4 space-y-2">
+              <p className="text-muted font-mono text-xs">special_moves[]</p>
+              <div className="flex flex-wrap gap-2">
+                {SPECIAL_MOVES.map((move) => (
+                  <span
+                    key={move}
+                    className="px-2 py-1 text-xs bg-tertiary rounded border border-theme text-muted hover:text-accent hover:border-accent transition-colors"
+                  >
+                    {move}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="border border-theme bg-secondary rounded-lg p-4 font-mono text-sm text-primary space-y-2">
+              <p className="text-muted">hot_take()</p>
+              <p>"The IDE is dead. Vibe engineering killed it."</p>
+              <p className="text-muted">With coding agents in the loop, the stack matters less.</p>
+            </div>
           </div>
 
           {/* Image Column - Asymmetric Treatment */}
@@ -82,10 +157,42 @@ function AboutPage() {
         </div>
       </header>
 
+      {/* Outside of Programming - Hobby Gallery */}
+      <section className="space-y-6">
+        <div className="flex items-center gap-4">
+          <h2 className="text-2xl font-bold text-primary">side_quests()</h2>
+          <div className="flex-1 h-px bg-[var(--border)]" />
+        </div>
+        <p className="text-secondary text-lg leading-relaxed">
+          The other side of me: water, wind, music, and a past life as a London tour guide.
+        </p>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 auto-rows-[140px] md:auto-rows-[170px]">
+          {HOBBIES.map((hobby) => (
+            <div
+              key={hobby.title}
+              className={`relative group overflow-hidden rounded-lg border border-theme ${
+                hobby.className ?? 'aspect-square'
+              }`}
+            >
+              <img
+                src={hobby.image}
+                alt={hobby.title}
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-80" />
+              <div className="absolute bottom-0 left-0 right-0 p-4 space-y-1">
+                <p className="text-white font-mono text-sm">{hobby.title}</p>
+                <p className="text-white/80 text-xs font-mono">{hobby.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Photo Gallery Section */}
       <section className="space-y-6">
         <div className="flex items-center gap-4">
-          <h2 className="text-2xl font-bold text-primary">gallery.map()</h2>
+          <h2 className="text-2xl font-bold text-primary">stage_credits()</h2>
           <div className="flex-1 h-px bg-[var(--border)]" />
         </div>
 
@@ -161,56 +268,25 @@ function AboutPage() {
         <div className="grid md:grid-cols-[200px_1fr] gap-6 md:gap-12">
           <div className="space-y-2">
             <h2 className="text-xl font-bold text-primary">work()</h2>
-            <p className="text-muted text-sm font-mono">// career history</p>
+            <p className="text-muted text-sm font-mono">// look at my linkedin</p>
           </div>
-          <div className="space-y-6">
-            <WorkItem
-              company="Postman"
-              role="Staff Engineer"
-              period="2021 - Present"
-              description="Leading frontend architecture and developer experience initiatives. Building tools that make API development more accessible."
-            />
-            <WorkItem
-              company="Formidable"
-              role="Senior Software Engineer"
-              period="2019 - 2021"
-              description="Worked with Fortune 500 clients on complex React applications. Contributed to open source projects."
-            />
-            <WorkItem
-              company="Various Startups"
-              role="Full Stack Developer"
-              period="2015 - 2019"
-              description="Built products from 0 to 1 across different industries. Learned to wear many hats."
-            />
-          </div>
-        </div>
-
-        {/* Divider */}
-        <div className="h-px bg-[var(--border)]" />
-
-        {/* Skills & Interests */}
-        <div className="grid md:grid-cols-[200px_1fr] gap-6 md:gap-12">
-          <div className="space-y-2">
-            <h2 className="text-xl font-bold text-primary">skills[]</h2>
-            <p className="text-muted text-sm font-mono">// tech stack</p>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <SkillGroup
-              title="Frontend"
-              skills={['React', 'TypeScript', 'Next.js', 'TanStack', 'CSS-in-JS']}
-            />
-            <SkillGroup
-              title="Backend"
-              skills={['Node.js', 'GraphQL', 'REST APIs', 'PostgreSQL', 'Redis']}
-            />
-            <SkillGroup
-              title="Tools"
-              skills={['Vite', 'Webpack', 'Docker', 'GitHub Actions', 'Vercel']}
-            />
-            <SkillGroup
-              title="Interests"
-              skills={['AI/ML', 'DX', 'Open Source', 'Speaking', 'Mentoring']}
-            />
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-center gap-2 text-sm font-mono text-muted">
+              <span>For the full backstory:</span>
+              <a
+                href="https://www.linkedin.com/in/ruben-casas-17100383/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-accent hover:underline"
+              >
+                Look at my LinkedIn
+              </a>
+            </div>
+            <ul className="space-y-2 text-secondary">
+              <li>Current quest: Staff Vibe Engineer @ Postman (2021 — now)</li>
+              <li>Previous quest: Senior Software Engineer @ Formidable (2019 — 2021)</li>
+              <li>Earlier: Full-stack builder across startups (2015 — 2019)</li>
+            </ul>
           </div>
         </div>
 
@@ -221,7 +297,7 @@ function AboutPage() {
         <div className="grid md:grid-cols-[200px_1fr] gap-6 md:gap-12">
           <div className="space-y-2">
             <h2 className="text-xl font-bold text-primary">stats()</h2>
-            <p className="text-muted text-sm font-mono">// speaking metrics</p>
+            <p className="text-muted text-sm font-mono">// speaking stats</p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatCard number="30+" label="Conferences" />
@@ -231,93 +307,6 @@ function AboutPage() {
           </div>
         </div>
       </section>
-
-      {/* CTA Section */}
-      <section className="border border-theme rounded-lg overflow-hidden">
-        <div className="flex items-center gap-2 px-4 py-2 bg-tertiary border-b border-theme">
-          <div className="flex gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-red-500/80" />
-            <span className="w-3 h-3 rounded-full bg-yellow-500/80" />
-            <span className="w-3 h-3 rounded-full bg-green-500/80" />
-          </div>
-          <span className="text-xs text-muted font-mono ml-2">contact.sh</span>
-        </div>
-        <div className="p-6 bg-secondary text-center space-y-4">
-          <p className="text-primary font-mono">
-            <span className="text-accent">$</span> want_to_connect?
-          </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            <a
-              href="https://x.com/Infoxicador"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-tertiary rounded border border-theme hover:bg-primary transition-colors text-sm font-mono"
-            >
-              <span className="text-accent">{'>'}</span> twitter
-            </a>
-            <a
-              href="https://github.com/infoxicator"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-tertiary rounded border border-theme hover:bg-primary transition-colors text-sm font-mono"
-            >
-              <span className="text-accent">{'>'}</span> github
-            </a>
-            <a
-              href="https://www.linkedin.com/in/ruben-casas-17100383/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-tertiary rounded border border-theme hover:bg-primary transition-colors text-sm font-mono"
-            >
-              <span className="text-accent">{'>'}</span> linkedin
-            </a>
-          </div>
-        </div>
-      </section>
-    </div>
-  )
-}
-
-function WorkItem({
-  company,
-  role,
-  period,
-  description,
-}: {
-  company: string
-  role: string
-  period: string
-  description: string
-}) {
-  return (
-    <div className="group relative pl-6 border-l-2 border-theme hover:border-accent transition-colors">
-      <div className="absolute left-0 top-0 w-3 h-3 -translate-x-[7px] rounded-full bg-tertiary border-2 border-theme group-hover:border-accent group-hover:bg-accent transition-colors" />
-      <div className="space-y-1">
-        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-          <h3 className="text-primary font-semibold">{company}</h3>
-          <span className="text-muted text-sm font-mono">{role}</span>
-        </div>
-        <p className="text-muted text-sm font-mono">{period}</p>
-        <p className="text-secondary">{description}</p>
-      </div>
-    </div>
-  )
-}
-
-function SkillGroup({ title, skills }: { title: string; skills: string[] }) {
-  return (
-    <div className="space-y-2">
-      <h3 className="text-primary font-semibold text-sm">{title}</h3>
-      <div className="flex flex-wrap gap-1.5">
-        {skills.map((skill) => (
-          <span
-            key={skill}
-            className="px-2 py-1 text-xs bg-tertiary rounded border border-theme text-muted hover:text-accent hover:border-accent transition-colors"
-          >
-            {skill}
-          </span>
-        ))}
-      </div>
     </div>
   )
 }
