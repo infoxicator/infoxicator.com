@@ -29,6 +29,7 @@ const SIDE_QUESTS = [
     title: 'Wingfoiling',
     description: 'Wind + water + board. Sounds made up but it is real and addictive.',
     image: '/images/posts/what-codex-thinks-about-me/wing-what.jpeg',
+    video: '/videos/wing-foil.mp4',
     featured: true,
   },
   {
@@ -61,7 +62,7 @@ const PODCASTS = [
     description: 'Tasty web development treats',
     url: 'https://syntax.fm/',
     color: '#F0DB4F',
-    artwork: 'https://syntax.fm/static/logo.png',
+    artwork: '/images/about/podcasts/syntax-fm.png',
   },
   {
     name: 'Latent Space',
@@ -69,7 +70,7 @@ const PODCASTS = [
     description: 'The AI engineer podcast',
     url: 'https://www.latent.space/',
     color: '#8B5CF6',
-    artwork: 'https://storage.buzzsprout.com/wbpcgvuqjwn64ebgabwxycduxjwh',
+    artwork: '/images/about/podcasts/latent-space.png',
   },
   {
     name: 'My First Million',
@@ -77,7 +78,7 @@ const PODCASTS = [
     description: 'Brainstorming business ideas since episode 1',
     url: 'https://www.mfmpod.com/',
     color: '#22C55E',
-    artwork: 'https://media.npr.org/assets/img/2023/07/26/my-first-million_tile_npr-network-01_custom-29a2e82bbf16a38b0b9f60d91a69b5beb4b0a790.jpg',
+    artwork: '/images/about/podcasts/my-first-million.png',
   },
   {
     name: 'The Pragmatic Engineer',
@@ -85,7 +86,7 @@ const PODCASTS = [
     description: 'Big tech and high-growth startups',
     url: 'https://newsletter.pragmaticengineer.com/podcast',
     color: '#3B82F6',
-    artwork: 'https://substackcdn.com/image/fetch/w_96,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F2c6b3277-68c9-408b-888d-5a7e1da6df60_1000x1000.png',
+    artwork: '/images/about/podcasts/pragmatic-engineer.jpg',
   },
   {
     name: 'PodRocket',
@@ -93,23 +94,23 @@ const PODCASTS = [
     description: 'Weekly web dev conversations',
     url: 'https://podrocket.logrocket.com/',
     color: '#764ABC',
-    artwork: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8dUoXqCLT7VKVdNgPCf_5g49BPZXON3ZKIw&s',
+    artwork: '/images/about/podcasts/podrocket.jpg',
   },
   {
     name: 'Contejas Podcast',
     hosts: 'Contejas',
     description: 'Spanish tech conversations',
-    url: 'https://www.youtube.com/@ContejasTeam',
+    url: 'https://tej.as/podcast',
     color: '#EC4899',
-    artwork: 'https://yt3.googleusercontent.com/zZ0vSq_4Y1pPPLT_-aYnHmJCWRPcFJqGxUuYdJ1-0M5vkh0A6-R9_JQ9w0DF4Q6dI0vUz0rF3g=s176-c-k-c0x00ffffff-no-rj',
+    artwork: '/images/about/podcasts/contejaspod.jpeg',
   },
   {
     name: 'Kill Switch',
     hosts: 'Various',
     description: 'True crime meets tech',
-    url: 'https://www.bbc.co.uk/programmes/p0gx61v3',
+    url: 'https://open.spotify.com/show/3gkLkDGuc1avcwMYmoOchw',
     color: '#EF4444',
-    artwork: 'https://ichef.bbci.co.uk/images/ic/480xn/p0gx6cj9.jpg',
+    artwork: '/images/about/podcasts/kill-switch.jpg',
   },
   {
     name: 'Something You Should Know',
@@ -117,7 +118,7 @@ const PODCASTS = [
     description: 'Random facts about how elevators work',
     url: 'https://somethingyoushouldknow.net/',
     color: '#F97316',
-    artwork: 'https://i.scdn.co/image/ab6765630000f68d5c6a3a7f8f05a1c9c0d5e6f7',
+    artwork: '/images/about/podcasts/something-you-should-know.jpg',
   },
 ]
 
@@ -254,7 +255,7 @@ function HeroSection() {
         {/* Right Column - Picture and Special Moves */}
         <div className="space-y-6 order-1 lg:order-2">
           {/* Image */}
-          <div className="relative">
+          <div className="relative max-w-[280px] mx-auto md:max-w-none">
             {/* Decorative elements */}
             <div className="absolute -inset-4 bg-gradient-to-br from-accent/20 via-transparent to-transparent rounded-2xl blur-xl" />
             <div className="absolute inset-0 border-2 border-accent/30 translate-x-4 translate-y-4 rounded-xl" />
@@ -331,6 +332,21 @@ function HotTakeSection() {
 }
 
 function SideQuestsSection() {
+  const [videoModal, setVideoModal] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (videoModal === null) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setVideoModal(null)
+    }
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.body.style.overflow = ''
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [videoModal])
+
   return (
     <section className="space-y-8">
       <div className="flex items-center gap-4">
@@ -346,9 +362,10 @@ function SideQuestsSection() {
         {SIDE_QUESTS.map((quest, index) => (
           <div
             key={quest.title}
+            onClick={() => quest.video && setVideoModal(quest.video)}
             className={`relative group overflow-hidden rounded-xl border border-theme bg-secondary hover:border-accent transition-all duration-500 ${
               index === 0 ? 'col-span-2 row-span-2' : ''
-            }`}
+            } ${quest.video ? 'cursor-pointer' : ''}`}
           >
             <img
               src={quest.image}
@@ -357,6 +374,17 @@ function SideQuestsSection() {
             />
             {/* Overlay - stronger gradient for text legibility */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/10" />
+
+            {/* Play button for video items */}
+            {quest.video && (
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="w-16 h-16 rounded-full bg-accent/90 flex items-center justify-center backdrop-blur-sm">
+                  <svg className="w-7 h-7 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </div>
+              </div>
+            )}
 
             {/* Content - flex container pinned to bottom */}
             <div className="absolute inset-0 flex flex-col justify-end p-3 md:p-4">
@@ -371,6 +399,38 @@ function SideQuestsSection() {
           </div>
         ))}
       </div>
+
+      {/* Video Modal */}
+      {videoModal && (
+        <div
+          className="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 backdrop-blur-sm"
+          onClick={() => setVideoModal(null)}
+        >
+          <button
+            className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors p-2 z-10"
+            onClick={() => setVideoModal(null)}
+          >
+            <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          <div
+            className="relative max-w-[90vw] max-h-[90vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <video
+              src={videoModal}
+              autoPlay
+              muted
+              loop
+              playsInline
+              controls
+              className="max-h-[90vh] rounded-lg shadow-2xl"
+            />
+          </div>
+        </div>
+      )}
     </section>
   )
 }
@@ -414,7 +474,7 @@ function PodcastCarousel() {
             <div className="flex-1 h-px bg-gradient-to-r from-[var(--border)] to-transparent" />
           </div>
           <p className="text-secondary">
-            Podcasts that live in my head. My commute and gym session, basically.
+            Podcasts that live in my head. My morning walk and daily bike ride session, basically.
           </p>
         </div>
 
@@ -717,6 +777,37 @@ const STAGE_PHOTOS = [
 
 function SpeakingGallery() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  const [selectedPhoto, setSelectedPhoto] = useState<number | null>(null)
+  const leaveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  const handleMouseEnter = (index: number) => {
+    if (leaveTimeoutRef.current) {
+      clearTimeout(leaveTimeoutRef.current)
+      leaveTimeoutRef.current = null
+    }
+    setHoveredIndex(index)
+  }
+
+  const handleMouseLeave = () => {
+    leaveTimeoutRef.current = setTimeout(() => {
+      setHoveredIndex(null)
+    }, 50)
+  }
+
+  useEffect(() => {
+    if (selectedPhoto === null) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSelectedPhoto(null)
+      if (e.key === 'ArrowRight') setSelectedPhoto((prev) => (prev! + 1) % STAGE_PHOTOS.length)
+      if (e.key === 'ArrowLeft') setSelectedPhoto((prev) => (prev! - 1 + STAGE_PHOTOS.length) % STAGE_PHOTOS.length)
+    }
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.body.style.overflow = ''
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [selectedPhoto])
 
   return (
     <section className="space-y-8">
@@ -743,10 +834,12 @@ function SpeakingGallery() {
             style={{
               transform: `translate(-50%, -50%) rotate(${hoveredIndex === 0 ? 0 : STAGE_PHOTOS[0].rotation}deg) scale(${hoveredIndex === 0 ? 1.05 : 1})`,
               zIndex: hoveredIndex === 0 ? 100 : STAGE_PHOTOS[0].zIndex,
-              transition: 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease',
+              pointerEvents: hoveredIndex !== null && hoveredIndex !== 0 ? 'none' : 'auto',
             }}
-            onMouseEnter={() => setHoveredIndex(0)}
-            onMouseLeave={() => setHoveredIndex(null)}
+            onMouseEnter={() => handleMouseEnter(0)}
+            onMouseLeave={handleMouseLeave}
+            onClick={() => setSelectedPhoto(0)}
           >
             <div className="bg-white p-2 md:p-3 rounded-sm shadow-2xl shadow-black/30">
               <div className="relative overflow-hidden">
@@ -759,7 +852,6 @@ function SpeakingGallery() {
               </div>
               <div className="pt-2 md:pt-3 pb-1">
                 <p className="font-handwriting text-gray-700 text-sm md:text-base">{STAGE_PHOTOS[0].conference}</p>
-                <p className="text-gray-400 text-xs font-mono">{STAGE_PHOTOS[0].year}</p>
               </div>
             </div>
             {/* Tape effect */}
@@ -772,10 +864,12 @@ function SpeakingGallery() {
             style={{
               transform: `rotate(${hoveredIndex === 1 ? 0 : STAGE_PHOTOS[1].rotation}deg) scale(${hoveredIndex === 1 ? 1.1 : 1})`,
               zIndex: hoveredIndex === 1 ? 100 : STAGE_PHOTOS[1].zIndex,
-              transition: 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease',
+              pointerEvents: hoveredIndex !== null && hoveredIndex !== 1 ? 'none' : 'auto',
             }}
-            onMouseEnter={() => setHoveredIndex(1)}
-            onMouseLeave={() => setHoveredIndex(null)}
+            onMouseEnter={() => handleMouseEnter(1)}
+            onMouseLeave={handleMouseLeave}
+            onClick={() => setSelectedPhoto(1)}
           >
             <div className="bg-white p-2 rounded-sm shadow-xl shadow-black/20">
               <img
@@ -796,10 +890,12 @@ function SpeakingGallery() {
             style={{
               transform: `rotate(${hoveredIndex === 2 ? 0 : STAGE_PHOTOS[2].rotation}deg) scale(${hoveredIndex === 2 ? 1.1 : 1})`,
               zIndex: hoveredIndex === 2 ? 100 : STAGE_PHOTOS[2].zIndex,
-              transition: 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease',
+              pointerEvents: hoveredIndex !== null && hoveredIndex !== 2 ? 'none' : 'auto',
             }}
-            onMouseEnter={() => setHoveredIndex(2)}
-            onMouseLeave={() => setHoveredIndex(null)}
+            onMouseEnter={() => handleMouseEnter(2)}
+            onMouseLeave={handleMouseLeave}
+            onClick={() => setSelectedPhoto(2)}
           >
             <div className="bg-white p-2 rounded-sm shadow-xl shadow-black/20">
               <img
@@ -820,10 +916,12 @@ function SpeakingGallery() {
             style={{
               transform: `rotate(${hoveredIndex === 3 ? 0 : STAGE_PHOTOS[3].rotation}deg) scale(${hoveredIndex === 3 ? 1.1 : 1})`,
               zIndex: hoveredIndex === 3 ? 100 : STAGE_PHOTOS[3].zIndex,
-              transition: 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease',
+              pointerEvents: hoveredIndex !== null && hoveredIndex !== 3 ? 'none' : 'auto',
             }}
-            onMouseEnter={() => setHoveredIndex(3)}
-            onMouseLeave={() => setHoveredIndex(null)}
+            onMouseEnter={() => handleMouseEnter(3)}
+            onMouseLeave={handleMouseLeave}
+            onClick={() => setSelectedPhoto(3)}
           >
             <div className="bg-white p-2 rounded-sm shadow-xl shadow-black/20">
               <img
@@ -843,10 +941,12 @@ function SpeakingGallery() {
             style={{
               transform: `rotate(${hoveredIndex === 4 ? 0 : STAGE_PHOTOS[4].rotation}deg) scale(${hoveredIndex === 4 ? 1.1 : 1})`,
               zIndex: hoveredIndex === 4 ? 100 : STAGE_PHOTOS[4].zIndex,
-              transition: 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease',
+              pointerEvents: hoveredIndex !== null && hoveredIndex !== 4 ? 'none' : 'auto',
             }}
-            onMouseEnter={() => setHoveredIndex(4)}
-            onMouseLeave={() => setHoveredIndex(null)}
+            onMouseEnter={() => handleMouseEnter(4)}
+            onMouseLeave={handleMouseLeave}
+            onClick={() => setSelectedPhoto(4)}
           >
             <div className="bg-white p-2 rounded-sm shadow-xl shadow-black/20">
               <img
@@ -867,10 +967,12 @@ function SpeakingGallery() {
             style={{
               transform: `rotate(${hoveredIndex === 5 ? 0 : STAGE_PHOTOS[5].rotation}deg) scale(${hoveredIndex === 5 ? 1.1 : 1})`,
               zIndex: hoveredIndex === 5 ? 100 : STAGE_PHOTOS[5].zIndex,
-              transition: 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease',
+              pointerEvents: hoveredIndex !== null && hoveredIndex !== 5 ? 'none' : 'auto',
             }}
-            onMouseEnter={() => setHoveredIndex(5)}
-            onMouseLeave={() => setHoveredIndex(null)}
+            onMouseEnter={() => handleMouseEnter(5)}
+            onMouseLeave={handleMouseLeave}
+            onClick={() => setSelectedPhoto(5)}
           >
             <div className="bg-white p-2 rounded-sm shadow-xl shadow-black/20">
               <img
@@ -891,10 +993,12 @@ function SpeakingGallery() {
             style={{
               transform: `rotate(${hoveredIndex === 6 ? 0 : STAGE_PHOTOS[6].rotation}deg) scale(${hoveredIndex === 6 ? 1.1 : 1})`,
               zIndex: hoveredIndex === 6 ? 100 : STAGE_PHOTOS[6].zIndex,
-              transition: 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease',
+              pointerEvents: hoveredIndex !== null && hoveredIndex !== 6 ? 'none' : 'auto',
             }}
-            onMouseEnter={() => setHoveredIndex(6)}
-            onMouseLeave={() => setHoveredIndex(null)}
+            onMouseEnter={() => handleMouseEnter(6)}
+            onMouseLeave={handleMouseLeave}
+            onClick={() => setSelectedPhoto(6)}
           >
             <div className="bg-white p-2 rounded-sm shadow-xl shadow-black/20">
               <img
@@ -914,10 +1018,12 @@ function SpeakingGallery() {
             style={{
               transform: `rotate(${hoveredIndex === 7 ? 0 : STAGE_PHOTOS[7].rotation}deg) scale(${hoveredIndex === 7 ? 1.1 : 1})`,
               zIndex: hoveredIndex === 7 ? 100 : STAGE_PHOTOS[7].zIndex,
-              transition: 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease',
+              pointerEvents: hoveredIndex !== null && hoveredIndex !== 7 ? 'none' : 'auto',
             }}
-            onMouseEnter={() => setHoveredIndex(7)}
-            onMouseLeave={() => setHoveredIndex(null)}
+            onMouseEnter={() => handleMouseEnter(7)}
+            onMouseLeave={handleMouseLeave}
+            onClick={() => setSelectedPhoto(7)}
           >
             <div className="bg-white p-2 rounded-sm shadow-xl shadow-black/20">
               <img
@@ -964,6 +1070,63 @@ function SpeakingGallery() {
           </svg>
         </Link>
       </div>
+
+      {/* Photo modal */}
+      {selectedPhoto !== null && (
+        <div
+          className="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 backdrop-blur-sm"
+          onClick={() => setSelectedPhoto(null)}
+        >
+          {/* Close button */}
+          <button
+            className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors p-2"
+            onClick={() => setSelectedPhoto(null)}
+          >
+            <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          {/* Navigation arrows */}
+          <button
+            className="absolute left-4 text-white/70 hover:text-white transition-colors p-2"
+            onClick={(e) => {
+              e.stopPropagation()
+              setSelectedPhoto((prev) => (prev! - 1 + STAGE_PHOTOS.length) % STAGE_PHOTOS.length)
+            }}
+          >
+            <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button
+            className="absolute right-4 text-white/70 hover:text-white transition-colors p-2"
+            onClick={(e) => {
+              e.stopPropagation()
+              setSelectedPhoto((prev) => (prev! + 1) % STAGE_PHOTOS.length)
+            }}
+          >
+            <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          {/* Image */}
+          <div
+            className="max-w-[90vw] max-h-[85vh] relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={STAGE_PHOTOS[selectedPhoto].src}
+              alt={STAGE_PHOTOS[selectedPhoto].alt}
+              className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
+            />
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 rounded-b-lg">
+              <p className="text-white font-medium">{STAGE_PHOTOS[selectedPhoto].conference}</p>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   )
 }

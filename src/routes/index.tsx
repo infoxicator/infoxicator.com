@@ -60,7 +60,10 @@ function Home() {
   return (
     <div className="space-y-16">
       {/* Profile Card Section */}
-      <section className="border border-theme rounded-2xl overflow-hidden bg-primary">
+      <Link
+        to="/about"
+        className="block border border-theme rounded-2xl overflow-hidden bg-primary hover:border-accent transition-colors"
+      >
         {/* Cover/Banner Area */}
         <div className="h-32 bg-gradient-to-r from-[var(--accent)] to-[var(--accent-hover)] relative">
           {/* Profile Picture */}
@@ -100,6 +103,7 @@ function Home() {
           <div className="pt-2 flex items-center gap-3">
             <Link
               to="/blog"
+              onClick={(e) => e.stopPropagation()}
               className="inline-flex items-center gap-2 px-4 py-2 bg-secondary rounded-full border border-theme hover:bg-tertiary transition-colors text-sm font-medium"
             >
               Read the blog
@@ -112,6 +116,7 @@ function Home() {
                 href="https://x.com/Infoxicador"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
                 className="p-2 rounded-full hover:bg-secondary transition-colors text-muted hover:text-primary"
                 aria-label="Twitter"
               >
@@ -123,6 +128,7 @@ function Home() {
                 href="https://github.com/infoxicator"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
                 className="p-2 rounded-full hover:bg-secondary transition-colors text-muted hover:text-primary"
                 aria-label="GitHub"
               >
@@ -134,6 +140,7 @@ function Home() {
                 href="https://www.linkedin.com/in/ruben-casas-17100383/"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
                 className="p-2 rounded-full hover:bg-secondary transition-colors text-muted hover:text-primary"
                 aria-label="LinkedIn"
               >
@@ -145,6 +152,7 @@ function Home() {
                 href="https://www.youtube.com/rubencasas"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
                 className="p-2 rounded-full hover:bg-secondary transition-colors text-muted hover:text-primary"
                 aria-label="YouTube"
               >
@@ -155,7 +163,7 @@ function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </Link>
 
       {/* Recent Posts Section */}
       <section className="space-y-6">
