@@ -23,4 +23,6 @@ llms need our context to produce the desired outcome
 
 tweet claude rubber duck
 
-the new triangle / testing thropy
+the new triangle / testing thropy (block blogpost)
+
+tech debt doesn't exist anymore, verification loop debt is the new tech debt
