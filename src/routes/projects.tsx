@@ -37,6 +37,36 @@ export const Route = createFileRoute('/projects')({
 // Project data - you can move this to a separate data file later
 const projects: Project[] = [
   {
+    id: 'postman-mcp-apps-integration',
+    title: 'MCP Apps Integration',
+    description:
+      "Shipped the official MCP Apps integration in Postman's MCP Inspector in collaboration with Anthropic, the MCP Apps working group, and MCP-UI creators. Delivered protocol communication redesigns, double-iframe security, and spec feedback validated in production.",
+    image: '/images/projects/mcp-apps-low-res.gif',
+    tech: ['MCP Apps', 'MCP Inspector', 'Postman'],
+    link: 'https://www.linkedin.com/posts/ruben-casas-17100383_announcing-official-mcp-apps-support-in-postman-activity-7415408750137671680-vric',
+    year: 'Dec 2025 - Present',
+  },
+  {
+    id: 'postman-chatgpt-apps-integration',
+    title: 'ChatGPT Apps Integration at Postman',
+    description:
+      'Shipped ChatGPT apps to the MCP Inspector so developers can debug and test locally. Reverse-engineered the architecture and double-iframe sandbox that protects hosts from injected code.',
+    image: '/images/projects/chatgpt-apps-postman.png',
+    tech: ['ChatGPT Apps', 'MCP Inspector', 'Postman'],
+    link: 'https://www.linkedin.com/posts/ruben-casas-17100383_this-is-what-the-developer-experience-for-activity-7395149320397672448-nHzh',
+    year: 'Oct 2025 - Present',
+  },
+  {
+    id: 'postman-mcp-ui',
+    title: 'MCP UI At Postman',
+    description:
+      "Built the first production MCP-UI integration with the MCP-UI creators and launched it on stage at MCP Night in San Francisco. The integration supports MCP-UI in Postman's MCP Inspector and Postman Agent Mode.",
+    image: '/images/projects/mcp-ui-postman.jpeg',
+    tech: ['MCP-UI', 'MCP Inspector', 'Postman'],
+    youtube: 'https://www.youtube.com/watch?v=qfBlnl89kVM',
+    year: 'Jun 2025 - Present',
+  },
+  {
     id: 'infoxicator-site',
     title: 'My Personal Site',
     description:
