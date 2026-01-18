@@ -206,6 +206,16 @@ const projects: Project[] = [
     link: 'https://github.com/americanexpress/one-app',
     year: 'Mar 2020 - Mar 2022',
   },
+  {
+    id: 'react-native-star-printers',
+    title: 'React Native Star Printers',
+    description:
+      'Built a React Native bridge for Star Micronics printers after contributing to the Cordova/Ionic wrapper. The library enables printing on both iOS and Android.',
+    image: '/images/projects/react-native-star-prnt.png',
+    tech: ['React Native', 'iOS', 'Android'],
+    link: 'https://www.npmjs.com/package/react-native-star-prnt',
+    year: 'Feb 2018 - Mar 2019',
+  },
 ]
 
 interface Project {
