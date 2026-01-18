@@ -145,6 +145,37 @@ const projects: Project[] = [
     featured: true,
     year: '2025',
   },
+  {
+    id: 'postman-app-launch-performance',
+    title: 'Postman App Launch Performance',
+    description:
+      "Multi-year project to improve the launch performance of Postman's Electron application, including a public conference talk on the approach and results.",
+    image: '/images/projects/postman-performance.jpeg',
+    tech: ['Electron', 'Performance', 'Postman'],
+    link: 'https://gitnation.com/contents/this-is-how-we-made-postman-launch-twice-as-fast',
+    year: 'Apr 2023 - Apr 2025',
+  },
+  {
+    id: 'postman-vscode-extension',
+    title: 'Postman VSCode Extension',
+    description:
+      'Shipped the Postman VSCode extension with a small team in six months; now used by 2M+ developers. Introduced bidirectional sync across tabs and an integration-test platform.',
+    image: '/images/projects/vscode-blog-new-features.jpeg',
+    tech: ['VS Code', 'Extensions', 'Postman'],
+    link: 'https://marketplace.visualstudio.com/items?itemName=Postman.postman-for-vscode',
+    year: 'Jan 2022 - Aug 2022',
+  },
+  {
+    id: 'one-app-micro-frontend-framework',
+    title: 'One App Micro-Frontend Framework',
+    description:
+      'Contributor and core team member of the open source React meta-framework published after the internal implementation at American Express.',
+    image: '/images/projects/one-app.png',
+    tech: ['React', 'Micro-Frontends', 'Open Source'],
+    github: 'https://github.com/americanexpress/one-app',
+    link: 'https://github.com/americanexpress/one-app',
+    year: 'Mar 2020 - Mar 2022',
+  },
 ]
 
 interface Project {
