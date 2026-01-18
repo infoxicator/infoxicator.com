@@ -9,7 +9,7 @@ const CHARACTER_SHEET = {
   class: 'Staff Vibe Engineer',
   subclass: 'Google Dev Expert',
   guild: 'Postman',
-  origin: 'Colombia 🇨🇴',
+  origin: 'Colombian-born, British 🇨🇴🇬🇧',
   base: 'South East England, UK 🇬🇧',
   languages: ['English', 'Spanish'],
   party: 'Married + two kids',
