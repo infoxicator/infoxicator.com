@@ -27,7 +27,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
 
 function looksLikeHtml(content: string): boolean {
   const hasHtml =
-    /<(p|h1|h2|h3|ul|ol|blockquote|figure|pre|img|a|iframe|code|strong|em|s|br)\b/i.test(
+    /<(p|h1|h2|h3|ul|ol|blockquote|figure|pre|img|a|iframe|code|strong|em|s|del|br)\b/i.test(
       content
     )
   const hasMarkdown = /(^|\n)\s*(#{1,6}\s|```|[-*]\s|\d+\.\s|!\[|\[.+\]\(.+\))/m.test(
@@ -190,7 +190,7 @@ function parseMarkdownSync(content: string): React.ReactNode[] {
     if (line.startsWith('# ')) {
       elements.push(
         <h1 key={i} className="text-2xl font-bold text-primary mt-8 mb-4">
-          {line.slice(2)}
+          {renderInlineElements(line.slice(2))}
         </h1>
       )
       continue
@@ -199,7 +199,7 @@ function parseMarkdownSync(content: string): React.ReactNode[] {
     if (line.startsWith('## ')) {
       elements.push(
         <h2 key={i} className="text-xl font-semibold text-primary mt-8 mb-3">
-          {line.slice(3)}
+          {renderInlineElements(line.slice(3))}
         </h2>
       )
       continue
@@ -208,7 +208,7 @@ function parseMarkdownSync(content: string): React.ReactNode[] {
     if (line.startsWith('### ')) {
       elements.push(
         <h3 key={i} className="text-lg font-medium text-primary mt-6 mb-2">
-          {line.slice(4)}
+          {renderInlineElements(line.slice(4))}
         </h3>
       )
       continue
@@ -381,7 +381,7 @@ async function parseMarkdown(content: string): Promise<React.ReactNode[]> {
     if (line.startsWith('# ')) {
       elements.push(
         <h1 key={i} className="text-2xl font-bold text-primary mt-8 mb-4">
-          {line.slice(2)}
+          {renderInlineElements(line.slice(2))}
         </h1>
       )
       continue
@@ -390,7 +390,7 @@ async function parseMarkdown(content: string): Promise<React.ReactNode[]> {
     if (line.startsWith('## ')) {
       elements.push(
         <h2 key={i} className="text-xl font-semibold text-primary mt-8 mb-3">
-          {line.slice(3)}
+          {renderInlineElements(line.slice(3))}
         </h2>
       )
       continue
@@ -399,7 +399,7 @@ async function parseMarkdown(content: string): Promise<React.ReactNode[]> {
     if (line.startsWith('### ')) {
       elements.push(
         <h3 key={i} className="text-lg font-medium text-primary mt-6 mb-2">
-          {line.slice(4)}
+          {renderInlineElements(line.slice(4))}
         </h3>
       )
       continue
@@ -502,35 +502,53 @@ async function renderHtmlNode(
       )
     }
     case 'h1':
-      return (
-        <h1
-          key={key}
-          id={element.getAttribute('id') || undefined}
-          className="text-2xl font-bold text-primary mt-8 mb-4"
-        >
-          {element.textContent?.trim()}
-        </h1>
-      )
+      {
+        const children = await renderHtmlNodes(Array.from(element.childNodes), key)
+        if (children.length === 0) {
+          return null
+        }
+        return (
+          <h1
+            key={key}
+            id={element.getAttribute('id') || undefined}
+            className="text-2xl font-bold text-primary mt-8 mb-4"
+          >
+            {children}
+          </h1>
+        )
+      }
     case 'h2':
-      return (
-        <h2
-          key={key}
-          id={element.getAttribute('id') || undefined}
-          className="text-xl font-semibold text-primary mt-8 mb-3"
-        >
-          {element.textContent?.trim()}
-        </h2>
-      )
+      {
+        const children = await renderHtmlNodes(Array.from(element.childNodes), key)
+        if (children.length === 0) {
+          return null
+        }
+        return (
+          <h2
+            key={key}
+            id={element.getAttribute('id') || undefined}
+            className="text-xl font-semibold text-primary mt-8 mb-3"
+          >
+            {children}
+          </h2>
+        )
+      }
     case 'h3':
-      return (
-        <h3
-          key={key}
-          id={element.getAttribute('id') || undefined}
-          className="text-lg font-medium text-primary mt-6 mb-2"
-        >
-          {element.textContent?.trim()}
-        </h3>
-      )
+      {
+        const children = await renderHtmlNodes(Array.from(element.childNodes), key)
+        if (children.length === 0) {
+          return null
+        }
+        return (
+          <h3
+            key={key}
+            id={element.getAttribute('id') || undefined}
+            className="text-lg font-medium text-primary mt-6 mb-2"
+          >
+            {children}
+          </h3>
+        )
+      }
     case 'ul': {
       const children = await renderHtmlNodes(Array.from(element.childNodes), key)
       if (children.length === 0) {
@@ -706,6 +724,10 @@ async function renderHtmlNode(
     case 's': {
       const children = await renderHtmlNodes(Array.from(element.childNodes), key)
       return <s key={key}>{children}</s>
+    }
+    case 'del': {
+      const children = await renderHtmlNodes(Array.from(element.childNodes), key)
+      return <del key={key}>{children}</del>
     }
     case 'br':
       return <br key={key} />
@@ -912,13 +934,20 @@ function renderInlineElements(text: string): React.ReactNode {
     }
 
     // Handle bold, italics, and other text
-    const emphasisParts = part.split(/(\*\*[^*]+\*\*|\*[^*]+\*|_[^_]+_)/)
+    const emphasisParts = part.split(/(\*\*[^*]+\*\*|~~[^~]+~~|\*[^*]+\*|_[^_]+_)/)
     return emphasisParts.map((ep, j) => {
       if (ep.startsWith('**') && ep.endsWith('**')) {
         return (
           <strong key={`${i}-${j}`} className="font-semibold text-primary">
             {ep.slice(2, -2)}
           </strong>
+        )
+      }
+      if (ep.startsWith('~~') && ep.endsWith('~~')) {
+        return (
+          <s key={`${i}-${j}-strike`}>
+            {ep.slice(2, -2)}
+          </s>
         )
       }
       if (

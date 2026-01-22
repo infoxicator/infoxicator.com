@@ -26,3 +26,5 @@ tweet claude rubber duck
 the new triangle / testing thropy (block blogpost)
 
 tech debt doesn't exist anymore, verification loop debt is the new tech debt
+
+one of the reasons llms are so good at coding is because they are able to verify their work automatically. other sciences require more manual verification and human in the loop
