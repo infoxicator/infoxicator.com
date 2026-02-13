@@ -697,6 +697,38 @@ async function renderHtmlNode(
         </div>
       )
     }
+    case 'video': {
+      const src = element.getAttribute('src') || ''
+      if (!src) {
+        return null
+      }
+      const width = element.getAttribute('width') || undefined
+      const height = element.getAttribute('height') || undefined
+      const preloadAttr = element.getAttribute('preload')
+      const preload =
+        preloadAttr === 'none' || preloadAttr === 'metadata' || preloadAttr === 'auto'
+          ? preloadAttr
+          : undefined
+      const poster = element.getAttribute('poster') || undefined
+
+      return (
+        <div key={key} className="my-6 w-full overflow-hidden rounded border border-theme">
+          <video
+            src={src}
+            width={width}
+            height={height}
+            preload={preload}
+            poster={poster}
+            controls={element.hasAttribute('controls')}
+            autoPlay={element.hasAttribute('autoplay')}
+            loop={element.hasAttribute('loop')}
+            muted={element.hasAttribute('muted')}
+            playsInline={element.hasAttribute('playsinline')}
+            className="w-full h-auto"
+          />
+        </div>
+      )
+    }
     case 'code': {
       const text = element.textContent ?? ''
       return (
