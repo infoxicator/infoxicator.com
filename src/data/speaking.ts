@@ -22,6 +22,52 @@ export interface SpeakingItem {
 }
 
 export const speakingItems: SpeakingItem[] = [
+  // 1. Conference Talk - MCP Connect Day Paris
+  {
+    id: 'talk-mcp-connect-day-paris-2026',
+    type: 'talk',
+    title: 'Beyond Components: Generative UI in MCP',
+    event: 'MCP Connect Day Paris',
+    date: '2026-02-24',
+    description:
+      'Conference talk on moving beyond fixed components toward generative UI patterns in MCP.',
+    youtubeId: '-NseRIVgoFU',
+  },
+  // 2. Conference Talk - MCP Conference London
+  {
+    id: 'talk-mcp-conference-london-2026',
+    type: 'talk',
+    title: 'Beyond Components',
+    event: 'MCP Conference London',
+    date: '2026-02-13',
+    description:
+      'Conference talk in London focused on the "Beyond Components" approach for MCP Apps.',
+    image: '/images/speaking/mcp-conference.jpeg',
+  },
+  // 3. Meetup - Postman Agents and APIs London
+  {
+    id: 'meetup-postman-agents-and-apis-london-2026',
+    type: 'meetup',
+    title: 'The Origin of MCP-UI at Postman',
+    event: 'Postman Agents and APIs Meetup',
+    date: '2026-02-12',
+    description:
+      'Talk on the origin of MCP-UI and how Postman became the first MCP host to deploy it in production.',
+    location: 'London, UK',
+    image: '/images/speaking/agent-and-apis.jpeg',
+  },
+  // 4. Podcast - The Flow
+  {
+    id: 'podcast-the-flow-postman-ai-mcp-apps-2026',
+    type: 'podcast',
+    title: 'Postman AI and the Rise of MCP Apps',
+    event: 'The Flow Podcast',
+    date: '2026-02-23',
+    image: '/images/speaking/the-flow.jpeg',
+    description:
+      "David Jones-Gilardi and Roy Derks speak with Ruben Casas from Postman about how Postman moved from APIs to the latest AI tech.",
+    url: 'https://www.youtube.com/watch?v=Fa75RtTIFHI',
+  },
   // 1. React Summit US 2025 - This Is How We Made Postman Launch Twice as Fast
   {
     id: 'talk-react-summit-us-2025',
