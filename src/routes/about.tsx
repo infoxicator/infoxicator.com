@@ -6,7 +6,7 @@ import { SITE_AUTHOR, buildUrl } from '~/utils/site'
 // Character sheet data from Codex
 const CHARACTER_SHEET = {
   name: 'Ruben Casas',
-  class: 'Staff Vibe Engineer',
+  class: 'Staff Engineer',
   subclass: 'Google Dev Expert',
   guild: 'Postman',
   origin: 'Colombian-born, British 🇨🇴🇬🇧',
@@ -146,7 +146,7 @@ export const Route = createFileRoute('/about')({
     meta: seo({
       title: 'About | Ruben Casas',
       description:
-        'Learn more about Ruben Casas - Staff Vibe Engineer at Postman, Google Dev Expert, speaker, and blogger exploring AI agents and frontend architecture at scale.',
+        'Learn more about Ruben Casas - Staff Engineer at Postman, Google Dev Expert, speaker, and blogger exploring AI agents and frontend architecture at scale.',
       url: '/about/',
       image: '/profile.jpg',
       imageAlt: 'Ruben Casas',
@@ -161,7 +161,7 @@ export const Route = createFileRoute('/about')({
           name: 'About Ruben Casas',
           url: buildUrl('/about/'),
           description:
-            'Learn more about Ruben Casas - Staff Vibe Engineer, Google Dev Expert, speaker, and tech blogger.',
+            'Learn more about Ruben Casas - Staff Engineer, Google Dev Expert, speaker, and tech blogger.',
           mainEntity: {
             '@type': 'Person',
             name: SITE_AUTHOR,
@@ -316,7 +316,8 @@ function HotTakeSection() {
             <span className="text-accent font-mono text-xs">hot_take()</span>
           </div>
           <blockquote className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary leading-tight">
-            "The IDE is dead. <span className="text-accent">Vibe engineering</span> killed it."
+            "The IDE is dead. <span className="text-accent line-through">Vibe Coding</span> The
+            Codex App Killed It."
           </blockquote>
           <p className="text-secondary text-lg max-w-2xl mx-auto">
             With coding agents in the loop, the stack matters a lot less. The bottleneck is now{' '}
@@ -1246,7 +1247,7 @@ function FooterSection() {
           <ul className="space-y-3 text-secondary">
             <li className="flex items-start gap-3">
               <span className="text-accent">→</span>
-              <span>Staff Vibe Engineer @ Postman (2022 — now)</span>
+              <span>Staff Engineer @ Postman (2022 — now)</span>
             </li>
             <li className="flex items-start gap-3">
               <span className="text-muted">→</span>

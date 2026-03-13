@@ -55,9 +55,9 @@ It also added the line "building mildly interesting things with AI" which is hil
 
 Codex basically went on a mini scavenger hunt. Here is the condensed version:
 
-- **My site**: infoxicator.com says I am a Staff Vibe Engineer at Postman, speaker, blogger, and I build things with AI. Location is London, UK. Links to X, GitHub, LinkedIn, YouTube.
+- **My site**: infoxicator.com says I am a Staff Engineer at Postman, speaker, blogger, and I build things with AI. Location is London, UK. Links to X, GitHub, LinkedIn, YouTube.
 - **DEV profile**: Ruben Casas, Staff Engineer at Postman, Conference Speaker, building mildly interesting things with AI. "We rise by lifting others." Location: London.
-- **GitHub**: Staff Vibe Engineer at Postman. Bio repeats the same vibe. Public repo count, gists, all the usual stats. These are snapshots and will change.
+- **GitHub**: Staff Engineer at Postman. Bio repeats the same vibe. Public repo count, gists, all the usual stats. These are snapshots and will change.
 - **YouTube**: @RubenCasas channel, about line says I am the MCP-Ui guy exploring AI, multi-agent systems, and generative UI. I approve this branding.
 
 In other words, I am pretty consistent across platforms, which probably means I either have a strong personal brand or I copy paste my bio everywhere. The truth is yes.
