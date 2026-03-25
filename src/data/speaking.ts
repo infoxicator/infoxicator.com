@@ -22,6 +22,17 @@ export interface SpeakingItem {
 }
 
 export const speakingItems: SpeakingItem[] = [
+  // 1. Talk - Events by Apollo
+  {
+    id: 'talk-the-future-of-mcp-apps-2026',
+    type: 'talk',
+    title: 'The Future of MCP Apps',
+    event: 'Events by Apollo',
+    date: '2026-03-25',
+    description:
+      'Talk on the future of MCP Apps and how richer application experiences are evolving around the protocol.',
+    youtubeId: '-NjoTAB86ds',
+  },
   // 1. Conference Talk - MCP Connect Day Paris
   {
     id: 'talk-mcp-connect-day-paris-2026',
