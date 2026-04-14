@@ -316,15 +316,16 @@ function HotTakeSection() {
             <span className="text-accent font-mono text-xs">hot_take()</span>
           </div>
           <blockquote className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary leading-tight">
-            "The IDE is dead. <span className="text-accent line-through">Vibe Coding</span> The
-            Codex App Killed It."
+            "The most obvious future is probably too obvious.{' '}
+            <span className="text-accent">I believe</span> we are heading toward a world our
+            imagination still cannot reach."
           </blockquote>
           <p className="text-secondary text-lg max-w-2xl mx-auto">
-            With coding agents in the loop, the stack matters a lot less. The bottleneck is now{' '}
-            <span className="text-accent">intent</span>, not syntax.
+            The real shift is not just better tools or cleaner interfaces. It is that the next
+            chapter may look stranger and bigger than the futures we already know how to describe.
           </p>
           <p className="text-muted font-mono text-sm">
-            If you disagree, cool. See you on the other side in a year. 😎
+            If it feels hard to picture clearly, that is probably the point.
           </p>
         </div>
       </div>

@@ -1,0 +1,518 @@
+Hello, everybody. So a while ago, our CEO went onto Amazon and then he typed the cheapest
+
+laptop he could find. And he just ordered the laptop and he brought it to the office.
+
+So he brought it to the office. It was an Acer Celeron laptop, really low spec, very,
+
+very similar to a Chromebook, and he decided to test Postman on this really, really cheap
+
+laptop. We were not surprised that it was painful to watch. It was very, very, very
+
+difficult to get Postman working on that laptop. It was very slow. Sometimes it takes
+
+about 30, 40, 50 seconds to launch, and it will just start crashing. The CPU starts
+
+spiking. And it was a very difficult thing to see. And we knew we had a performance
+
+problem. But only then we realized how bad the problem was. Hi, everybody. So my name
+
+is Ruben Casas, I am a staff engineer at Postman, and today I'm going to show you five tips
+
+on how to improve your app performance. From picking the right metric, so understanding
+
+your problem, to reviewing and creating an action plan to bring the company together
+
+and solve the performance of your app. Doesn't matter if it's a mobile app, a desktop app,
+
+or a React app, you should be able to use these tips to get up and going and improving
+
+the performance like we did with Postman. So where do we start? In performance, the
+
+only place to start is measure, measure, measure. You need to start measuring performance. You
+
+cannot start solving a problem unless you start measuring performance. And then after
+
+you measure performance, the first thing you need to do is to pick a north star metric.
+
+You can measure multiple things, a lot of things, but you need to pick one metric and
+
+start obsessing over that metric and fixing and improving that metric. So we already had
+
+the metrics, some metrics at Postman, we had the usual stuff, we had the Core Vitals, the
+
+Lighthouse metrics. But to solve this problem, because it was so complicated, we knew we
+
+had to go deeper to understand the problem. So which one? Which one do we choose from
+
+Lighthouse? Which metric? We decided to go a different way. I found recently this concept
+
+called TTF. And TTF is used in mobile gaming. And as you can see in the Super Mario GIF
+
+here, is the time it takes to have fun. So from the moment you start a Mario game, you
+
+immediately start having fun. You start jumping, killing enemies, getting money, getting
+
+power-ups. So they have this term in mobile gaming called time to fun. Make sure that as
+
+soon as people open their app, they start having fun. Now our application is not a
+
+mobile app that you can use, but I got inspired by that and decided to choose a
+
+different metric called TTU. And TTU stands for Time to Usability. So Time to Usability
+
+is a metric that we have chosen to improve the performance of our application. And what is
+
+Time to Usability? Well, there are examples of other applications that are using this
+
+metric. They don't call it TTU. And TTU is a term that I came up with. But some other
+
+companies like VS Code have a concept of Time to Usability. And for them, Time to
+
+Usability is the time that takes for a user to get a blinking cursor and start coding
+
+on VS Code. Other companies like Slack, for example, they have the same, which is how
+
+fast until the user can open a chat and send a message. Now, what about TTI, Time to
+
+Interactive? We already have a metric in Lighthouse called Time to Interactive. And
+
+this Time to Interactive metric is measuring the time that it takes the application for
+
+you to be able to click and do things around it. But the problem with TTI is, in
+
+short, that it's technically ready. So your application is ready from the technical
+
+sense, so it's not blocked, you can start doing things. However, it doesn't tell you
+
+when you can actually start getting benefits from your app. In this case, TTU is
+
+probably a better metric because it reflects the real usability and the real things that
+
+developers are doing with your application. And we can optimize for what actually
+
+matters to our users. So we selected our TTU, Time to Usability, and the Time to Usability
+
+for Postman was the time that it takes for the Workbench, which is the main workspace
+
+where you perform most of the operations in Postman, and for the main part of the
+
+application, which is sending requests to be active. We put this as our critical path.
+
+The Time to Usability was the time that it took for someone to click onto the desktop
+
+application icon for this page to render and for that button to be ready for you to
+
+send a request, which is what most of the Postman users do exactly when they start the
+
+application. So we've chosen our TTU and we've defined it. Now, how do we measure it? Because
+
+we can just say, this is the time it takes for Postman to launch and show the button,
+
+but we need real data to measure this. And as I mentioned, TTU is a made-up metric that I came
+
+up with. It's not something that's provided with Lighthouse or with the Core Web Vitals.
+
+So we needed to measure this. And the way we did this was we inserted marks for the platform
+
+initialization, JavaScript evaluation, data fetching, rendering. Then we also captured the
+
+navigation resources. How long does it take for you to download that JavaScript, if it's coming
+
+from the network or from the service worker? We turned this into spans and we pushed them into
+
+our RAM and our synthetic labs for tracking. And our users are everywhere in the world.
+
+There are different CPUs, different laptops. So we had to get segmented dashboards per CPU
+
+and region just to see how the variation of the performance was between those regions and
+
+different users. You can do this. You can measure with just a built-in browser API,
+
+performance.mark. So performance.mark is very powerful, which is basically, you add it to your code
+
+and you start measuring from the moment you put a marker until the next part you put this marker,
+
+it will measure the time that it takes. So for example, in this case, this is a pseudocode
+
+of what we started measuring. We measured from the time that the platform initialized,
+
+the time that it took for the JavaScript bundles to load and execute and parse and compile,
+
+the time that it took for our data fetching to get all that data to show to the user,
+
+and the time that it took for that render of the critical UI to show on the page. And at the end,
+
+we just marked this with, okay, this core feature is ready and our time to usability is ready for us.
+
+Now, how do you see this locally and in synthetic monitoring? You can do this by going to the
+
+performance in the developer tools, you run a performance profile on your laptop,
+
+and these markers will start appearing in the timings section of that performance profile.
+
+Now, we don't want to just do this test on our laptops, we want to make sure that we can measure
+
+on real users and real user devices. So even though that we can do this locally,
+
+we also wanted to aggregate and publish these to our real user metrics. So we use another API called
+
+the performance.measure that gathers all of those performance markers that we showed you a minute
+
+ago. And you can take those markers and then send them to your analytic service. In this case,
+
+I'm just console logging this, but you can just create an API that sends this information to your
+
+real user metrics system. Now, this will allow you to create a lot of dashboards, and we created
+
+a lot of dashboards. We have segmentations, how many users were seeing the application critical
+
+path in under 10 seconds, how many people were seeing under 20, 30 seconds. We segmented this by
+
+user, device, operating system, the different type of postman application, if it was web, desktop,
+
+or if it was on Windows or macOS. Now, we set our goal. Our goal was to reduce the time to usability
+
+from 35 to 40 seconds that was taken at P90 to 10 seconds. And why we decided to choose 10 seconds?
+
+Well, we did some research, and 10 seconds is the maximum time that someone will wait for something
+
+to happen before they get distracted and go and do something else. So 10 seconds was our benchmark.
+
+And even though we had a lot of devices that were launching under 10 seconds, some of them were like
+
+two, three, five seconds, but those were like the super powerful Macs that would run the application.
+
+And we wanted to target every single device, even the low-powered devices to run under 10 seconds.
+
+So this is our goal. We've chosen this as our goal for the TTU. So this is what it takes us to our
+
+takeaway number one. Pick that no-start metric and then obsess on this metric until you achieve it.
+
+Improve it, measure it, obsess, and then go for it. So what's next? We picked our metric.
+
+We measured our metric. So now what we need to do is we need to understand the problem.
+
+We knew we had a big performance problem, but we didn't know what was causing that problem.
+
+So the big million-dollar question is, why is our app so slow? Why does it take so long to start?
+
+We took all of those measurements and we divided the application launch time into different sections
+
+that will allow us to understand where that time was going. So in the first part, we realized that
+
+it was about 22% of the time I was taking about Electron and the main process of Electron,
+
+just all that process starting up. Then our web view will start downloading, parsing JavaScript
+
+and compiling it. And that was taking about 40 seconds. Then the workspace, rendering all the
+
+API calls, the data fetching and rendering was taking the remainder all the time. So this way,
+
+we can visualize and segment the different parts of the application and then focus on
+
+those different problems. The takeaway number two is you cannot solve a problem that you don't
+
+understand. So first, we need to understand the problem and you need to start measuring
+
+progress towards fixing that problem. So what now? We know what the problem is. We have measured
+
+the problem. What do we need to do? We need to come up with a plan. So we needed a plan of action.
+
+And the first thing that we did was, okay, what have we done so far? What thing has worked? What
+
+things have not worked? And most importantly, what's the most low-hanging fruit, the obvious
+
+things that we can do to improve the performance of our application. So there was an obvious section
+
+that stood out and it was 40 percent of our application was downloading, parsing and compiling
+
+JavaScript. There was a huge part, nearly 50 percent of the time was in this section, which is basically
+
+even before we start rendering, our application was taking this much time, but just downloading
+
+and parsing JavaScript. Our bundle size was insanely huge. It was 14 megabytes of minified
+
+gzip compressed JavaScript. And this is the representation of what that looked like and all
+
+the code that we were shipping up front. And I know what you're thinking. 14 megabytes of JavaScript,
+
+are you insane? Well, there's an explanation for this. Postman app was a single page
+
+application that was a part of an Electron bundle that was served inside the bundle. So if you're
+
+familiar with Electron, you can get all the JavaScript files and then just ship it with the
+
+Electron bundle so you don't need to download anything from the network. But after years of
+
+iteration, circular dependencies, we ended up with a big, massive application with a lot of code.
+
+And we didn't have the need for code splitting or lazy loading because everything was inside
+
+an Electron bundle so you didn't have to pay that network cost. Now, after that, we moved to
+
+the web and we started shipping updates over the air. So we started downloading that JavaScript
+
+from our CDN instead of the Electron bundle to allow us to do updates faster. So we didn't have
+
+to download the Electron bundle every single time. But as you can imagine, that meant that now
+
+instead of having the 14 megabytes of JavaScript inside Electron, we had to download 14 megabytes
+
+over the network, which was a bit crazy. And that's the reason why our application was so big.
+
+I created this visualization. I went to the webpack stats and then tried to create a visualization
+
+of what our module graph and our bundle looked like. I ended up with this crazy, cool gif of
+
+our bundle, which I call the Supernova Module Graph. I remember I crashed my laptop a few times
+
+just trying to render this. It was impossible to understand all the connections and all the
+
+things that happened in our module graph that made that 14 megabytes of JavaScript bundle.
+
+So the question is, this is very obvious. It is big. It's a lot of JavaScript. But people might be
+
+asking, does the bundle size matter? And actually, it does. We did some research and
+
+the JavaScript, even if you compile it, if you compress it into Gzip, it will take
+
+a long time for the browser to execute it. So it's not the same as having a massive JPEG image.
+
+The bundle size, the JavaScript execution, takes a toll on your application, not just from the
+
+download part, from the network transfer, but also the parsing and the compiling. So if you're asking,
+
+does the bundle size matter? Yes, it does. And this is where we wanted to start reducing that bundle.
+
+We started applying all the Performance 101 optimizations, the basic stuff, the things
+
+that you learned that you have to do. So we started splitting the application into smaller
+
+chunks using lazy loading and doing some code splitting, ensuring that we just load the parts
+
+that were needed for the critical path. And we also introduced a service worker caching.
+
+So every time the application is launched, we cache all of the assets onto the service worker,
+
+so you don't have to download them from the network again. And when there is an update,
+
+we cache those assets in the background. So when you open the application, you don't even
+
+notice that the application has downloaded anything from the network, because it's already
+
+pre-cached into the service worker. But that was not enough and we had to go deeper.
+
+And I found a tool that I considered was the tipping point that helped us solve this
+
+problem. And the tool was called a StatusScope. And there is a new tool called Iris Doctor,
+
+which is very similar. I recommend you taking a look into it, which helps you understand
+
+that super NOA model graph and understand how you can start pulling things apart from that.
+
+The bundle analyzer has this very powerful feature. So StatusScope shows you, for example,
+
+in this case, why lodash is being included into the bundle. And now lodash is a really big
+
+dependency. And that was the first thing that we did, was like, okay, who is using lodash and why
+
+is lodash being bundled up front? And it tells you what file, what line is importing this module,
+
+so you can go and lazy load it or just completely remove it, which is what we recommend with lodash.
+
+So the results were incredible. We went from 14 megabytes of JavaScript compiled minified gzip
+
+to under 2.7 megabytes. There was still a lot of room for improvement, but Postman is nearly
+
+like a code editor. So we have a lot of things like the Monaco editor, which are really,
+
+really big and we cannot just remove. But that was huge. That was an incredible
+
+reduction of bundle from 14 megabytes to 2.7 megabytes.
+
+One thing that we made sure that we introduced was, okay, we need to make sure that we don't
+
+regress. That we don't, after reducing the bundle size in such a manner, we don't want people to go
+
+and add a new module that is going just to undo all the work that we have done. So we decided
+
+to introduce PR blocking checks on every single pull request. It will give you a status code
+
+report that will tell you if you are increasing the bundle size and if you are impacting the
+
+critical path on our metric. So we introduced this and we started to implement the PR checks,
+
+so we didn't go back to where we started. Now, the next thing was improving the network calls.
+
+And if you're a front-end engineer, you might be thinking, well, all of the optimizations are in
+
+the code, but actually some optimizations happen at the network level. We had so many network calls.
+
+There were hundreds of, for example, LaunchDarkly feature flags that were dead and we wanted to
+
+remove them. So that's the place we started. We started by removing LaunchDarkly flags,
+
+removing all those network calls, and we started prefetching the data. We took the critical path
+
+API calls that were required for us to render. And we started prefetching them upfront,
+
+even before your JavaScript started executing. So the data was already in parallel from the
+
+beginning, ready for you to use. And we also looked at the back-end. As front-end developers,
+
+we like to think we can do a lot of micro optimizations here and there, but sometimes
+
+the back-end is the one that is taking the longest and you need to go and speak to the back-end team
+
+and say, okay, we need to improve the back-end performance of these APIs that are used.
+
+And you'll be surprised how much performance you can gain from just that.
+
+Now, the last thing was this 22% that we found, and it was the electron performance. And you might
+
+be thinking, well, this is electron. There's nothing that you can do there to improve it.
+
+Well, we were wrong. It was the electron section, so it was before the WebView was launched, and it
+
+was all pure electron overhead. But then we realized that there were some things that we could improve
+
+for the electron performance. So the first thing was, let's improve the startup overhead of
+
+electron. Remove any database, bootstrap, initialization, blocking scripts that are happening
+
+on our code base that we can just remove and remove the blocking. And also, we started bundling
+
+the main process code. So in electron, one of the recommendations is to use a bundler and actually
+
+bundle the code, the JavaScript, that runs in electron. And also, something that we found that
+
+was very performance intensive was the require calls. Every time that you require a node module
+
+inside the electron main process, that was taking a toll on the total performance and the launch
+
+initialization. So for us, it was just start removing unnecessary modules and necessary dependencies
+
+from using require. Takeaway number three, relentless execution. So, I showed you how to
+
+divide the work, how to identify the critical areas, and then just go and execute. Remove
+
+all these things that are affecting your application, and you will start seeing the results.
+
+Now, after a few months working on this project, reality hit. We were just so happy that we reduced
+
+the bundle size so much. We're happy that we're making improvements to the network. But then,
+
+despite all of this, we were not seeing the results that we expected.
+
+And it didn't make sense. I was looking at the real user metrics, and it didn't make sense.
+
+I was expecting a huge reduction, at least on that section for the JavaScript loading.
+
+And I could not see that, even though the bundle had been reduced by 90%.
+
+So, what we had to do was just keep going and dig deeper and re-evaluate what we were doing
+
+and verify the data until we discovered something.
+
+There was a render-blocking process in the main process of Electron that was competing with our
+
+resources in the renderer, making that download and parsing of JavaScript sequential. So, you can
+
+imagine we still have a lot of JavaScript, and then the main process is completely blocking,
+
+stopping our JavaScript execution. Which meant that it doesn't matter how much bundle size
+
+reductions we have done, actually, they were just still waiting because they were blocked by the
+
+main thread. And there is one main rule on Electron, and it's, do not block the main thread.
+
+That's the golden rule. And we found this, and it was a moment of, okay, all of the improvements
+
+that we have done so far are now starting to show because we removed this particular bug that was
+
+affecting the main thread. And how we found it, we found it using this tool called Tracing.
+
+And you can use it with Cron Dev Tools as well. But this Tracing is for the main process for Electron.
+
+So, this is not the main process, the Tracing for the web app, this is for the main
+
+process of Electron. And we realized with this that we could find the place where it was blocking
+
+the render process. Now, it takes me to the advanced techniques. So, we have done the basics, we have
+
+done all of these things, but this exercise of doing the Tracing in Electron made us realize that there
+
+was more that we could do. There was more performance that we could extract. And we discovered this
+
+called the five-byte bytecode caching, the full bytecode caching. And the full bytecode caching
+
+is an optimization that we could implement with our service worker, where you can just basically
+
+pre-compile all your JavaScript. So, JavaScript compiles on demand just in time. But with the
+
+service worker, we could just, at the install event, we generate the full code cache. So, these scripts
+
+were pre-compiled. I did not compile in a lazy manner, but install everything at once. Now, we
+
+could do that because we had our service worker. That improved our launch performance from the
+
+Electron side and the co-loading even further. There were other techniques and advanced performance
+
+techniques that we tried, but they gave us different results. For example, we tried with v8
+
+snapshots. I don't know if anyone is using v8 snapshots for the main process in Electron,
+
+but it was a very tricky and brittle process. We got some improvements out of the v8 snapshots,
+
+but we decided to go with just the full bytecode caching because it was more predictable.
+
+So, takeaway number four, adapt and iterate. We had to look at the metrics, we had to look
+
+at the results, and then figure out what things were not working, and adapt, and then continue
+
+iterating until we got the result. Now, the last thing is organizational challenges. I mean, we are
+
+developers, we like a really good technical challenge, but at the same time, most of the
+
+issues that we had were also because of organizational challenges. They were not purely
+
+technical. We had issues like we tried to have a performance team to go and fix the performance
+
+while the rest of the company was shipping features, and the problem is this small focus
+
+team didn't have all the tools to go and fix the problem. We also had a lack of prioritization.
+
+Performance, we knew we had a problem, but nobody just started saying, hey, let's go and fix it,
+
+which also generates a lack of ownership. Performance is not my problem, it's a problem
+
+with the performance team, so I don't care about performance of the features when I start adding
+
+more features. But our CEO, after he brought this laptop, he just said, right, this is enough.
+
+Performance is everybody's problem, and he brought the entire company together, and he gave us a
+
+mandate to go and fix performance. So our company was focused for a few months, where we just
+
+focused every single developer, every single product team on fixing performance, and that was our goal,
+
+and that's what we went to do. So takeaway number five is focus and prioritization. You need to
+
+bring the company together, bring the different developers from different teams, and come up with
+
+a plan and get executed as one team. It is not just one team's responsibility of performance,
+
+every single developer should be responsible for the performance of the application.
+
+So the results for Postman were incredible. We went from 36 seconds at P90 for most of the
+
+slowest devices to just under 12.5 seconds for the slowest devices. And for Mac, it was even better.
+
+Our application starts between one and two seconds, depending on the machine.
+
+So this is what months of work and months of iteration achieved if you come together.
+
+Thank you very much. So my name is Ruben again. Here are my links if you want to follow me and ask
+
+any questions. Cheers.
+

@@ -1,0 +1,11 @@
+{
+  "name": "beyond-components-20min-deck",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "build": "node beyond-components-20min.cjs"
+  },
+  "dependencies": {
+    "pptxgenjs": "^3.12.0"
+  }
+}

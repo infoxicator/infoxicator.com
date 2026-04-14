@@ -1,0 +1,419 @@
+ All right, so today I'm going to be talking about this initiative that I led to reduce
+ postman's start-up time on low-end devices.
+ This involved work across Electrom Web and also organizational execution.
+ My role was a staff engineer.
+ I was part of the front-end platform team and the stack was an electron application and
+ a very, very large single-punch application powering the WebView part of Electrom.
+ This was a multi-tenant, sorry, multi-team performance initiative across many months with
+ multiple stakeholders and a lot of people in their business.
+ I'm going to be showing how I helped defining this problem, choosing the right metric, also
+ the key technical decisions I had to make in this case and how I influence other engineers
+ and the business to execute just not to improve performance but also introduce a culture of
+ performance.
+ So it was not just like a one-off exercise and then everybody would get back to their
+ jobs and then just forget about performance after that.
+ So let's get started.
+ I'm going to go deeper into a lot of the technical aspects of this problem.
+ For example, when I'm going to be talking about the optimizations in Electron I'm going
+ to go deeply technical on those.
+ How this all started?
+ So the problem became real when the CEO of Postman went to Amazon and then bought a laptop,
+ really, really cheap Intel setup on laptop and then he tried running Postman on it and
+ he brought it to the office and that was very, very painful to watch.
+ It was really, really slow and you could take about 30 to 50 seconds to even just load and
+ it would just crash.
+ You know, the frequently crashing, there would be high spikes of CPU and it basically was
+ unusable.
+ The app would not work and this was a wake-up call, it was terrible to watch but the reason
+ this mattered and it was not just because we wanted to prove that Postman had a performance
+ problem is this was actually affecting our users.
+ Why this was a big problem was because the product was basically unusable for a large
+ segment of the users that own lower end devices.
+ It created not just a reputational risk but also a churn, you know, if people, if they
+ pay up is broken, people are just going to churn and they'll come back and the product
+ basically didn't work.
+ And also when the reputation of Postman was notorious, people were calling Postman, you
+ know, he's blocked it, he doesn't work, he's too slow, it's a really, really slow app.
+ So this was affecting the product and it was affecting the business and we, this was the
+ wake-up call for us to figure out how to improve the performance.
+ That's where I came in.
+ So we had this performance, a performance team before and I came in and we knew the
+ problem was a big significant but this is when I took ownership to look at this problem
+ and try to come up with a solution from the engineering perspective as part of the platform
+ team.
+ So I took this as a task to lead to a solution coming up with the solution to this problem.
+ First of all, what I had to do was define the correct metric.
+ So how are you going to measure the performance of the application?
+ So first of all, we already, as I mentioned, we had a performance team before and people
+ before me, they've been doing some things like introducing like high-house calls and
+ trying to check core way vitals.
+ But all of these metrics were segmented across multiple areas of the application.
+ There was no single view of performance of the entire application.
+ So those metrics were mainly on the renderer process, so the electron has main and renderer.
+ And the renderer process, well, you can measure the performance and have a lot of metrics,
+ but there was no overview how long to take from when you open the app until you can do
+ something.
+ And that's where I came up with this metric.
+ I call that time to usability.
+ The reason or the way that I got inspired by this was a few things.
+ So from, I don't know if you're familiar with, like, I think this is a time in game
+ and I'm not a gamer, but it's called time to fun.
+ So the metric that games track is when they open the game and how long does it take for
+ people to have fun.
+ So I thought, well, our app is not game, but how long does it take for people to launch
+ their app and actually do something meaningful?
+ And this is having inspired by VS Code and a lot of other applications where they also
+ measure this, for example, VS Code, they measure when the application launches and then the
+ cursor is ticking.
+ And from the Slack as well, it's an electron app when you open Slack and then they measure
+ how long it takes for the sending message box to appear.
+ So I was inspired and I came up with this time to usability.
+ It's a custom metric.
+ I came up with it.
+ It didn't record outside of a person.
+ But it is a metric where we are measuring how long does it take for the time that you
+ click the button on the launchpad until you are ready to perform a task, which is, in
+ this case, postman send requests.
+ So I call this the critical task.
+ So in launch, the JavaScript is ready, the data is loaded, and then we are ready to send
+ a request.
+ It was very important to come up with an off-start metric because I didn't want to have optimizations
+ everywhere.
+ I wanted to focus on just one thing.
+ And the most impactful thing was, I looked at how many, what was the things that users
+ were doing when they launched the application?
+ And of course, the first thing they do is sending a request.
+ So it was a data-driven decision and we wanted to optimize for that initial experience.
+ Like you open the app.
+ You are ready to send a request.
+ There you go.
+ The target was 10 seconds.
+ So we wanted to ensure the application, and this is on low-end devices, by the way the
+ target on high-end devices was way lower, 10 seconds is still quite low.
+ But again, we are focusing on low-end devices and choosing these 10 seconds, I looked at
+ some research and I think I read a really, it's not probably old paper where the multiples
+ of 10 were in one minute and sorry, in one second, in 10 seconds and one minute.
+ I think 10 seconds is like the amount of time for an application, I mean three conferences
+ different but for an application to make sure that you don't lose track.
+ Like if I open the app after 10 seconds, I'll be like, the app is not working and they just
+ forget about it.
+ So we had the target.
+ We chosen the target.
+ We chosen what we're going to be measuring.
+ The next time was, what instrumentation, so I looked at the instrumentation methods and
+ of course DTU, the time to use ability, my trick that I came up with, it was a bit difficult
+ to measure with the current tools, you know, like we don't have that in my house.
+ And also there was a challenge on how we're going to measure the whole process, from the
+ main process to actually when the rendering happens.
+ So the instrumentation strategy was using their browser native APIs, in this case, this performance
+ mark, performance measure, to segment the different stages of the launch of that critical
+ path that I defined and looking at how long each segment of these process takes.
+ So using performance on mark, we can say, you know, the platform initialise here, then
+ we put another marker when that process finishes and the next one continues.
+ And then you can just aggregate all those markers and then I'll give you the total
+ launch time at the end, but you can also see the segments on how long each individual parts
+ were taken.
+ So we could have, well, how long the main process takes, how long the JavaScript parts
+ in the learning compilation, how long the data fetching and how long the rendering of
+ the workspace it was taken.
+ So this was locally, of course, but also we wanted to focus on real user metrics.
+ So there was not a lot of synthetic monitoring at that point, but I decided to focus on user
+ monitoring because we wanted to see the impact on users, we didn't want just to make nice
+ key dashboards and things that worked internally, but we wanted to see immediate impact on the
+ user.
+ So we sent this to the RAM, which is Postman's internal analytics.
+ And then we segmented all this by device, CPU class region.
+ So Postman has all of these different types of users.
+ So I collected those metrics, and that gave us a really nice segmentation.
+ So it was not just like a path, like a number, it was just a segmentation.
+ So we can see if we were making progress or not.
+ So the big umbrella question, so why is the app so slow?
+ So after having this representation, and I look at the data and static collecting data
+ from the users, the million dollar question was, hey, what's the app so slow and the results
+ were very interesting.
+ So 22% of the app was taken by the main process, and 38% by JavaScript and a lot of parsing
+ and compiling, and the rest was taken by the API calls and rendering.
+ And you can see this graph.
+ I managed to get for all the spans of different segments that we had.
+ And it was not surprising, but it was nice to see what the application was so slow.
+ So a huge chunk of the application start time was going in this blue section.
+ Nothing was happening.
+ It was a loading spinner during that 38% before anything even rendered on the screen.
+ So to reduce the start time, we wanted to focus on all of these areas.
+ The outcome of this was, I don't give you the actual segmentation on how to solve the
+ problem.
+ And I created this document, so I compiled all of these different results and graphs
+ and dashboards, and I put them into a document to explain to the business and all the stakeholders
+ and all of the engineers in the department.
+ So what the problem was, and with the real user metrics.
+ So I sent this to everybody, I got a lot of comments, people were questioning the measurements,
+ people were questioning why we have such a big bundle.
+ And I had to answer a lot of questions in here, but then at least I had arguments based on
+ data how to present this to people and how to try to gain that convincing people and
+ gain that support from them to go and do something about it.
+ Because at least now we have something to start with.
+ So the focus was, what do we focus on, like, what do we do?
+ As I mentioned, we wanted to focus on the highest return of investment areas, and our
+ premature optimization, optimizing things that are not going to produce a lot of value.
+ So the prioritization, I made this decision where I would just focus 100% on the data
+ section, which is the JavaScript execution, compilation, and download and parsing.
+ Because it was the main area, and it was not doing anything, that was just pure overhead,
+ and I wanted to focus on that.
+ But of course, this initiative was not just one section, I wanted to get the entire business
+ together.
+ And even though we were going to focus on the main bundle optimization and parsing and compiling,
+ there were also other tracks, I call them tracks, in terms of what other people would
+ be doing, improving performance in other areas, like networking, data fetching, and also the
+ main process in Electron.
+ So trying to get the buy-in from the organization was interesting.
+ I went to every single head of the department, after sending the document, there were a lot
+ of questions, but still had they needed a lot of convincing still.
+ And I went to ask for resources, and this is always an interesting discussion because they
+ wanted to ask how long it's going to take, how many people.
+ And we have an essay in Postman and the team down here, which is nevertheless we ship,
+ meaning we're not going to stop the business, we're still shipping features, and we're not
+ going to stop, and we're just going to fix it.
+ So I managed to secure buy-in from the business and the stakeholders, and I managed to get
+ at least committed to engineers per team to focus on performance, and make sure that that
+ was their focus.
+ That performance is important for everybody, and it's a business problem, it's not just
+ a technical problem, and it's not just an issue for their platform team or just a performance
+ team or whatever.
+ So I created this plan, presented it, and I started executing.
+ Before I talk about the main part that I focus on, there are other tracks like the improvements
+ to the network.
+ I'm just going to be briefing this one, but it was mainly that there were a lot of network
+ requests, a lot of feature flags, a lot of data that ride too late for the initial render.
+ So solution, a lot of low honey fruit, introduce some prefetching, collecting a lot of data,
+ and talking to the back end, so sometimes talking at the back end, the front end folks
+ and the back end folks don't talk to each other, and then the front end folks, they need to
+ talk a little bit more, because there are some times where the issues actually the data.
+ The front end might be slow, they might be some problems, but if an API is taking a lot
+ of time, or you are calling, in this case, we're calling hundreds of APIs.
+ So there was an aggregation coordination with the back end team to ensure that APIs were
+ faster, some aggregated endpoints for the critical data were created.
+ There was a brief mention of GraphQL at that point, and I think I shot it very quickly.
+ I think for Postman as an application, that was one of those premature optimizations
+ that I wanted to stop, because maybe, yeah, that would help with aggregation, et cetera,
+ but to be honest, we could get a lot more output just by combining a few APIs and cleaning
+ up the log of having a free drive and introducing a brand new tool in structure for the data
+ fetching, which probably wasn't that needed that long.
+ So we fixed the feature flags and all of this prefetching and performance of .NET, and the
+ inside was, you know, this is not just focusing on the front end, this is interesting, this
+ is what I do, but also there is a lot of all this stuff that can be done off from the back
+ end for improving performance.
+ Right, so in this slide, I'm going to spend a lot of time, because this is the main thing
+ I did, this was my main involvement, my main focus challenge was the JavaScript person
+ and compilation.
+ So I took the team, the platform team, a few engineers, and this was my responsibility,
+ and this was my strong bet, just a little bit of context first.
+ So while this was a big problem, the bundle for Postman was 14 megabytes of JavaScript
+ mini files, and there is a reason for this, it'd be like, why are you doing 14 megabytes
+ for Postman?
+ It's a nearly code editor, we have really heavy dependencies, but it was also because
+ the application was originally an electron application, and all the files were bundled
+ with the electron, but after a while, Postman decided to go on updates over the air, meaning
+ that you could potentially update the application without having to download the entire bundle,
+ the entire executable binary, but the problem is that it was built as a single file, it
+ was not built as a web app, it was built to set, and then you take it up with a bunch
+ of files where you don't care about how much JavaScript you put in there, because it's
+ in the main process.
+ The application was also very old, Postman was 10 years old at this point, and it's been
+ iterations, migration, things that were never finished.
+ So the one thing is very, very hard to make sense of what the code was in there.
+ JavaScript cost is not just network, it's also parsing and compiling.
+ So parsing and compiling JavaScript, people don't realize how much the compilation step
+ takes when you have a large bundle, so of course downloading from the network takes
+ a long time, but once JavaScript arrives, you have a big cost of parsing and compiling.
+ So I created this graph tractor on the standard, I went to webpack stats, and then tried to
+ run the bundle on theizer, and I created this visualization and it crashed my laptop
+ a few times, just to show you how bad the problem was.
+ This I call the supernova modern graph, this is a real modular graph, with I don't know
+ how many thousands of noise, and it was bad, like 700 circle dependencies.
+ It was a terrible problem, and that's the context on why we had so much hours correct.
+ Now, what do we do in this case?
+ I have two approaches, and I'm gonna go deeper into the two proposals that I put forward
+ and why it was not chosen, and a little bit of back history.
+ So like manager postman, I was meant to join to improve the modularization and re-architecture
+ of the application.
+ So I was familiar with the things I wanted to do to improve this, so the application
+ was solved, and I was struggling basically.
+ So I wanted to do the modularization and fix the root cause, and I was one approach, and
+ just to be honest, to clarify, I was not advocating for a full rewrite.
+ So people would come and say, "Hey, this is really bad, let's go and rewrite it from scratch."
+ That's not the approach I was suggesting with the modularization.
+ I came up with a lot of different, no migration, but improvements, avenues for modularization
+ with strangling parts and incremental, removable, and keep changing the different parts and
+ modularizing the parts with how to rewrite and make a binary rewrite.
+ So it was not like a massive migrational rewrite, it was a modular approach.
+ And I had a lot of evidence and I've been working on that for a while.
+ The other option was, well, let's figure out why this is so bad, instead of doing the
+ old modularization initiative and apply some performance techniques and see how far we can
+ get.
+ Unfortunately, I went to convince everybody about the modularization.
+ I convinced my colleagues to go to the heads of the department and explain why it wasn't
+ just good for performance.
+ It was also good for the long-term health and architecture of the application to have
+ a modular, basically to clean up, it was just a mess.
+ But at the end, after convincing everybody, and I thought I convinced the head of engineering
+ as well, but I think he changed his mind and he said he didn't want us to go that way.
+ I guess to reduce risk, I didn't agree with the assessment.
+ I thought the solution of modularization was probably better, but of course the risk and
+ at that point there was an unknown.
+ He was a big bet and the head of engineering had the last say and he said no, let's just
+ try to patch the architecture and figure out how to fix it without having to implement
+ this massive modularization plan.
+ So the solution chosen, I was like, okay, fine, let's do, let's see what we can do.
+ It's a business decision, the technical decision, I presented all my arguments, but see what
+ we can do.
+ So the first thing I did was, well, let's try and patch this.
+ Let's go through why this module graph and try to understand this module graph and how
+ to untangle it.
+ So I came across a tool called status code, which is much better than the weight loss
+ stats.
+ And today, there's a better one called ours doctor, which is based on our webpack.
+ So this tool, when I found this tool was eye opening, it was a turning point because before
+ nobody understood what was going on, this crashing my computer, I couldn't even understand
+ where all the circular dependencies and why the bundle was a huge.
+ But with this tool that I found, I analyzed the bundle and I could find the different
+ modules, graphs, import chains, and why the application was being injected, because even
+ after lazy loading and co-splitting, they were still getting inside because of the
+ circular dependencies.
+ So I gave the team today's tool, I gave them the tools to find out what they could do and
+ start splitting lazy loading dependency, proving aggressive.
+ This is what they took so long, one of the parts of the project that took a long time
+ because the team had to go, look at their code, look at the dependencies, start cutting
+ things, remove their code, replace the load, code splits, etc.
+ So it took a few months and we managed to get the bundle from 14 megabytes to 2.7 megabytes
+ or JavaScript, which was a huge, I didn't even think that we could get, it was a huge
+ reduction from thing to tool, and then before we go into that, and then everybody was happy
+ and now this comes in the here's journey story, when you are, yeah everything is great, performance
+ is solved, and actually it was not bad, something unexpected happened, after this work, everybody
+ putting so much effort into this, the bundled reductions didn't immediately produce the
+ expected gains.
+ So I was expecting that you remove and reduce the JavaScript bundle, and then the time to
+ use ability metric in real-time, real user metrics would just drop at the same time, at
+ the same pace as the bundle, because my theory was, there is a lot of work that is happening
+ in there, and if you reduce the amount of work of parsing, compiling, downloading, then
+ it naturally this will go down, but the observance, it was improving, but not as fast.
+ We improved by like 10 and a second, we were like at 27, 26 seconds, and everybody started
+ questioning everything, questioning me, because I asked the one who proposed this, and the
+ one that was very convinced that improving the bundle would improve the performance,
+ so I questioned myself, everybody started questioning me, questioned the metrics, are
+ the metrics correct, are we making a measurement errors, are we not getting the data, what's
+ going on with the metrics.
+ They also, I was trying to verify my assumptions, is JavaScript, the bottleneck, am I missing
+ something?
+ I was like, I could not look at the metrics, I was like, am I missing something?
+ So I also started getting pushed back from the business, I was in the big trouble, because
+ the heads of the department were like, hey, you know, we're investing in this, we spend
+ a lot of time.
+ Why is the performance now coming down?
+ My boss asking questions, everybody asks questions, everybody looking at me.
+ So how do I get out of this?
+ I take a step back, I had a conviction that this was the right approach, but there must
+ be something else that is happening.
+ So back to analysis, we just started using some contrasting on the main process and trying
+ to figure out why the JavaScript bundle was still taking, that section was taking so
+ long, and interesting, we found one debug, and I am happy to go in details on what the
+ bug, this is a very, very interesting bug, but in summary was there was a hidden main
+ thread, like a block in an electron.
+ So it's something that actually I did, at the beginning of the initiative, I lazy loaded
+ the initialization of the JavaScript, so I created like a bootstrap and then just lazy
+ loaded the rest of the application, the big bundle.
+ And that caused the document on load event to come sooner, and then the main process
+ was listening to this, to do also some lazy loading, which meant that the main process
+ was blocking the render when the JavaScript was parsing that compiling, meaning it was
+ sequential, it was a race condition between these two, so we get sometimes a variable results,
+ and also it was just blocking completely the main process, and the matrix was telling us
+ that the render was taking long, but it was an outcome from the main process.
+ So the main lesson I learned here was don't block the main process of electron, because
+ that is the sacred process, you should not block it, and I found this bug delayed our
+ execution for a long time.
+ So after we fixed this bug, the news was the time to usability, the launch performance
+ had immediate sharp drop, I remember looking at the metrics, and the metrics were like coming
+ down like crazy, I was like, wow, it was like your present button, performance went down
+ like 10 seconds lower, like in within like a week, and then you keep dropping.
+ So it was difficult, but I managed to find that, I'm going to focus on a couple of advanced
+ buttons, I think they'll be very useful if I discuss them, because the bundle was interesting,
+ but there was still some of the things that we could do, and after looking at the current
+ tracing we realized, okay, the main process probably we can improve other things, because
+ you'll be thinking, oh, the main process, these are all the electron stuff, we are not
+ going to be fixing electron performance, these are overhead, but actually that was not true,
+ there was a lot of stuff still in the main process that we could do, and one of those
+ was my bundling the main process, so I think we used RSPAC at that point to bundle the
+ main process that gave us a couple of seconds of improvement at P90, then there was a persistent
+ database called JSON Electron Storage, which was very, very slow, removing that, and then
+ finally, RSSI requires, because in the main process we also have a lot of dependencies
+ and a lot of code that was not needed, but then after removing the code that was not needed,
+ there was still a lot of code that was required, the startup, so there was one interesting
+ optimization technique that we started looking with the main process, the team had a couple
+ of good engineers from C++ backgrounds, and they were really good at looking at the electron
+ process, and they proposed this, V8 snapshot, which was basically compiling these dependencies,
+ converting them into native code, so that required impact would be removed.
+ I tested this, but I personally pushed back a lot on this approach, because first of all
+ the results, they presented were interesting, but they were not that much compared to the
+ risk, so for example, my concern is very complex, it requires C++ engineers maintaining
+ these mappings for every dependency, and not just the maintenance, what happens when you
+ update the dependency, so there was some maintenance, a lot of complexity, and the gains were really
+ small compared to the risk, so eventually I just suggested against this, and I advanced
+ against using this alternative, but there were other alternatives, and all the things
+ that were actually implemented that were advanced, this case were the renderer, so after reducing
+ the bundle, we're thinking, okay, what else, can we reduce the bundle even more, but there
+ were things like using a better compression, and then the service worker, service worker
+ catching all the assets on an update, so we can have the assets downloaded ahead of time,
+ so when you launch the application, those assets are not going to be downloaded from
+ the network, they will come from the service worker, and we're not paying that latency,
+ but as I mentioned earlier, the parsing and compiling of JavaScript is also very expensive,
+ so there was one last thing that we could do, and this was an advance of the message with
+ the service worker, which was called the bytecode caching by a service worker install, so bytecode
+ caching, JavaScript is a just-in-time compile language, and every time that you try to use
+ one of these files to create, I think it will compile the file just in time, so this optimization
+ consisted on pre-compiling that file, and then just put it into the caching, and V8 does
+ this for you, but this optimization in particular is in a full bytecode caching, meaning that
+ the entirety of the file is pre-compiled ahead of time, not just incrementally, there is
+ an article that shows how that works automatically, but this was like a very aggressive caching
+ on the JavaScript install.
+ So the outcome, this was material, the byte did work, never became done, we managed to
+ get the app from 30 seats, P90 to 12.5 seconds, or on high-end devices, this was even, you
+ know, the improvements were also noticed, you know, from one to two seconds, on really
+ high-end Macs, but at 12.5 seconds, at that point, they would like to be started to, we
+ started to see diminishing returns, so we never got to the ten-second goal, I don't
+ think it was a failure that we didn't get to the ten seconds, but it was mostly, we
+ started all optimizing, and there were all the things that had to be fixed before we
+ can get to the ten seconds, which turned out to be a lot of the architectural problems
+ that I mentioned at the beginning, that they needed to be solved, and there will be a more
+ drastic approach that will be needed for us to go beyond ten seconds, not just ten seconds,
+ but beyond for really, really old devices, they became usable from a lot of people, you
+ know, like a lot of people who couldn't use the app before now can use the app, user experience
+ was improved, not just for the lowest devices, but everyone, and of course it led to better,
+ you know, reduced frustration from users and churn.
+ So my learning was, you know, I want to optimize for value, I could have assessed over this
+ metric and get ten seconds, but we achieved the user value, which was that the users were
+ able to use the app now, and they just go through ten seconds.
+ On the organizational side, before I came to this project, there was just an isolated
+ team working on performance by themselves, and they could not make a lot of progress,
+ it was a lack prioritization, lack of ownership, there was an only show of regression, basically
+ performance was no one's problem, but then when I came into this project, I just established
+ a company-wide initiative, and they find a metric, they know a star, so everybody knows
+ what needs to happen and how we're measuring it, and then after that, I also introduced
+ PR checks to block regression because we didn't want this to become one single-time exercise,
+ and then the performance would just take a noise-life after the performance initiative
+ was completed, so a new team for synthetic monitoring and ensuring that the releases
+ are blocked to the performance tests are not complete, they're not passing.
+ The outcome, I was proud of this because everybody's performance became everybody's
+ responsibility, I was known as the performance guy, that that would be telling people about
+ performance performance, then the product improved, and we make sure that we didn't
+ regret it, so performance accelerated when you still become an niche problem, it was
+ a company problem and more like a part of engineering execution, so I'm proud that
+ I made this part of the engineering organization and DNA, rather than just a single project.
+ My experience can help here with the code exam, I was involved in the work on electron
+ performance, so I believe my skills and experience with this is very important as they call
+ exam gets bigger, and we can make it super up, managing large-scale, large-scale applications,
+ this is not just for electrons, but performance across large-class conferences, our script,
+ applications and performance optimization techniques, and the electron, I'm sorry,
+ postman, as codecs is a developer tool and developers are very picky, so improving their
+ performance and gaining the developer love is something that I've been doing for a while.
+ Most importantly, this required a relentless execution and it required cross-functional
+ collaboration, organizational enlightenment, a relentless execution from my part, so I'm
+ really proud of this project.

@@ -1,0 +1,1037 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:12.239
+Hello, everybody. So a while ago, our CEO went onto Amazon and then he typed the cheapest
+
+2
+00:00:12.239 --> 00:00:17.719
+laptop he could find. And he just ordered the laptop and he brought it to the office.
+
+3
+00:00:17.719 --> 00:00:23.120
+So he brought it to the office. It was an Acer Celeron laptop, really low spec, very,
+
+4
+00:00:23.120 --> 00:00:27.959
+very similar to a Chromebook, and he decided to test Postman on this really, really cheap
+
+5
+00:00:28.040 --> 00:00:35.040
+laptop. We were not surprised that it was painful to watch. It was very, very, very
+
+6
+00:00:35.040 --> 00:00:40.400
+difficult to get Postman working on that laptop. It was very slow. Sometimes it takes
+
+7
+00:00:40.400 --> 00:00:46.000
+about 30, 40, 50 seconds to launch, and it will just start crashing. The CPU starts
+
+8
+00:00:46.000 --> 00:00:53.599
+spiking. And it was a very difficult thing to see. And we knew we had a performance
+
+9
+00:00:53.599 --> 00:01:01.319
+problem. But only then we realized how bad the problem was. Hi, everybody. So my name
+
+10
+00:01:01.319 --> 00:01:06.919
+is Ruben Casas, I am a staff engineer at Postman, and today I'm going to show you five tips
+
+11
+00:01:06.919 --> 00:01:11.680
+on how to improve your app performance. From picking the right metric, so understanding
+
+12
+00:01:11.680 --> 00:01:16.559
+your problem, to reviewing and creating an action plan to bring the company together
+
+13
+00:01:16.559 --> 00:01:22.080
+and solve the performance of your app. Doesn't matter if it's a mobile app, a desktop app,
+
+14
+00:01:22.160 --> 00:01:26.639
+or a React app, you should be able to use these tips to get up and going and improving
+
+15
+00:01:26.639 --> 00:01:35.400
+the performance like we did with Postman. So where do we start? In performance, the
+
+16
+00:01:35.400 --> 00:01:42.559
+only place to start is measure, measure, measure. You need to start measuring performance. You
+
+17
+00:01:42.559 --> 00:01:48.400
+cannot start solving a problem unless you start measuring performance. And then after
+
+18
+00:01:48.440 --> 00:01:53.139
+you measure performance, the first thing you need to do is to pick a north star metric.
+
+19
+00:01:53.139 --> 00:01:59.400
+You can measure multiple things, a lot of things, but you need to pick one metric and
+
+20
+00:01:59.400 --> 00:02:06.120
+start obsessing over that metric and fixing and improving that metric. So we already had
+
+21
+00:02:06.120 --> 00:02:10.320
+the metrics, some metrics at Postman, we had the usual stuff, we had the Core Vitals, the
+
+22
+00:02:10.320 --> 00:02:15.279
+Lighthouse metrics. But to solve this problem, because it was so complicated, we knew we
+
+23
+00:02:15.360 --> 00:02:22.080
+had to go deeper to understand the problem. So which one? Which one do we choose from
+
+24
+00:02:22.080 --> 00:02:28.699
+Lighthouse? Which metric? We decided to go a different way. I found recently this concept
+
+25
+00:02:28.699 --> 00:02:35.880
+called TTF. And TTF is used in mobile gaming. And as you can see in the Super Mario GIF
+
+26
+00:02:35.880 --> 00:02:43.199
+here, is the time it takes to have fun. So from the moment you start a Mario game, you
+
+27
+00:02:43.240 --> 00:02:47.639
+immediately start having fun. You start jumping, killing enemies, getting money, getting
+
+28
+00:02:47.639 --> 00:02:52.740
+power-ups. So they have this term in mobile gaming called time to fun. Make sure that as
+
+29
+00:02:52.740 --> 00:02:59.399
+soon as people open their app, they start having fun. Now our application is not a
+
+30
+00:02:59.399 --> 00:03:04.440
+mobile app that you can use, but I got inspired by that and decided to choose a
+
+31
+00:03:04.440 --> 00:03:11.919
+different metric called TTU. And TTU stands for Time to Usability. So Time to Usability
+
+32
+00:03:11.919 --> 00:03:16.600
+is a metric that we have chosen to improve the performance of our application. And what is
+
+33
+00:03:16.600 --> 00:03:21.240
+Time to Usability? Well, there are examples of other applications that are using this
+
+34
+00:03:21.240 --> 00:03:25.520
+metric. They don't call it TTU. And TTU is a term that I came up with. But some other
+
+35
+00:03:25.520 --> 00:03:31.199
+companies like VS Code have a concept of Time to Usability. And for them, Time to
+
+36
+00:03:31.199 --> 00:03:37.119
+Usability is the time that takes for a user to get a blinking cursor and start coding
+
+37
+00:03:37.199 --> 00:03:42.160
+on VS Code. Other companies like Slack, for example, they have the same, which is how
+
+38
+00:03:42.160 --> 00:03:50.080
+fast until the user can open a chat and send a message. Now, what about TTI, Time to
+
+39
+00:03:50.080 --> 00:03:55.279
+Interactive? We already have a metric in Lighthouse called Time to Interactive. And
+
+40
+00:03:55.279 --> 00:03:59.639
+this Time to Interactive metric is measuring the time that it takes the application for
+
+41
+00:03:59.639 --> 00:04:04.839
+you to be able to click and do things around it. But the problem with TTI is, in
+
+42
+00:04:04.839 --> 00:04:09.320
+short, that it's technically ready. So your application is ready from the technical
+
+43
+00:04:09.320 --> 00:04:13.800
+sense, so it's not blocked, you can start doing things. However, it doesn't tell you
+
+44
+00:04:13.800 --> 00:04:18.440
+when you can actually start getting benefits from your app. In this case, TTU is
+
+45
+00:04:18.440 --> 00:04:23.959
+probably a better metric because it reflects the real usability and the real things that
+
+46
+00:04:23.959 --> 00:04:28.679
+developers are doing with your application. And we can optimize for what actually
+
+47
+00:04:28.679 --> 00:04:36.359
+matters to our users. So we selected our TTU, Time to Usability, and the Time to Usability
+
+48
+00:04:36.359 --> 00:04:40.679
+for Postman was the time that it takes for the Workbench, which is the main workspace
+
+49
+00:04:40.679 --> 00:04:45.559
+where you perform most of the operations in Postman, and for the main part of the
+
+50
+00:04:45.559 --> 00:04:51.640
+application, which is sending requests to be active. We put this as our critical path.
+
+51
+00:04:51.640 --> 00:04:56.200
+The Time to Usability was the time that it took for someone to click onto the desktop
+
+52
+00:04:56.200 --> 00:05:01.720
+application icon for this page to render and for that button to be ready for you to
+
+53
+00:05:01.720 --> 00:05:08.040
+send a request, which is what most of the Postman users do exactly when they start the
+
+54
+00:05:08.040 --> 00:05:16.040
+application. So we've chosen our TTU and we've defined it. Now, how do we measure it? Because
+
+55
+00:05:16.040 --> 00:05:20.519
+we can just say, this is the time it takes for Postman to launch and show the button,
+
+56
+00:05:20.519 --> 00:05:26.760
+but we need real data to measure this. And as I mentioned, TTU is a made-up metric that I came
+
+57
+00:05:26.760 --> 00:05:30.760
+up with. It's not something that's provided with Lighthouse or with the Core Web Vitals.
+
+58
+00:05:30.760 --> 00:05:36.359
+So we needed to measure this. And the way we did this was we inserted marks for the platform
+
+59
+00:05:36.359 --> 00:05:41.880
+initialization, JavaScript evaluation, data fetching, rendering. Then we also captured the
+
+60
+00:05:41.880 --> 00:05:45.959
+navigation resources. How long does it take for you to download that JavaScript, if it's coming
+
+61
+00:05:45.959 --> 00:05:51.079
+from the network or from the service worker? We turned this into spans and we pushed them into
+
+62
+00:05:51.079 --> 00:05:57.160
+our RAM and our synthetic labs for tracking. And our users are everywhere in the world.
+
+63
+00:05:57.160 --> 00:06:02.679
+There are different CPUs, different laptops. So we had to get segmented dashboards per CPU
+
+64
+00:06:02.679 --> 00:06:07.160
+and region just to see how the variation of the performance was between those regions and
+
+65
+00:06:07.160 --> 00:06:14.679
+different users. You can do this. You can measure with just a built-in browser API,
+
+66
+00:06:14.679 --> 00:06:19.959
+performance.mark. So performance.mark is very powerful, which is basically, you add it to your code
+
+67
+00:06:19.959 --> 00:06:25.799
+and you start measuring from the moment you put a marker until the next part you put this marker,
+
+68
+00:06:25.799 --> 00:06:31.720
+it will measure the time that it takes. So for example, in this case, this is a pseudocode
+
+69
+00:06:31.720 --> 00:06:35.320
+of what we started measuring. We measured from the time that the platform initialized,
+
+70
+00:06:35.880 --> 00:06:41.079
+the time that it took for the JavaScript bundles to load and execute and parse and compile,
+
+71
+00:06:41.079 --> 00:06:46.519
+the time that it took for our data fetching to get all that data to show to the user,
+
+72
+00:06:46.519 --> 00:06:52.279
+and the time that it took for that render of the critical UI to show on the page. And at the end,
+
+73
+00:06:52.279 --> 00:06:58.600
+we just marked this with, okay, this core feature is ready and our time to usability is ready for us.
+
+74
+00:07:00.200 --> 00:07:08.200
+Now, how do you see this locally and in synthetic monitoring? You can do this by going to the
+
+75
+00:07:08.200 --> 00:07:12.679
+performance in the developer tools, you run a performance profile on your laptop,
+
+76
+00:07:12.679 --> 00:07:17.559
+and these markers will start appearing in the timings section of that performance profile.
+
+77
+00:07:18.519 --> 00:07:23.880
+Now, we don't want to just do this test on our laptops, we want to make sure that we can measure
+
+78
+00:07:23.880 --> 00:07:29.000
+on real users and real user devices. So even though that we can do this locally,
+
+79
+00:07:29.000 --> 00:07:34.920
+we also wanted to aggregate and publish these to our real user metrics. So we use another API called
+
+80
+00:07:34.920 --> 00:07:41.320
+the performance.measure that gathers all of those performance markers that we showed you a minute
+
+81
+00:07:41.320 --> 00:07:47.399
+ago. And you can take those markers and then send them to your analytic service. In this case,
+
+82
+00:07:47.399 --> 00:07:52.359
+I'm just console logging this, but you can just create an API that sends this information to your
+
+83
+00:07:52.359 --> 00:08:01.160
+real user metrics system. Now, this will allow you to create a lot of dashboards, and we created
+
+84
+00:08:01.160 --> 00:08:07.799
+a lot of dashboards. We have segmentations, how many users were seeing the application critical
+
+85
+00:08:07.799 --> 00:08:13.959
+path in under 10 seconds, how many people were seeing under 20, 30 seconds. We segmented this by
+
+86
+00:08:13.959 --> 00:08:19.959
+user, device, operating system, the different type of postman application, if it was web, desktop,
+
+87
+00:08:19.959 --> 00:08:29.640
+or if it was on Windows or macOS. Now, we set our goal. Our goal was to reduce the time to usability
+
+88
+00:08:29.640 --> 00:08:37.559
+from 35 to 40 seconds that was taken at P90 to 10 seconds. And why we decided to choose 10 seconds?
+
+89
+00:08:37.559 --> 00:08:43.320
+Well, we did some research, and 10 seconds is the maximum time that someone will wait for something
+
+90
+00:08:43.320 --> 00:08:49.400
+to happen before they get distracted and go and do something else. So 10 seconds was our benchmark.
+
+91
+00:08:49.400 --> 00:08:54.760
+And even though we had a lot of devices that were launching under 10 seconds, some of them were like
+
+92
+00:08:54.760 --> 00:09:01.159
+two, three, five seconds, but those were like the super powerful Macs that would run the application.
+
+93
+00:09:01.159 --> 00:09:07.239
+And we wanted to target every single device, even the low-powered devices to run under 10 seconds.
+
+94
+00:09:07.239 --> 00:09:13.320
+So this is our goal. We've chosen this as our goal for the TTU. So this is what it takes us to our
+
+95
+00:09:13.320 --> 00:09:20.760
+takeaway number one. Pick that no-start metric and then obsess on this metric until you achieve it.
+
+96
+00:09:21.400 --> 00:09:29.320
+Improve it, measure it, obsess, and then go for it. So what's next? We picked our metric.
+
+97
+00:09:29.320 --> 00:09:33.479
+We measured our metric. So now what we need to do is we need to understand the problem.
+
+98
+00:09:34.039 --> 00:09:38.840
+We knew we had a big performance problem, but we didn't know what was causing that problem.
+
+99
+00:09:40.039 --> 00:09:45.400
+So the big million-dollar question is, why is our app so slow? Why does it take so long to start?
+
+100
+00:09:46.119 --> 00:09:50.919
+We took all of those measurements and we divided the application launch time into different sections
+
+101
+00:09:50.919 --> 00:09:57.239
+that will allow us to understand where that time was going. So in the first part, we realized that
+
+102
+00:09:57.239 --> 00:10:03.479
+it was about 22% of the time I was taking about Electron and the main process of Electron,
+
+103
+00:10:03.479 --> 00:10:10.840
+just all that process starting up. Then our web view will start downloading, parsing JavaScript
+
+104
+00:10:11.400 --> 00:10:18.200
+and compiling it. And that was taking about 40 seconds. Then the workspace, rendering all the
+
+105
+00:10:18.200 --> 00:10:23.559
+API calls, the data fetching and rendering was taking the remainder all the time. So this way,
+
+106
+00:10:23.559 --> 00:10:27.960
+we can visualize and segment the different parts of the application and then focus on
+
+107
+00:10:27.960 --> 00:10:33.640
+those different problems. The takeaway number two is you cannot solve a problem that you don't
+
+108
+00:10:33.640 --> 00:10:37.719
+understand. So first, we need to understand the problem and you need to start measuring
+
+109
+00:10:37.719 --> 00:10:45.000
+progress towards fixing that problem. So what now? We know what the problem is. We have measured
+
+110
+00:10:45.000 --> 00:10:50.440
+the problem. What do we need to do? We need to come up with a plan. So we needed a plan of action.
+
+111
+00:10:50.440 --> 00:10:54.919
+And the first thing that we did was, okay, what have we done so far? What thing has worked? What
+
+112
+00:10:54.919 --> 00:11:00.280
+things have not worked? And most importantly, what's the most low-hanging fruit, the obvious
+
+113
+00:11:00.280 --> 00:11:05.960
+things that we can do to improve the performance of our application. So there was an obvious section
+
+114
+00:11:05.960 --> 00:11:11.479
+that stood out and it was 40 percent of our application was downloading, parsing and compiling
+
+115
+00:11:11.479 --> 00:11:17.000
+JavaScript. There was a huge part, nearly 50 percent of the time was in this section, which is basically
+
+116
+00:11:17.000 --> 00:11:22.039
+even before we start rendering, our application was taking this much time, but just downloading
+
+117
+00:11:22.039 --> 00:11:29.400
+and parsing JavaScript. Our bundle size was insanely huge. It was 14 megabytes of minified
+
+118
+00:11:29.400 --> 00:11:33.960
+gzip compressed JavaScript. And this is the representation of what that looked like and all
+
+119
+00:11:33.960 --> 00:11:39.400
+the code that we were shipping up front. And I know what you're thinking. 14 megabytes of JavaScript,
+
+120
+00:11:39.400 --> 00:11:47.559
+are you insane? Well, there's an explanation for this. Postman app was a single page
+
+121
+00:11:47.559 --> 00:11:52.840
+application that was a part of an Electron bundle that was served inside the bundle. So if you're
+
+122
+00:11:52.840 --> 00:11:57.799
+familiar with Electron, you can get all the JavaScript files and then just ship it with the
+
+123
+00:11:57.799 --> 00:12:02.840
+Electron bundle so you don't need to download anything from the network. But after years of
+
+124
+00:12:02.840 --> 00:12:09.559
+iteration, circular dependencies, we ended up with a big, massive application with a lot of code.
+
+125
+00:12:09.559 --> 00:12:15.400
+And we didn't have the need for code splitting or lazy loading because everything was inside
+
+126
+00:12:15.400 --> 00:12:21.799
+an Electron bundle so you didn't have to pay that network cost. Now, after that, we moved to
+
+127
+00:12:22.840 --> 00:12:28.840
+the web and we started shipping updates over the air. So we started downloading that JavaScript
+
+128
+00:12:28.840 --> 00:12:34.599
+from our CDN instead of the Electron bundle to allow us to do updates faster. So we didn't have
+
+129
+00:12:34.599 --> 00:12:40.679
+to download the Electron bundle every single time. But as you can imagine, that meant that now
+
+130
+00:12:40.679 --> 00:12:46.840
+instead of having the 14 megabytes of JavaScript inside Electron, we had to download 14 megabytes
+
+131
+00:12:46.840 --> 00:12:52.039
+over the network, which was a bit crazy. And that's the reason why our application was so big.
+
+132
+00:12:53.479 --> 00:12:58.760
+I created this visualization. I went to the webpack stats and then tried to create a visualization
+
+133
+00:12:58.760 --> 00:13:05.799
+of what our module graph and our bundle looked like. I ended up with this crazy, cool gif of
+
+134
+00:13:05.799 --> 00:13:11.640
+our bundle, which I call the Supernova Module Graph. I remember I crashed my laptop a few times
+
+135
+00:13:11.640 --> 00:13:17.159
+just trying to render this. It was impossible to understand all the connections and all the
+
+136
+00:13:17.159 --> 00:13:21.640
+things that happened in our module graph that made that 14 megabytes of JavaScript bundle.
+
+137
+00:13:22.520 --> 00:13:28.039
+So the question is, this is very obvious. It is big. It's a lot of JavaScript. But people might be
+
+138
+00:13:28.039 --> 00:13:35.960
+asking, does the bundle size matter? And actually, it does. We did some research and
+
+139
+00:13:36.599 --> 00:13:43.559
+the JavaScript, even if you compile it, if you compress it into Gzip, it will take
+
+140
+00:13:44.119 --> 00:13:51.239
+a long time for the browser to execute it. So it's not the same as having a massive JPEG image.
+
+141
+00:13:52.280 --> 00:13:57.719
+The bundle size, the JavaScript execution, takes a toll on your application, not just from the
+
+142
+00:13:57.719 --> 00:14:03.719
+download part, from the network transfer, but also the parsing and the compiling. So if you're asking,
+
+143
+00:14:03.719 --> 00:14:09.479
+does the bundle size matter? Yes, it does. And this is where we wanted to start reducing that bundle.
+
+144
+00:14:11.239 --> 00:14:17.080
+We started applying all the Performance 101 optimizations, the basic stuff, the things
+
+145
+00:14:17.080 --> 00:14:21.400
+that you learned that you have to do. So we started splitting the application into smaller
+
+146
+00:14:21.400 --> 00:14:26.440
+chunks using lazy loading and doing some code splitting, ensuring that we just load the parts
+
+147
+00:14:26.440 --> 00:14:31.239
+that were needed for the critical path. And we also introduced a service worker caching.
+
+148
+00:14:31.239 --> 00:14:37.479
+So every time the application is launched, we cache all of the assets onto the service worker,
+
+149
+00:14:37.479 --> 00:14:41.880
+so you don't have to download them from the network again. And when there is an update,
+
+150
+00:14:41.880 --> 00:14:46.280
+we cache those assets in the background. So when you open the application, you don't even
+
+151
+00:14:46.280 --> 00:14:50.840
+notice that the application has downloaded anything from the network, because it's already
+
+152
+00:14:50.840 --> 00:14:55.960
+pre-cached into the service worker. But that was not enough and we had to go deeper.
+
+153
+00:14:56.840 --> 00:15:02.919
+And I found a tool that I considered was the tipping point that helped us solve this
+
+154
+00:15:02.919 --> 00:15:07.239
+problem. And the tool was called a StatusScope. And there is a new tool called Iris Doctor,
+
+155
+00:15:07.239 --> 00:15:12.440
+which is very similar. I recommend you taking a look into it, which helps you understand
+
+156
+00:15:12.520 --> 00:15:18.200
+that super NOA model graph and understand how you can start pulling things apart from that.
+
+157
+00:15:19.640 --> 00:15:24.599
+The bundle analyzer has this very powerful feature. So StatusScope shows you, for example,
+
+158
+00:15:24.599 --> 00:15:30.200
+in this case, why lodash is being included into the bundle. And now lodash is a really big
+
+159
+00:15:30.200 --> 00:15:34.280
+dependency. And that was the first thing that we did, was like, okay, who is using lodash and why
+
+160
+00:15:34.280 --> 00:15:42.200
+is lodash being bundled up front? And it tells you what file, what line is importing this module,
+
+161
+00:15:42.200 --> 00:15:46.840
+so you can go and lazy load it or just completely remove it, which is what we recommend with lodash.
+
+162
+00:15:48.599 --> 00:15:55.320
+So the results were incredible. We went from 14 megabytes of JavaScript compiled minified gzip
+
+163
+00:15:56.280 --> 00:16:03.080
+to under 2.7 megabytes. There was still a lot of room for improvement, but Postman is nearly
+
+164
+00:16:03.640 --> 00:16:07.960
+like a code editor. So we have a lot of things like the Monaco editor, which are really,
+
+165
+00:16:07.960 --> 00:16:12.840
+really big and we cannot just remove. But that was huge. That was an incredible
+
+166
+00:16:12.840 --> 00:16:16.440
+reduction of bundle from 14 megabytes to 2.7 megabytes.
+
+167
+00:16:18.520 --> 00:16:22.119
+One thing that we made sure that we introduced was, okay, we need to make sure that we don't
+
+168
+00:16:22.119 --> 00:16:27.880
+regress. That we don't, after reducing the bundle size in such a manner, we don't want people to go
+
+169
+00:16:27.880 --> 00:16:33.159
+and add a new module that is going just to undo all the work that we have done. So we decided
+
+170
+00:16:33.159 --> 00:16:38.359
+to introduce PR blocking checks on every single pull request. It will give you a status code
+
+171
+00:16:38.359 --> 00:16:44.280
+report that will tell you if you are increasing the bundle size and if you are impacting the
+
+172
+00:16:44.280 --> 00:16:50.679
+critical path on our metric. So we introduced this and we started to implement the PR checks,
+
+173
+00:16:50.679 --> 00:16:57.000
+so we didn't go back to where we started. Now, the next thing was improving the network calls.
+
+174
+00:16:57.000 --> 00:17:01.559
+And if you're a front-end engineer, you might be thinking, well, all of the optimizations are in
+
+175
+00:17:01.559 --> 00:17:07.479
+the code, but actually some optimizations happen at the network level. We had so many network calls.
+
+176
+00:17:08.119 --> 00:17:13.880
+There were hundreds of, for example, LaunchDarkly feature flags that were dead and we wanted to
+
+177
+00:17:13.880 --> 00:17:18.760
+remove them. So that's the place we started. We started by removing LaunchDarkly flags,
+
+178
+00:17:18.760 --> 00:17:25.239
+removing all those network calls, and we started prefetching the data. We took the critical path
+
+179
+00:17:25.239 --> 00:17:30.280
+API calls that were required for us to render. And we started prefetching them upfront,
+
+180
+00:17:30.280 --> 00:17:35.479
+even before your JavaScript started executing. So the data was already in parallel from the
+
+181
+00:17:35.479 --> 00:17:41.400
+beginning, ready for you to use. And we also looked at the back-end. As front-end developers,
+
+182
+00:17:41.400 --> 00:17:47.319
+we like to think we can do a lot of micro optimizations here and there, but sometimes
+
+183
+00:17:47.319 --> 00:17:52.439
+the back-end is the one that is taking the longest and you need to go and speak to the back-end team
+
+184
+00:17:52.439 --> 00:17:56.439
+and say, okay, we need to improve the back-end performance of these APIs that are used.
+
+185
+00:17:56.439 --> 00:17:59.880
+And you'll be surprised how much performance you can gain from just that.
+
+186
+00:18:02.680 --> 00:18:09.400
+Now, the last thing was this 22% that we found, and it was the electron performance. And you might
+
+187
+00:18:09.400 --> 00:18:13.160
+be thinking, well, this is electron. There's nothing that you can do there to improve it.
+
+188
+00:18:13.160 --> 00:18:18.119
+Well, we were wrong. It was the electron section, so it was before the WebView was launched, and it
+
+189
+00:18:18.119 --> 00:18:23.319
+was all pure electron overhead. But then we realized that there were some things that we could improve
+
+190
+00:18:23.319 --> 00:18:29.719
+for the electron performance. So the first thing was, let's improve the startup overhead of
+
+191
+00:18:29.719 --> 00:18:35.640
+electron. Remove any database, bootstrap, initialization, blocking scripts that are happening
+
+192
+00:18:35.640 --> 00:18:42.520
+on our code base that we can just remove and remove the blocking. And also, we started bundling
+
+193
+00:18:42.520 --> 00:18:48.119
+the main process code. So in electron, one of the recommendations is to use a bundler and actually
+
+194
+00:18:48.119 --> 00:18:54.839
+bundle the code, the JavaScript, that runs in electron. And also, something that we found that
+
+195
+00:18:54.839 --> 00:19:01.079
+was very performance intensive was the require calls. Every time that you require a node module
+
+196
+00:19:01.079 --> 00:19:06.520
+inside the electron main process, that was taking a toll on the total performance and the launch
+
+197
+00:19:06.520 --> 00:19:12.680
+initialization. So for us, it was just start removing unnecessary modules and necessary dependencies
+
+198
+00:19:12.680 --> 00:19:20.920
+from using require. Takeaway number three, relentless execution. So, I showed you how to
+
+199
+00:19:20.920 --> 00:19:26.760
+divide the work, how to identify the critical areas, and then just go and execute. Remove
+
+200
+00:19:26.760 --> 00:19:30.199
+all these things that are affecting your application, and you will start seeing the results.
+
+201
+00:19:33.160 --> 00:19:39.880
+Now, after a few months working on this project, reality hit. We were just so happy that we reduced
+
+202
+00:19:39.880 --> 00:19:45.160
+the bundle size so much. We're happy that we're making improvements to the network. But then,
+
+203
+00:19:45.800 --> 00:19:49.079
+despite all of this, we were not seeing the results that we expected.
+
+204
+00:19:49.800 --> 00:19:55.640
+And it didn't make sense. I was looking at the real user metrics, and it didn't make sense.
+
+205
+00:19:55.640 --> 00:20:00.439
+I was expecting a huge reduction, at least on that section for the JavaScript loading.
+
+206
+00:20:01.000 --> 00:20:04.040
+And I could not see that, even though the bundle had been reduced by 90%.
+
+207
+00:20:05.000 --> 00:20:10.760
+So, what we had to do was just keep going and dig deeper and re-evaluate what we were doing
+
+208
+00:20:10.760 --> 00:20:15.400
+and verify the data until we discovered something.
+
+209
+00:20:17.160 --> 00:20:21.800
+There was a render-blocking process in the main process of Electron that was competing with our
+
+210
+00:20:21.800 --> 00:20:28.680
+resources in the renderer, making that download and parsing of JavaScript sequential. So, you can
+
+211
+00:20:28.680 --> 00:20:34.280
+imagine we still have a lot of JavaScript, and then the main process is completely blocking,
+
+212
+00:20:34.280 --> 00:20:39.400
+stopping our JavaScript execution. Which meant that it doesn't matter how much bundle size
+
+213
+00:20:39.400 --> 00:20:44.199
+reductions we have done, actually, they were just still waiting because they were blocked by the
+
+214
+00:20:44.199 --> 00:20:49.239
+main thread. And there is one main rule on Electron, and it's, do not block the main thread.
+
+215
+00:20:49.239 --> 00:20:56.040
+That's the golden rule. And we found this, and it was a moment of, okay, all of the improvements
+
+216
+00:20:56.040 --> 00:21:01.319
+that we have done so far are now starting to show because we removed this particular bug that was
+
+217
+00:21:01.319 --> 00:21:07.640
+affecting the main thread. And how we found it, we found it using this tool called Tracing.
+
+218
+00:21:07.640 --> 00:21:12.920
+And you can use it with Cron Dev Tools as well. But this Tracing is for the main process for Electron.
+
+219
+00:21:12.920 --> 00:21:19.239
+So, this is not the main process, the Tracing for the web app, this is for the main
+
+220
+00:21:19.239 --> 00:21:24.920
+process of Electron. And we realized with this that we could find the place where it was blocking
+
+221
+00:21:24.920 --> 00:21:31.959
+the render process. Now, it takes me to the advanced techniques. So, we have done the basics, we have
+
+222
+00:21:31.959 --> 00:21:37.640
+done all of these things, but this exercise of doing the Tracing in Electron made us realize that there
+
+223
+00:21:37.640 --> 00:21:42.439
+was more that we could do. There was more performance that we could extract. And we discovered this
+
+224
+00:21:42.439 --> 00:21:48.359
+called the five-byte bytecode caching, the full bytecode caching. And the full bytecode caching
+
+225
+00:21:48.359 --> 00:21:54.359
+is an optimization that we could implement with our service worker, where you can just basically
+
+226
+00:21:54.359 --> 00:22:01.400
+pre-compile all your JavaScript. So, JavaScript compiles on demand just in time. But with the
+
+227
+00:22:01.400 --> 00:22:07.880
+service worker, we could just, at the install event, we generate the full code cache. So, these scripts
+
+228
+00:22:07.880 --> 00:22:13.719
+were pre-compiled. I did not compile in a lazy manner, but install everything at once. Now, we
+
+229
+00:22:13.719 --> 00:22:18.520
+could do that because we had our service worker. That improved our launch performance from the
+
+230
+00:22:18.520 --> 00:22:25.000
+Electron side and the co-loading even further. There were other techniques and advanced performance
+
+231
+00:22:25.000 --> 00:22:30.599
+techniques that we tried, but they gave us different results. For example, we tried with v8
+
+232
+00:22:30.599 --> 00:22:35.000
+snapshots. I don't know if anyone is using v8 snapshots for the main process in Electron,
+
+233
+00:22:35.880 --> 00:22:42.680
+but it was a very tricky and brittle process. We got some improvements out of the v8 snapshots,
+
+234
+00:22:42.680 --> 00:22:46.920
+but we decided to go with just the full bytecode caching because it was more predictable.
+
+235
+00:22:48.760 --> 00:22:55.640
+So, takeaway number four, adapt and iterate. We had to look at the metrics, we had to look
+
+236
+00:22:55.640 --> 00:23:01.079
+at the results, and then figure out what things were not working, and adapt, and then continue
+
+237
+00:23:01.079 --> 00:23:09.000
+iterating until we got the result. Now, the last thing is organizational challenges. I mean, we are
+
+238
+00:23:09.000 --> 00:23:14.839
+developers, we like a really good technical challenge, but at the same time, most of the
+
+239
+00:23:14.839 --> 00:23:19.239
+issues that we had were also because of organizational challenges. They were not purely
+
+240
+00:23:19.239 --> 00:23:25.640
+technical. We had issues like we tried to have a performance team to go and fix the performance
+
+241
+00:23:25.640 --> 00:23:30.359
+while the rest of the company was shipping features, and the problem is this small focus
+
+242
+00:23:30.359 --> 00:23:36.520
+team didn't have all the tools to go and fix the problem. We also had a lack of prioritization.
+
+243
+00:23:36.520 --> 00:23:42.280
+Performance, we knew we had a problem, but nobody just started saying, hey, let's go and fix it,
+
+244
+00:23:42.280 --> 00:23:47.800
+which also generates a lack of ownership. Performance is not my problem, it's a problem
+
+245
+00:23:47.800 --> 00:23:52.280
+with the performance team, so I don't care about performance of the features when I start adding
+
+246
+00:23:52.280 --> 00:24:01.319
+more features. But our CEO, after he brought this laptop, he just said, right, this is enough.
+
+247
+00:24:01.319 --> 00:24:06.119
+Performance is everybody's problem, and he brought the entire company together, and he gave us a
+
+248
+00:24:06.119 --> 00:24:12.839
+mandate to go and fix performance. So our company was focused for a few months, where we just
+
+249
+00:24:12.839 --> 00:24:19.239
+focused every single developer, every single product team on fixing performance, and that was our goal,
+
+250
+00:24:19.239 --> 00:24:27.400
+and that's what we went to do. So takeaway number five is focus and prioritization. You need to
+
+251
+00:24:27.400 --> 00:24:33.479
+bring the company together, bring the different developers from different teams, and come up with
+
+252
+00:24:33.479 --> 00:24:40.359
+a plan and get executed as one team. It is not just one team's responsibility of performance,
+
+253
+00:24:40.359 --> 00:24:45.160
+every single developer should be responsible for the performance of the application.
+
+254
+00:24:46.760 --> 00:24:53.079
+So the results for Postman were incredible. We went from 36 seconds at P90 for most of the
+
+255
+00:24:53.079 --> 00:25:00.760
+slowest devices to just under 12.5 seconds for the slowest devices. And for Mac, it was even better.
+
+256
+00:25:00.760 --> 00:25:04.040
+Our application starts between one and two seconds, depending on the machine.
+
+257
+00:25:04.040 --> 00:25:10.280
+So this is what months of work and months of iteration achieved if you come together.
+
+258
+00:25:11.800 --> 00:25:15.880
+Thank you very much. So my name is Ruben again. Here are my links if you want to follow me and ask
+
+259
+00:25:15.880 --> 00:25:22.280
+any questions. Cheers.

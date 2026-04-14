@@ -1,0 +1,1259 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:11.040
+ All right, so today I'm going to be talking about this initiative that I led to reduce
+
+00:00:11.040 --> 00:00:15.240
+ postman's start-up time on low-end devices.
+
+00:00:15.240 --> 00:00:22.720
+ This involved work across Electrom Web and also organizational execution.
+
+00:00:22.720 --> 00:00:24.800
+ My role was a staff engineer.
+
+00:00:24.800 --> 00:00:31.380
+ I was part of the front-end platform team and the stack was an electron application and
+
+00:00:31.380 --> 00:00:37.280
+ a very, very large single-punch application powering the WebView part of Electrom.
+
+00:00:37.280 --> 00:00:42.880
+ This was a multi-tenant, sorry, multi-team performance initiative across many months with
+
+00:00:42.880 --> 00:00:47.240
+ multiple stakeholders and a lot of people in their business.
+
+00:00:47.240 --> 00:00:54.020
+ I'm going to be showing how I helped defining this problem, choosing the right metric, also
+
+00:00:54.020 --> 00:01:00.240
+ the key technical decisions I had to make in this case and how I influence other engineers
+
+00:01:00.240 --> 00:01:07.720
+ and the business to execute just not to improve performance but also introduce a culture of
+
+00:01:07.720 --> 00:01:08.720
+ performance.
+
+00:01:08.720 --> 00:01:12.680
+ So it was not just like a one-off exercise and then everybody would get back to their
+
+00:01:12.680 --> 00:01:15.720
+ jobs and then just forget about performance after that.
+
+00:01:15.720 --> 00:01:17.120
+ So let's get started.
+
+00:01:17.120 --> 00:01:21.080
+ I'm going to go deeper into a lot of the technical aspects of this problem.
+
+00:01:21.080 --> 00:01:24.960
+ For example, when I'm going to be talking about the optimizations in Electron I'm going
+
+00:01:24.960 --> 00:01:29.480
+ to go deeply technical on those.
+
+00:01:29.480 --> 00:01:31.120
+ How this all started?
+
+00:01:31.120 --> 00:01:39.520
+ So the problem became real when the CEO of Postman went to Amazon and then bought a laptop,
+
+00:01:39.520 --> 00:01:44.880
+ really, really cheap Intel setup on laptop and then he tried running Postman on it and
+
+00:01:44.880 --> 00:01:49.400
+ he brought it to the office and that was very, very painful to watch.
+
+00:01:49.400 --> 00:01:56.480
+ It was really, really slow and you could take about 30 to 50 seconds to even just load and
+
+00:01:56.480 --> 00:01:57.480
+ it would just crash.
+
+00:01:57.480 --> 00:02:04.160
+ You know, the frequently crashing, there would be high spikes of CPU and it basically was
+
+00:02:04.160 --> 00:02:05.160
+ unusable.
+
+00:02:05.160 --> 00:02:12.240
+ The app would not work and this was a wake-up call, it was terrible to watch but the reason
+
+00:02:12.240 --> 00:02:16.680
+ this mattered and it was not just because we wanted to prove that Postman had a performance
+
+00:02:16.680 --> 00:02:20.520
+ problem is this was actually affecting our users.
+
+00:02:20.520 --> 00:02:26.520
+ Why this was a big problem was because the product was basically unusable for a large
+
+00:02:26.520 --> 00:02:31.120
+ segment of the users that own lower end devices.
+
+00:02:31.120 --> 00:02:37.320
+ It created not just a reputational risk but also a churn, you know, if people, if they
+
+00:02:37.320 --> 00:02:42.320
+ pay up is broken, people are just going to churn and they'll come back and the product
+
+00:02:42.320 --> 00:02:43.840
+ basically didn't work.
+
+00:02:43.840 --> 00:02:49.280
+ And also when the reputation of Postman was notorious, people were calling Postman, you
+
+00:02:49.280 --> 00:02:54.960
+ know, he's blocked it, he doesn't work, he's too slow, it's a really, really slow app.
+
+00:02:54.960 --> 00:02:59.280
+ So this was affecting the product and it was affecting the business and we, this was the
+
+00:02:59.280 --> 00:03:04.080
+ wake-up call for us to figure out how to improve the performance.
+
+00:03:04.080 --> 00:03:05.080
+ That's where I came in.
+
+00:03:05.080 --> 00:03:11.960
+ So we had this performance, a performance team before and I came in and we knew the
+
+00:03:11.960 --> 00:03:20.040
+ problem was a big significant but this is when I took ownership to look at this problem
+
+00:03:20.040 --> 00:03:24.600
+ and try to come up with a solution from the engineering perspective as part of the platform
+
+00:03:24.600 --> 00:03:25.600
+ team.
+
+00:03:25.600 --> 00:03:31.600
+ So I took this as a task to lead to a solution coming up with the solution to this problem.
+
+00:03:31.600 --> 00:03:37.880
+ First of all, what I had to do was define the correct metric.
+
+00:03:37.880 --> 00:03:42.040
+ So how are you going to measure the performance of the application?
+
+00:03:42.040 --> 00:03:47.120
+ So first of all, we already, as I mentioned, we had a performance team before and people
+
+00:03:47.120 --> 00:03:52.520
+ before me, they've been doing some things like introducing like high-house calls and
+
+00:03:52.520 --> 00:03:55.200
+ trying to check core way vitals.
+
+00:03:55.200 --> 00:04:00.000
+ But all of these metrics were segmented across multiple areas of the application.
+
+00:04:00.000 --> 00:04:02.840
+ There was no single view of performance of the entire application.
+
+00:04:02.840 --> 00:04:08.200
+ So those metrics were mainly on the renderer process, so the electron has main and renderer.
+
+00:04:08.200 --> 00:04:12.860
+ And the renderer process, well, you can measure the performance and have a lot of metrics,
+
+00:04:12.860 --> 00:04:18.120
+ but there was no overview how long to take from when you open the app until you can do
+
+00:04:18.120 --> 00:04:19.120
+ something.
+
+00:04:19.120 --> 00:04:23.360
+ And that's where I came up with this metric.
+
+00:04:23.360 --> 00:04:25.920
+ I call that time to usability.
+
+00:04:25.920 --> 00:04:30.040
+ The reason or the way that I got inspired by this was a few things.
+
+00:04:30.040 --> 00:04:33.640
+ So from, I don't know if you're familiar with, like, I think this is a time in game
+
+00:04:33.640 --> 00:04:37.320
+ and I'm not a gamer, but it's called time to fun.
+
+00:04:37.320 --> 00:04:44.680
+ So the metric that games track is when they open the game and how long does it take for
+
+00:04:44.680 --> 00:04:46.360
+ people to have fun.
+
+00:04:46.360 --> 00:04:52.360
+ So I thought, well, our app is not game, but how long does it take for people to launch
+
+00:04:52.360 --> 00:04:54.820
+ their app and actually do something meaningful?
+
+00:04:54.820 --> 00:04:58.720
+ And this is having inspired by VS Code and a lot of other applications where they also
+
+00:04:58.720 --> 00:05:04.000
+ measure this, for example, VS Code, they measure when the application launches and then the
+
+00:05:04.000 --> 00:05:06.400
+ cursor is ticking.
+
+00:05:06.400 --> 00:05:11.040
+ And from the Slack as well, it's an electron app when you open Slack and then they measure
+
+00:05:11.040 --> 00:05:15.520
+ how long it takes for the sending message box to appear.
+
+00:05:15.520 --> 00:05:19.160
+ So I was inspired and I came up with this time to usability.
+
+00:05:19.160 --> 00:05:20.720
+ It's a custom metric.
+
+00:05:20.720 --> 00:05:21.720
+ I came up with it.
+
+00:05:21.720 --> 00:05:25.800
+ It didn't record outside of a person.
+
+00:05:25.800 --> 00:05:34.440
+ But it is a metric where we are measuring how long does it take for the time that you
+
+00:05:34.440 --> 00:05:40.720
+ click the button on the launchpad until you are ready to perform a task, which is, in
+
+00:05:40.720 --> 00:05:42.680
+ this case, postman send requests.
+
+00:05:42.680 --> 00:05:44.600
+ So I call this the critical task.
+
+00:05:44.600 --> 00:05:49.000
+ So in launch, the JavaScript is ready, the data is loaded, and then we are ready to send
+
+00:05:49.000 --> 00:05:50.000
+ a request.
+
+00:05:50.000 --> 00:05:58.560
+ It was very important to come up with an off-start metric because I didn't want to have optimizations
+
+00:05:58.560 --> 00:05:59.560
+ everywhere.
+
+00:05:59.560 --> 00:06:01.400
+ I wanted to focus on just one thing.
+
+00:06:01.400 --> 00:06:06.800
+ And the most impactful thing was, I looked at how many, what was the things that users
+
+00:06:06.800 --> 00:06:08.120
+ were doing when they launched the application?
+
+00:06:08.120 --> 00:06:10.800
+ And of course, the first thing they do is sending a request.
+
+00:06:10.800 --> 00:06:15.640
+ So it was a data-driven decision and we wanted to optimize for that initial experience.
+
+00:06:15.640 --> 00:06:16.640
+ Like you open the app.
+
+00:06:16.640 --> 00:06:18.120
+ You are ready to send a request.
+
+00:06:18.120 --> 00:06:20.880
+ There you go.
+
+00:06:20.880 --> 00:06:22.280
+ The target was 10 seconds.
+
+00:06:22.280 --> 00:06:27.160
+ So we wanted to ensure the application, and this is on low-end devices, by the way the
+
+00:06:27.160 --> 00:06:31.400
+ target on high-end devices was way lower, 10 seconds is still quite low.
+
+00:06:31.400 --> 00:06:38.080
+ But again, we are focusing on low-end devices and choosing these 10 seconds, I looked at
+
+00:06:38.080 --> 00:06:43.400
+ some research and I think I read a really, it's not probably old paper where the multiples
+
+00:06:43.400 --> 00:06:48.680
+ of 10 were in one minute and sorry, in one second, in 10 seconds and one minute.
+
+00:06:48.680 --> 00:06:52.440
+ I think 10 seconds is like the amount of time for an application, I mean three conferences
+
+00:06:52.440 --> 00:06:58.440
+ different but for an application to make sure that you don't lose track.
+
+00:06:58.440 --> 00:07:01.680
+ Like if I open the app after 10 seconds, I'll be like, the app is not working and they just
+
+00:07:01.680 --> 00:07:03.000
+ forget about it.
+
+00:07:03.000 --> 00:07:05.280
+ So we had the target.
+
+00:07:05.280 --> 00:07:06.280
+ We chosen the target.
+
+00:07:06.280 --> 00:07:08.480
+ We chosen what we're going to be measuring.
+
+00:07:08.480 --> 00:07:13.440
+ The next time was, what instrumentation, so I looked at the instrumentation methods and
+
+00:07:13.440 --> 00:07:18.840
+ of course DTU, the time to use ability, my trick that I came up with, it was a bit difficult
+
+00:07:18.840 --> 00:07:24.480
+ to measure with the current tools, you know, like we don't have that in my house.
+
+00:07:24.480 --> 00:07:28.600
+ And also there was a challenge on how we're going to measure the whole process, from the
+
+00:07:28.600 --> 00:07:32.720
+ main process to actually when the rendering happens.
+
+00:07:32.720 --> 00:07:38.720
+ So the instrumentation strategy was using their browser native APIs, in this case, this performance
+
+00:07:38.720 --> 00:07:44.680
+ mark, performance measure, to segment the different stages of the launch of that critical
+
+00:07:44.680 --> 00:07:52.680
+ path that I defined and looking at how long each segment of these process takes.
+
+00:07:52.680 --> 00:07:57.320
+ So using performance on mark, we can say, you know, the platform initialise here, then
+
+00:07:57.320 --> 00:08:02.520
+ we put another marker when that process finishes and the next one continues.
+
+00:08:02.520 --> 00:08:07.560
+ And then you can just aggregate all those markers and then I'll give you the total
+
+00:08:07.560 --> 00:08:13.000
+ launch time at the end, but you can also see the segments on how long each individual parts
+
+00:08:13.000 --> 00:08:14.000
+ were taken.
+
+00:08:14.000 --> 00:08:17.760
+ So we could have, well, how long the main process takes, how long the JavaScript parts
+
+00:08:17.760 --> 00:08:22.360
+ in the learning compilation, how long the data fetching and how long the rendering of
+
+00:08:22.360 --> 00:08:23.840
+ the workspace it was taken.
+
+00:08:23.840 --> 00:08:31.640
+ So this was locally, of course, but also we wanted to focus on real user metrics.
+
+00:08:31.640 --> 00:08:39.560
+ So there was not a lot of synthetic monitoring at that point, but I decided to focus on user
+
+00:08:39.560 --> 00:08:44.840
+ monitoring because we wanted to see the impact on users, we didn't want just to make nice
+
+00:08:44.840 --> 00:08:50.160
+ key dashboards and things that worked internally, but we wanted to see immediate impact on the
+
+00:08:50.160 --> 00:08:51.160
+ user.
+
+00:08:51.160 --> 00:08:55.600
+ So we sent this to the RAM, which is Postman's internal analytics.
+
+00:08:55.600 --> 00:09:01.040
+ And then we segmented all this by device, CPU class region.
+
+00:09:01.040 --> 00:09:04.520
+ So Postman has all of these different types of users.
+
+00:09:04.520 --> 00:09:13.840
+ So I collected those metrics, and that gave us a really nice segmentation.
+
+00:09:13.840 --> 00:09:19.280
+ So it was not just like a path, like a number, it was just a segmentation.
+
+00:09:19.280 --> 00:09:22.160
+ So we can see if we were making progress or not.
+
+00:09:22.160 --> 00:09:25.560
+ So the big umbrella question, so why is the app so slow?
+
+00:09:25.560 --> 00:09:29.800
+ So after having this representation, and I look at the data and static collecting data
+
+00:09:29.800 --> 00:09:37.520
+ from the users, the million dollar question was, hey, what's the app so slow and the results
+
+00:09:37.520 --> 00:09:38.520
+ were very interesting.
+
+00:09:38.520 --> 00:09:45.880
+ So 22% of the app was taken by the main process, and 38% by JavaScript and a lot of parsing
+
+00:09:45.880 --> 00:09:50.920
+ and compiling, and the rest was taken by the API calls and rendering.
+
+00:09:50.920 --> 00:09:51.920
+ And you can see this graph.
+
+00:09:51.920 --> 00:09:57.080
+ I managed to get for all the spans of different segments that we had.
+
+00:09:57.080 --> 00:10:06.000
+ And it was not surprising, but it was nice to see what the application was so slow.
+
+00:10:06.000 --> 00:10:12.640
+ So a huge chunk of the application start time was going in this blue section.
+
+00:10:12.640 --> 00:10:13.640
+ Nothing was happening.
+
+00:10:13.640 --> 00:10:19.800
+ It was a loading spinner during that 38% before anything even rendered on the screen.
+
+00:10:19.800 --> 00:10:26.240
+ So to reduce the start time, we wanted to focus on all of these areas.
+
+00:10:26.240 --> 00:10:32.880
+ The outcome of this was, I don't give you the actual segmentation on how to solve the
+
+00:10:32.880 --> 00:10:33.880
+ problem.
+
+00:10:33.880 --> 00:10:41.160
+ And I created this document, so I compiled all of these different results and graphs
+
+00:10:41.160 --> 00:10:46.960
+ and dashboards, and I put them into a document to explain to the business and all the stakeholders
+
+00:10:46.960 --> 00:10:49.400
+ and all of the engineers in the department.
+
+00:10:49.400 --> 00:10:53.920
+ So what the problem was, and with the real user metrics.
+
+00:10:53.920 --> 00:10:59.880
+ So I sent this to everybody, I got a lot of comments, people were questioning the measurements,
+
+00:10:59.880 --> 00:11:04.040
+ people were questioning why we have such a big bundle.
+
+00:11:04.040 --> 00:11:10.200
+ And I had to answer a lot of questions in here, but then at least I had arguments based on
+
+00:11:10.200 --> 00:11:17.400
+ data how to present this to people and how to try to gain that convincing people and
+
+00:11:17.400 --> 00:11:20.160
+ gain that support from them to go and do something about it.
+
+00:11:20.160 --> 00:11:23.520
+ Because at least now we have something to start with.
+
+00:11:23.520 --> 00:11:29.000
+ So the focus was, what do we focus on, like, what do we do?
+
+00:11:29.000 --> 00:11:33.880
+ As I mentioned, we wanted to focus on the highest return of investment areas, and our
+
+00:11:33.880 --> 00:11:38.760
+ premature optimization, optimizing things that are not going to produce a lot of value.
+
+00:11:38.760 --> 00:11:43.800
+ So the prioritization, I made this decision where I would just focus 100% on the data
+
+00:11:43.800 --> 00:11:48.800
+ section, which is the JavaScript execution, compilation, and download and parsing.
+
+00:11:48.800 --> 00:11:54.720
+ Because it was the main area, and it was not doing anything, that was just pure overhead,
+
+00:11:54.720 --> 00:11:56.480
+ and I wanted to focus on that.
+
+00:11:56.480 --> 00:12:01.440
+ But of course, this initiative was not just one section, I wanted to get the entire business
+
+00:12:01.440 --> 00:12:02.440
+ together.
+
+00:12:02.440 --> 00:12:08.120
+ And even though we were going to focus on the main bundle optimization and parsing and compiling,
+
+00:12:08.120 --> 00:12:12.400
+ there were also other tracks, I call them tracks, in terms of what other people would
+
+00:12:12.400 --> 00:12:19.120
+ be doing, improving performance in other areas, like networking, data fetching, and also the
+
+00:12:19.120 --> 00:12:21.640
+ main process in Electron.
+
+00:12:21.640 --> 00:12:27.200
+ So trying to get the buy-in from the organization was interesting.
+
+00:12:27.200 --> 00:12:31.200
+ I went to every single head of the department, after sending the document, there were a lot
+
+00:12:31.200 --> 00:12:34.280
+ of questions, but still had they needed a lot of convincing still.
+
+00:12:34.280 --> 00:12:40.720
+ And I went to ask for resources, and this is always an interesting discussion because they
+
+00:12:40.720 --> 00:12:43.800
+ wanted to ask how long it's going to take, how many people.
+
+00:12:43.800 --> 00:12:50.240
+ And we have an essay in Postman and the team down here, which is nevertheless we ship,
+
+00:12:50.240 --> 00:12:54.520
+ meaning we're not going to stop the business, we're still shipping features, and we're not
+
+00:12:54.520 --> 00:12:57.600
+ going to stop, and we're just going to fix it.
+
+00:12:57.600 --> 00:13:03.480
+ So I managed to secure buy-in from the business and the stakeholders, and I managed to get
+
+00:13:03.480 --> 00:13:10.680
+ at least committed to engineers per team to focus on performance, and make sure that that
+
+00:13:10.680 --> 00:13:11.680
+ was their focus.
+
+00:13:11.680 --> 00:13:15.280
+ That performance is important for everybody, and it's a business problem, it's not just
+
+00:13:15.280 --> 00:13:20.120
+ a technical problem, and it's not just an issue for their platform team or just a performance
+
+00:13:20.120 --> 00:13:22.000
+ team or whatever.
+
+00:13:22.000 --> 00:13:29.480
+ So I created this plan, presented it, and I started executing.
+
+00:13:29.480 --> 00:13:36.800
+ Before I talk about the main part that I focus on, there are other tracks like the improvements
+
+00:13:36.800 --> 00:13:37.800
+ to the network.
+
+00:13:37.800 --> 00:13:42.760
+ I'm just going to be briefing this one, but it was mainly that there were a lot of network
+
+00:13:42.760 --> 00:13:48.760
+ requests, a lot of feature flags, a lot of data that ride too late for the initial render.
+
+00:13:48.760 --> 00:13:56.560
+ So solution, a lot of low honey fruit, introduce some prefetching, collecting a lot of data,
+
+00:13:56.560 --> 00:14:01.680
+ and talking to the back end, so sometimes talking at the back end, the front end folks
+
+00:14:01.680 --> 00:14:05.640
+ and the back end folks don't talk to each other, and then the front end folks, they need to
+
+00:14:05.640 --> 00:14:10.160
+ talk a little bit more, because there are some times where the issues actually the data.
+
+00:14:10.160 --> 00:14:13.760
+ The front end might be slow, they might be some problems, but if an API is taking a lot
+
+00:14:13.760 --> 00:14:18.200
+ of time, or you are calling, in this case, we're calling hundreds of APIs.
+
+00:14:18.200 --> 00:14:21.880
+ So there was an aggregation coordination with the back end team to ensure that APIs were
+
+00:14:21.880 --> 00:14:27.000
+ faster, some aggregated endpoints for the critical data were created.
+
+00:14:27.000 --> 00:14:33.120
+ There was a brief mention of GraphQL at that point, and I think I shot it very quickly.
+
+00:14:33.120 --> 00:14:37.400
+ I think for Postman as an application, that was one of those premature optimizations
+
+00:14:37.400 --> 00:14:42.960
+ that I wanted to stop, because maybe, yeah, that would help with aggregation, et cetera,
+
+00:14:42.960 --> 00:14:48.520
+ but to be honest, we could get a lot more output just by combining a few APIs and cleaning
+
+00:14:48.520 --> 00:14:54.240
+ up the log of having a free drive and introducing a brand new tool in structure for the data
+
+00:14:54.240 --> 00:14:57.960
+ fetching, which probably wasn't that needed that long.
+
+00:14:57.960 --> 00:15:06.480
+ So we fixed the feature flags and all of this prefetching and performance of .NET, and the
+
+00:15:06.480 --> 00:15:10.000
+ inside was, you know, this is not just focusing on the front end, this is interesting, this
+
+00:15:10.000 --> 00:15:14.480
+ is what I do, but also there is a lot of all this stuff that can be done off from the back
+
+00:15:14.480 --> 00:15:16.640
+ end for improving performance.
+
+00:15:16.640 --> 00:15:22.960
+ Right, so in this slide, I'm going to spend a lot of time, because this is the main thing
+
+00:15:22.960 --> 00:15:29.840
+ I did, this was my main involvement, my main focus challenge was the JavaScript person
+
+00:15:29.840 --> 00:15:30.840
+ and compilation.
+
+00:15:30.840 --> 00:15:38.240
+ So I took the team, the platform team, a few engineers, and this was my responsibility,
+
+00:15:38.240 --> 00:15:42.320
+ and this was my strong bet, just a little bit of context first.
+
+00:15:42.320 --> 00:15:50.240
+ So while this was a big problem, the bundle for Postman was 14 megabytes of JavaScript
+
+00:15:50.240 --> 00:15:56.960
+ mini files, and there is a reason for this, it'd be like, why are you doing 14 megabytes
+
+00:15:56.960 --> 00:15:57.960
+ for Postman?
+
+00:15:57.960 --> 00:16:04.120
+ It's a nearly code editor, we have really heavy dependencies, but it was also because
+
+00:16:04.120 --> 00:16:10.440
+ the application was originally an electron application, and all the files were bundled
+
+00:16:10.440 --> 00:16:16.400
+ with the electron, but after a while, Postman decided to go on updates over the air, meaning
+
+00:16:16.400 --> 00:16:22.080
+ that you could potentially update the application without having to download the entire bundle,
+
+00:16:22.080 --> 00:16:30.760
+ the entire executable binary, but the problem is that it was built as a single file, it
+
+00:16:30.760 --> 00:16:33.920
+ was not built as a web app, it was built to set, and then you take it up with a bunch
+
+00:16:33.920 --> 00:16:37.240
+ of files where you don't care about how much JavaScript you put in there, because it's
+
+00:16:37.240 --> 00:16:39.000
+ in the main process.
+
+00:16:39.000 --> 00:16:46.480
+ The application was also very old, Postman was 10 years old at this point, and it's been
+
+00:16:46.480 --> 00:16:51.280
+ iterations, migration, things that were never finished.
+
+00:16:51.280 --> 00:17:00.800
+ So the one thing is very, very hard to make sense of what the code was in there.
+
+00:17:00.800 --> 00:17:05.800
+ JavaScript cost is not just network, it's also parsing and compiling.
+
+00:17:05.800 --> 00:17:10.360
+ So parsing and compiling JavaScript, people don't realize how much the compilation step
+
+00:17:10.360 --> 00:17:14.960
+ takes when you have a large bundle, so of course downloading from the network takes
+
+00:17:14.960 --> 00:17:23.040
+ a long time, but once JavaScript arrives, you have a big cost of parsing and compiling.
+
+00:17:23.040 --> 00:17:29.160
+ So I created this graph tractor on the standard, I went to webpack stats, and then tried to
+
+00:17:29.160 --> 00:17:33.800
+ run the bundle on theizer, and I created this visualization and it crashed my laptop
+
+00:17:33.800 --> 00:17:37.200
+ a few times, just to show you how bad the problem was.
+
+00:17:37.200 --> 00:17:42.040
+ This I call the supernova modern graph, this is a real modular graph, with I don't know
+
+00:17:42.040 --> 00:17:48.640
+ how many thousands of noise, and it was bad, like 700 circle dependencies.
+
+00:17:48.640 --> 00:17:53.360
+ It was a terrible problem, and that's the context on why we had so much hours correct.
+
+00:17:53.360 --> 00:17:56.600
+ Now, what do we do in this case?
+
+00:17:56.600 --> 00:18:02.800
+ I have two approaches, and I'm gonna go deeper into the two proposals that I put forward
+
+00:18:02.800 --> 00:18:07.280
+ and why it was not chosen, and a little bit of back history.
+
+00:18:07.280 --> 00:18:12.280
+ So like manager postman, I was meant to join to improve the modularization and re-architecture
+
+00:18:12.280 --> 00:18:14.160
+ of the application.
+
+00:18:14.160 --> 00:18:18.920
+ So I was familiar with the things I wanted to do to improve this, so the application
+
+00:18:18.920 --> 00:18:21.560
+ was solved, and I was struggling basically.
+
+00:18:21.560 --> 00:18:27.480
+ So I wanted to do the modularization and fix the root cause, and I was one approach, and
+
+00:18:27.480 --> 00:18:32.680
+ just to be honest, to clarify, I was not advocating for a full rewrite.
+
+00:18:32.680 --> 00:18:37.280
+ So people would come and say, "Hey, this is really bad, let's go and rewrite it from scratch."
+
+00:18:37.280 --> 00:18:40.200
+ That's not the approach I was suggesting with the modularization.
+
+00:18:40.200 --> 00:18:47.440
+ I came up with a lot of different, no migration, but improvements, avenues for modularization
+
+00:18:47.440 --> 00:18:54.960
+ with strangling parts and incremental, removable, and keep changing the different parts and
+
+00:18:54.960 --> 00:18:58.560
+ modularizing the parts with how to rewrite and make a binary rewrite.
+
+00:18:58.560 --> 00:19:02.560
+ So it was not like a massive migrational rewrite, it was a modular approach.
+
+00:19:02.560 --> 00:19:06.760
+ And I had a lot of evidence and I've been working on that for a while.
+
+00:19:06.760 --> 00:19:10.520
+ The other option was, well, let's figure out why this is so bad, instead of doing the
+
+00:19:10.520 --> 00:19:17.320
+ old modularization initiative and apply some performance techniques and see how far we can
+
+00:19:17.320 --> 00:19:18.320
+ get.
+
+00:19:18.320 --> 00:19:22.840
+ Unfortunately, I went to convince everybody about the modularization.
+
+00:19:22.840 --> 00:19:28.360
+ I convinced my colleagues to go to the heads of the department and explain why it wasn't
+
+00:19:28.360 --> 00:19:30.240
+ just good for performance.
+
+00:19:30.240 --> 00:19:34.960
+ It was also good for the long-term health and architecture of the application to have
+
+00:19:34.960 --> 00:19:39.320
+ a modular, basically to clean up, it was just a mess.
+
+00:19:39.320 --> 00:19:45.480
+ But at the end, after convincing everybody, and I thought I convinced the head of engineering
+
+00:19:45.480 --> 00:19:51.360
+ as well, but I think he changed his mind and he said he didn't want us to go that way.
+
+00:19:51.360 --> 00:19:56.200
+ I guess to reduce risk, I didn't agree with the assessment.
+
+00:19:56.200 --> 00:20:04.280
+ I thought the solution of modularization was probably better, but of course the risk and
+
+00:20:04.280 --> 00:20:05.880
+ at that point there was an unknown.
+
+00:20:05.880 --> 00:20:10.160
+ He was a big bet and the head of engineering had the last say and he said no, let's just
+
+00:20:10.160 --> 00:20:16.560
+ try to patch the architecture and figure out how to fix it without having to implement
+
+00:20:16.560 --> 00:20:19.480
+ this massive modularization plan.
+
+00:20:19.480 --> 00:20:25.800
+ So the solution chosen, I was like, okay, fine, let's do, let's see what we can do.
+
+00:20:25.800 --> 00:20:32.120
+ It's a business decision, the technical decision, I presented all my arguments, but see what
+
+00:20:32.120 --> 00:20:33.120
+ we can do.
+
+00:20:33.120 --> 00:20:36.720
+ So the first thing I did was, well, let's try and patch this.
+
+00:20:36.720 --> 00:20:41.080
+ Let's go through why this module graph and try to understand this module graph and how
+
+00:20:41.080 --> 00:20:42.640
+ to untangle it.
+
+00:20:42.640 --> 00:20:47.320
+ So I came across a tool called status code, which is much better than the weight loss
+
+00:20:47.320 --> 00:20:48.320
+ stats.
+
+00:20:48.320 --> 00:20:55.200
+ And today, there's a better one called ours doctor, which is based on our webpack.
+
+00:20:55.200 --> 00:21:01.960
+ So this tool, when I found this tool was eye opening, it was a turning point because before
+
+00:21:01.960 --> 00:21:07.920
+ nobody understood what was going on, this crashing my computer, I couldn't even understand
+
+00:21:07.920 --> 00:21:12.200
+ where all the circular dependencies and why the bundle was a huge.
+
+00:21:12.200 --> 00:21:18.500
+ But with this tool that I found, I analyzed the bundle and I could find the different
+
+00:21:18.500 --> 00:21:25.480
+ modules, graphs, import chains, and why the application was being injected, because even
+
+00:21:25.480 --> 00:21:29.520
+ after lazy loading and co-splitting, they were still getting inside because of the
+
+00:21:29.520 --> 00:21:30.720
+ circular dependencies.
+
+00:21:30.720 --> 00:21:38.600
+ So I gave the team today's tool, I gave them the tools to find out what they could do and
+
+00:21:38.600 --> 00:21:41.940
+ start splitting lazy loading dependency, proving aggressive.
+
+00:21:41.940 --> 00:21:48.040
+ This is what they took so long, one of the parts of the project that took a long time
+
+00:21:48.040 --> 00:21:52.240
+ because the team had to go, look at their code, look at the dependencies, start cutting
+
+00:21:52.240 --> 00:21:56.480
+ things, remove their code, replace the load, code splits, etc.
+
+00:21:56.480 --> 00:22:03.080
+ So it took a few months and we managed to get the bundle from 14 megabytes to 2.7 megabytes
+
+00:22:03.080 --> 00:22:09.640
+ or JavaScript, which was a huge, I didn't even think that we could get, it was a huge
+
+00:22:09.640 --> 00:22:17.280
+ reduction from thing to tool, and then before we go into that, and then everybody was happy
+
+00:22:17.280 --> 00:22:24.840
+ and now this comes in the here's journey story, when you are, yeah everything is great, performance
+
+00:22:24.840 --> 00:22:31.160
+ is solved, and actually it was not bad, something unexpected happened, after this work, everybody
+
+00:22:31.160 --> 00:22:37.200
+ putting so much effort into this, the bundled reductions didn't immediately produce the
+
+00:22:37.200 --> 00:22:38.560
+ expected gains.
+
+00:22:38.560 --> 00:22:45.760
+ So I was expecting that you remove and reduce the JavaScript bundle, and then the time to
+
+00:22:45.760 --> 00:22:52.120
+ use ability metric in real-time, real user metrics would just drop at the same time, at
+
+00:22:52.120 --> 00:22:58.280
+ the same pace as the bundle, because my theory was, there is a lot of work that is happening
+
+00:22:58.280 --> 00:23:02.960
+ in there, and if you reduce the amount of work of parsing, compiling, downloading, then
+
+00:23:02.960 --> 00:23:11.000
+ it naturally this will go down, but the observance, it was improving, but not as fast.
+
+00:23:11.000 --> 00:23:17.640
+ We improved by like 10 and a second, we were like at 27, 26 seconds, and everybody started
+
+00:23:17.640 --> 00:23:23.840
+ questioning everything, questioning me, because I asked the one who proposed this, and the
+
+00:23:23.840 --> 00:23:28.000
+ one that was very convinced that improving the bundle would improve the performance,
+
+00:23:28.000 --> 00:23:32.640
+ so I questioned myself, everybody started questioning me, questioned the metrics, are
+
+00:23:32.640 --> 00:23:39.840
+ the metrics correct, are we making a measurement errors, are we not getting the data, what's
+
+00:23:39.840 --> 00:23:41.360
+ going on with the metrics.
+
+00:23:41.360 --> 00:23:47.960
+ They also, I was trying to verify my assumptions, is JavaScript, the bottleneck, am I missing
+
+00:23:47.960 --> 00:23:48.960
+ something?
+
+00:23:48.960 --> 00:23:52.280
+ I was like, I could not look at the metrics, I was like, am I missing something?
+
+00:23:52.280 --> 00:23:56.760
+ So I also started getting pushed back from the business, I was in the big trouble, because
+
+00:23:56.760 --> 00:24:02.000
+ the heads of the department were like, hey, you know, we're investing in this, we spend
+
+00:24:02.000 --> 00:24:03.000
+ a lot of time.
+
+00:24:03.000 --> 00:24:04.880
+ Why is the performance now coming down?
+
+00:24:04.880 --> 00:24:09.120
+ My boss asking questions, everybody asks questions, everybody looking at me.
+
+00:24:09.120 --> 00:24:11.600
+ So how do I get out of this?
+
+00:24:11.600 --> 00:24:18.520
+ I take a step back, I had a conviction that this was the right approach, but there must
+
+00:24:18.520 --> 00:24:20.660
+ be something else that is happening.
+
+00:24:20.660 --> 00:24:28.480
+ So back to analysis, we just started using some contrasting on the main process and trying
+
+00:24:28.480 --> 00:24:36.560
+ to figure out why the JavaScript bundle was still taking, that section was taking so
+
+00:24:36.560 --> 00:24:44.160
+ long, and interesting, we found one debug, and I am happy to go in details on what the
+
+00:24:44.160 --> 00:24:49.480
+ bug, this is a very, very interesting bug, but in summary was there was a hidden main
+
+00:24:49.480 --> 00:24:52.520
+ thread, like a block in an electron.
+
+00:24:52.520 --> 00:24:59.960
+ So it's something that actually I did, at the beginning of the initiative, I lazy loaded
+
+00:24:59.960 --> 00:25:05.240
+ the initialization of the JavaScript, so I created like a bootstrap and then just lazy
+
+00:25:05.240 --> 00:25:07.920
+ loaded the rest of the application, the big bundle.
+
+00:25:07.920 --> 00:25:12.840
+ And that caused the document on load event to come sooner, and then the main process
+
+00:25:12.840 --> 00:25:18.320
+ was listening to this, to do also some lazy loading, which meant that the main process
+
+00:25:18.320 --> 00:25:23.640
+ was blocking the render when the JavaScript was parsing that compiling, meaning it was
+
+00:25:23.640 --> 00:25:30.160
+ sequential, it was a race condition between these two, so we get sometimes a variable results,
+
+00:25:30.160 --> 00:25:35.560
+ and also it was just blocking completely the main process, and the matrix was telling us
+
+00:25:35.560 --> 00:25:41.120
+ that the render was taking long, but it was an outcome from the main process.
+
+00:25:41.120 --> 00:25:47.360
+ So the main lesson I learned here was don't block the main process of electron, because
+
+00:25:47.360 --> 00:25:52.960
+ that is the sacred process, you should not block it, and I found this bug delayed our
+
+00:25:52.960 --> 00:25:56.160
+ execution for a long time.
+
+00:25:56.160 --> 00:26:02.280
+ So after we fixed this bug, the news was the time to usability, the launch performance
+
+00:26:02.280 --> 00:26:08.320
+ had immediate sharp drop, I remember looking at the metrics, and the metrics were like coming
+
+00:26:08.320 --> 00:26:15.320
+ down like crazy, I was like, wow, it was like your present button, performance went down
+
+00:26:15.320 --> 00:26:20.120
+ like 10 seconds lower, like in within like a week, and then you keep dropping.
+
+00:26:20.120 --> 00:26:27.840
+ So it was difficult, but I managed to find that, I'm going to focus on a couple of advanced
+
+00:26:27.840 --> 00:26:33.760
+ buttons, I think they'll be very useful if I discuss them, because the bundle was interesting,
+
+00:26:33.760 --> 00:26:37.680
+ but there was still some of the things that we could do, and after looking at the current
+
+00:26:37.680 --> 00:26:41.840
+ tracing we realized, okay, the main process probably we can improve other things, because
+
+00:26:41.840 --> 00:26:45.200
+ you'll be thinking, oh, the main process, these are all the electron stuff, we are not
+
+00:26:45.200 --> 00:26:49.840
+ going to be fixing electron performance, these are overhead, but actually that was not true,
+
+00:26:49.840 --> 00:26:53.720
+ there was a lot of stuff still in the main process that we could do, and one of those
+
+00:26:53.720 --> 00:26:59.200
+ was my bundling the main process, so I think we used RSPAC at that point to bundle the
+
+00:26:59.200 --> 00:27:05.280
+ main process that gave us a couple of seconds of improvement at P90, then there was a persistent
+
+00:27:05.280 --> 00:27:12.360
+ database called JSON Electron Storage, which was very, very slow, removing that, and then
+
+00:27:12.360 --> 00:27:17.160
+ finally, RSSI requires, because in the main process we also have a lot of dependencies
+
+00:27:17.160 --> 00:27:24.240
+ and a lot of code that was not needed, but then after removing the code that was not needed,
+
+00:27:24.240 --> 00:27:32.920
+ there was still a lot of code that was required, the startup, so there was one interesting
+
+00:27:32.920 --> 00:27:38.040
+ optimization technique that we started looking with the main process, the team had a couple
+
+00:27:38.040 --> 00:27:45.080
+ of good engineers from C++ backgrounds, and they were really good at looking at the electron
+
+00:27:45.080 --> 00:27:52.760
+ process, and they proposed this, V8 snapshot, which was basically compiling these dependencies,
+
+00:27:52.760 --> 00:27:59.200
+ converting them into native code, so that required impact would be removed.
+
+00:27:59.200 --> 00:28:05.680
+ I tested this, but I personally pushed back a lot on this approach, because first of all
+
+00:28:05.680 --> 00:28:10.120
+ the results, they presented were interesting, but they were not that much compared to the
+
+00:28:10.120 --> 00:28:18.240
+ risk, so for example, my concern is very complex, it requires C++ engineers maintaining
+
+00:28:18.240 --> 00:28:23.800
+ these mappings for every dependency, and not just the maintenance, what happens when you
+
+00:28:23.800 --> 00:28:31.420
+ update the dependency, so there was some maintenance, a lot of complexity, and the gains were really
+
+00:28:31.420 --> 00:28:39.080
+ small compared to the risk, so eventually I just suggested against this, and I advanced
+
+00:28:39.080 --> 00:28:43.920
+ against using this alternative, but there were other alternatives, and all the things
+
+00:28:43.920 --> 00:28:49.680
+ that were actually implemented that were advanced, this case were the renderer, so after reducing
+
+00:28:49.680 --> 00:28:54.720
+ the bundle, we're thinking, okay, what else, can we reduce the bundle even more, but there
+
+00:28:54.720 --> 00:29:00.280
+ were things like using a better compression, and then the service worker, service worker
+
+00:29:00.280 --> 00:29:06.320
+ catching all the assets on an update, so we can have the assets downloaded ahead of time,
+
+00:29:06.320 --> 00:29:09.920
+ so when you launch the application, those assets are not going to be downloaded from
+
+00:29:09.920 --> 00:29:14.840
+ the network, they will come from the service worker, and we're not paying that latency,
+
+00:29:14.840 --> 00:29:24.160
+ but as I mentioned earlier, the parsing and compiling of JavaScript is also very expensive,
+
+00:29:24.160 --> 00:29:28.720
+ so there was one last thing that we could do, and this was an advance of the message with
+
+00:29:28.720 --> 00:29:34.480
+ the service worker, which was called the bytecode caching by a service worker install, so bytecode
+
+00:29:34.480 --> 00:29:43.200
+ caching, JavaScript is a just-in-time compile language, and every time that you try to use
+
+00:29:43.200 --> 00:29:50.600
+ one of these files to create, I think it will compile the file just in time, so this optimization
+
+00:29:50.600 --> 00:29:59.800
+ consisted on pre-compiling that file, and then just put it into the caching, and V8 does
+
+00:29:59.800 --> 00:30:05.920
+ this for you, but this optimization in particular is in a full bytecode caching, meaning that
+
+00:30:05.920 --> 00:30:12.760
+ the entirety of the file is pre-compiled ahead of time, not just incrementally, there is
+
+00:30:12.760 --> 00:30:18.440
+ an article that shows how that works automatically, but this was like a very aggressive caching
+
+00:30:18.440 --> 00:30:22.080
+ on the JavaScript install.
+
+00:30:22.080 --> 00:30:29.560
+ So the outcome, this was material, the byte did work, never became done, we managed to
+
+00:30:29.560 --> 00:30:37.000
+ get the app from 30 seats, P90 to 12.5 seconds, or on high-end devices, this was even, you
+
+00:30:37.000 --> 00:30:40.080
+ know, the improvements were also noticed, you know, from one to two seconds, on really
+
+00:30:40.080 --> 00:30:46.720
+ high-end Macs, but at 12.5 seconds, at that point, they would like to be started to, we
+
+00:30:46.720 --> 00:30:53.360
+ started to see diminishing returns, so we never got to the ten-second goal, I don't
+
+00:30:53.360 --> 00:30:59.720
+ think it was a failure that we didn't get to the ten seconds, but it was mostly, we
+
+00:30:59.720 --> 00:31:03.920
+ started all optimizing, and there were all the things that had to be fixed before we
+
+00:31:03.920 --> 00:31:08.640
+ can get to the ten seconds, which turned out to be a lot of the architectural problems
+
+00:31:08.640 --> 00:31:14.520
+ that I mentioned at the beginning, that they needed to be solved, and there will be a more
+
+00:31:14.520 --> 00:31:19.880
+ drastic approach that will be needed for us to go beyond ten seconds, not just ten seconds,
+
+00:31:19.880 --> 00:31:26.280
+ but beyond for really, really old devices, they became usable from a lot of people, you
+
+00:31:26.280 --> 00:31:30.440
+ know, like a lot of people who couldn't use the app before now can use the app, user experience
+
+00:31:30.440 --> 00:31:38.600
+ was improved, not just for the lowest devices, but everyone, and of course it led to better,
+
+00:31:38.600 --> 00:31:43.200
+ you know, reduced frustration from users and churn.
+
+00:31:43.200 --> 00:31:46.840
+ So my learning was, you know, I want to optimize for value, I could have assessed over this
+
+00:31:46.840 --> 00:31:54.080
+ metric and get ten seconds, but we achieved the user value, which was that the users were
+
+00:31:54.080 --> 00:31:58.800
+ able to use the app now, and they just go through ten seconds.
+
+00:31:58.800 --> 00:32:04.240
+ On the organizational side, before I came to this project, there was just an isolated
+
+00:32:04.240 --> 00:32:09.680
+ team working on performance by themselves, and they could not make a lot of progress,
+
+00:32:09.680 --> 00:32:15.800
+ it was a lack prioritization, lack of ownership, there was an only show of regression, basically
+
+00:32:15.800 --> 00:32:23.600
+ performance was no one's problem, but then when I came into this project, I just established
+
+00:32:23.600 --> 00:32:28.880
+ a company-wide initiative, and they find a metric, they know a star, so everybody knows
+
+00:32:28.880 --> 00:32:36.240
+ what needs to happen and how we're measuring it, and then after that, I also introduced
+
+00:32:36.240 --> 00:32:41.880
+ PR checks to block regression because we didn't want this to become one single-time exercise,
+
+00:32:41.880 --> 00:32:45.640
+ and then the performance would just take a noise-life after the performance initiative
+
+00:32:45.640 --> 00:32:52.200
+ was completed, so a new team for synthetic monitoring and ensuring that the releases
+
+00:32:52.200 --> 00:32:57.400
+ are blocked to the performance tests are not complete, they're not passing.
+
+00:32:57.400 --> 00:33:03.120
+ The outcome, I was proud of this because everybody's performance became everybody's
+
+00:33:03.120 --> 00:33:07.520
+ responsibility, I was known as the performance guy, that that would be telling people about
+
+00:33:07.520 --> 00:33:14.040
+ performance performance, then the product improved, and we make sure that we didn't
+
+00:33:14.040 --> 00:33:21.000
+ regret it, so performance accelerated when you still become an niche problem, it was
+
+00:33:21.000 --> 00:33:25.560
+ a company problem and more like a part of engineering execution, so I'm proud that
+
+00:33:25.560 --> 00:33:32.720
+ I made this part of the engineering organization and DNA, rather than just a single project.
+
+00:33:32.720 --> 00:33:39.280
+ My experience can help here with the code exam, I was involved in the work on electron
+
+00:33:39.280 --> 00:33:45.120
+ performance, so I believe my skills and experience with this is very important as they call
+
+00:33:45.120 --> 00:33:52.160
+ exam gets bigger, and we can make it super up, managing large-scale, large-scale applications,
+
+00:33:52.160 --> 00:33:58.080
+ this is not just for electrons, but performance across large-class conferences, our script,
+
+00:33:58.080 --> 00:34:03.680
+ applications and performance optimization techniques, and the electron, I'm sorry,
+
+00:34:03.680 --> 00:34:09.120
+ postman, as codecs is a developer tool and developers are very picky, so improving their
+
+00:34:09.120 --> 00:34:15.480
+ performance and gaining the developer love is something that I've been doing for a while.
+
+00:34:15.480 --> 00:34:20.520
+ Most importantly, this required a relentless execution and it required cross-functional
+
+00:34:20.520 --> 00:34:26.200
+ collaboration, organizational enlightenment, a relentless execution from my part, so I'm
+
+00:34:26.200 --> 00:34:28.200
+ really proud of this project.
+
