@@ -22,6 +22,31 @@ export interface SpeakingItem {
 }
 
 export const speakingItems: SpeakingItem[] = [
+  // 1. Conference Talk - AI Engineer Europe 2026
+  {
+    id: 'talk-ai-engineer-europe-generative-ui-mcp-apps-2026',
+    type: 'talk',
+    title: 'Beyond Components: Designing Generative UI for MCP Apps',
+    event: 'AI Engineer Europe 2026',
+    date: '2026-04-10',
+    image: '/images/speaking/ai-engineer-europe-2026.png',
+    description:
+      'Conference talk on how MCP applications unlock generative user interfaces, from static UI templates and declarative runtime interfaces to fully generative interfaces authored by LLMs.',
+    url: 'https://www.ai.engineer/europe/schedule?session=114',
+  },
+  // 2. Conference Talk - CityJS London 2026
+  {
+    id: 'talk-cityjs-london-react-beyond-components-2026',
+    type: 'talk',
+    title: 'React Beyond Components: The Rise of Generative UI',
+    event: 'CityJS London 2026',
+    date: '2026-04-17',
+    image: '/images/speaking/cityjs-london-generative-ui-2026.png',
+    description:
+      'Talk exploring how React fits into the emerging spectrum of generative UI, from static React UI templates exposed through tools to declarative agent-orchestrated interfaces and fully generative React interfaces authored on the fly by LLMs.',
+    location: 'London, UK',
+    url: 'https://london.cityjsconf.org/speakers',
+  },
   // 1. Talk - Events by Apollo
   {
     id: 'talk-the-future-of-mcp-apps-2026',
