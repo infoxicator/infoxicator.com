@@ -32,10 +32,12 @@ export const Route = createRootRoute({
     ],
     links: [
       { rel: 'stylesheet', href: appCss },
+      { rel: 'icon', href: '/favicon.ico', sizes: 'any' },
       {
-        rel: 'apple-touch-icon',
-        sizes: '180x180',
-        href: '/apple-touch-icon.png',
+        rel: 'icon',
+        type: 'image/png',
+        sizes: '16x16',
+        href: '/favicon-16x16.png',
       },
       {
         rel: 'icon',
@@ -46,11 +48,26 @@ export const Route = createRootRoute({
       {
         rel: 'icon',
         type: 'image/png',
-        sizes: '16x16',
-        href: '/favicon-16x16.png',
+        sizes: '192x192',
+        href: '/android-chrome-192x192.png',
+      },
+      {
+        rel: 'icon',
+        type: 'image/png',
+        sizes: '512x512',
+        href: '/android-chrome-512x512.png',
+      },
+      {
+        rel: 'apple-touch-icon',
+        sizes: '180x180',
+        href: '/apple-touch-icon.png',
+      },
+      {
+        rel: 'mask-icon',
+        href: '/safari-pinned-tab.svg',
+        color: '#15202B',
       },
       { rel: 'manifest', href: '/site.webmanifest' },
-      { rel: 'icon', href: '/favicon.ico' },
       {
         rel: 'alternate',
         type: 'application/rss+xml',
