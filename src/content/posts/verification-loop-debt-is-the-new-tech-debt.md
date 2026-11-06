@@ -1,7 +1,7 @@
 ---
 title: "Verification Loop Debt Is the New Tech Debt"
 excerpt: "When people I respect keep saying the same thing, I pay attention. A strong verification loop is more than testing, and without it even the best coding agents fall apart."
-date: "2026-01-08"
+date: "2026-02-18"
 tags:
   - AI
   - Agents
