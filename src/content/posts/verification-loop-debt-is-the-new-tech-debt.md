@@ -6,7 +6,7 @@ tags:
   - AI
   - Agents
   - Verification
-readingTime: "6 min read"
+readingTime: "8 min read"
 ---
 
 When I hear a similar opinion coming from multiple people I admire, I pay attention immediately.
@@ -60,9 +60,51 @@ Run the tests. Typecheck. Lint. Start the app. See if it compiled. See if the as
 
 Other sciences do not get that for free. They need more manual verification and a human in the loop. Software got lucky. The compiler and the test suite are a built-in critic.
 
-That maps to what Block described in their post on a [testing pyramid for AI agents](https://engineering.block.xyz/blog/testing-pyramid-for-ai-agents). The layers are no longer just about unit, integration and UI. They are about how much uncertainty you are willing to tolerate. The bottom still asks a simple question: did we write correct software? Higher up, a single run tells you almost nothing. And at the top they even test vibes on purpose, because if they do not, their users will.
+---
+
+## Two pyramids
+
+In the past we used to have the testing pyramid like this.
+
+![The testing pyramid](/images/posts/verification-loop-debt/classic-testing-pyramid.png)
+
+That is the shape [Kent C. Dodds](https://kentcdodds.com/blog/write-tests) walked through too. Lots of cheap unit tests at the bottom. A smaller pile of integration tests in the middle. A thin layer of end to end tests at the top, because those were slower, flakier, and more expensive.
+
+The model was about test types, and about where to spend your time. As you go up the pyramid, you write fewer tests.
+
+Then Kent C. pushed on that shape. His [testing trophy](https://kentcdodds.com/blog/the-testing-trophy-and-testing-classifications) said the real return was not in hoarding unit tests. It was in integration tests, the ones that give you more confidence for the time you spend. Static checks at the base, some unit tests, a big middle of integration, and fewer end to end tests at the top. Write tests. Not too many. Mostly integration.
+
+Then I read what [Angie Jones wrote at Block](https://engineering.block.xyz/blog/testing-pyramid-for-ai-agents) about a testing pyramid for AI agents.
+
+Here is the thing. The layers are no longer about unit versus integration versus UI. They are about how much uncertainty you are willing to tolerate.
+
+At the bottom, they still ask a simple question: did we write correct software? Mock the model. Keep it deterministic. If this layer is flaky, that is your code, not the AI.
+
+In the middle they record reality and replay it. Real tools. Real MCP sessions. Not because they trust the outside world to stay still, but because they want a fixture they can check against.
+
+Higher up, a single run tells you almost nothing. They measure success rates over many runs.
+
+And at the top they even test vibes on purpose, with rubrics and a judge, because if they do not, their users will.
 
 If the agent can run the checks, the quality of those checks becomes the whole game.
+
+---
+
+## The bottleneck moves
+
+Here is my prediction.
+
+As we get better at writing tests that are actually worth running, the bottleneck will not be inference anymore.
+
+It will be compute. CI. CD. The unglamorous infrastructure that has to execute all of that verification, again and again, every time something changes.
+
+![The bottleneck moves from inference to compute, CI/CD, and infrastructure](/images/posts/verification-loop-debt/verification-bottleneck.png)
+
+You save tokens, which is great. You stop burning money asking the model to guess whether it was right.
+
+But you create a different bottleneck. The loop still has to run somewhere. Pipelines get slower. Runners get more expensive. Someone has to pay for the machines that keep the loop honest.
+
+The reality is, verification does not make work disappear. It just moves the cost to a place you can see.
 
 ---
 
