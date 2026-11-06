@@ -11,7 +11,7 @@
     "generate:og": "node scripts/generate-og-images.mjs",
     "generate:og:force": "node scripts/generate-og-images.mjs --force",
     "preview": "vite preview",
-    "start": "pnpx srvx --prod -s ../client dist/server/server.js"
+    "start": "pnpx srvx --prod scripts/standalone-server.mjs"
   },
   "dependencies": {
     "@content-collections/core": "^0.13.0",
