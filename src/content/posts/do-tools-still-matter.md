@@ -1,5 +1,5 @@
 ---
-title: "Do tools still matter in the age of Code Mode?"
+title: "MCP Isn't Dead, MCP Best Practices Are"
 excerpt: "MCP tool design advice changed when clients learned to search for tools and execute code. What still matters, what moved to the client, and when a workflow tool is still the right choice."
 date: "2026-10-10"
 tags:
